@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-import type {MetaFunction} from "@remix-run/node";
 import {
     Links,
     LiveReload,
@@ -10,7 +8,6 @@ import {
 } from "@remix-run/react";
 import styles from '~/styles/global.css'
 import tailwind from "./tailwind.css";
-
 export const meta: () => { charset: string; viewport: string; title: string } = () => ({
     charset: "utf-8",
     title: "New Remix App",
@@ -44,8 +41,7 @@ export default function App() {
             <Links/>
         </head>
         <body>
-            <Outlet/>
-
+        <Outlet/>
         <ScrollRestoration/>
         <Scripts/>
         <LiveReload/>

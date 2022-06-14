@@ -1,15 +1,18 @@
-import {Block, Button} from "konsta/react";
+import {App, Block, Button} from "konsta/react";
+import KonstaContainer from "~/components/KonstaContainer";
 
 export default function Index() {
     return (
         <>
-            <Block>
-                <p>This is block with text</p>
-            </Block>
-            <Block className="space-y-4">
-                <p>Here comes the button</p>
-                <Button>Action</Button>
-            </Block>
+            <KonstaContainer>
+                <Block>
+                    <p>This is block with text</p>
+                </Block>
+                <Block className="space-y-4">
+                    <p>Here comes the button</p>
+                    <Button>Action</Button>
+                </Block>
+            </KonstaContainer>
         </>
     );
 }

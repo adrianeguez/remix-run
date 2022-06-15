@@ -1,4 +1,4 @@
-import {App, Block, Button} from "konsta/react";
+import {Block, Button} from "konsta/react";
 import KonstaContainer from "~/components/KonstaContainer";
 
 export default function Index() {

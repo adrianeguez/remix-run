@@ -1,3 +1,13 @@
 {
-  "extends": ["@remix-run/eslint-config", "@remix-run/eslint-config/node"]
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "@remix-run/eslint-config",
+    "@remix-run/eslint-config/node",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ]
 }

@@ -1,7 +1,7 @@
 import { json } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
 
-export let loader: LoaderFunction = () => {
+export const loader: LoaderFunction = () => {
   return json(
     {
       short_name: "PWA",

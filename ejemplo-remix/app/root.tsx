@@ -26,14 +26,14 @@ export function links() {
         {rel: "stylesheet", href: styles},
     ];
 }
-declare var window:any;
+declare let window:any;
 export default function App() {
-    let location = useLocation();
-    let matches = useMatches();
+    const location = useLocation();
+    const matches = useMatches();
 
     let isMount = true;
     React.useEffect(() => {
-        let mounted = isMount;
+        const mounted = isMount;
         isMount = false;
         if ("serviceWorker" in navigator) {
             if (navigator.serviceWorker.controller) {
@@ -45,7 +45,7 @@ export default function App() {
                     manifest: window.__remixManifest,
                 });
             } else {
-                let listener = async () => {
+                const listener = async () => {
                     await navigator.serviceWorker.ready;
                     navigator.serviceWorker.controller?.postMessage({
                         type: "REMIX_NAVIGATION",

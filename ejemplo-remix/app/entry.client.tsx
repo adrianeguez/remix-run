@@ -10,7 +10,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
 
-  for (var i = 0; i < rawData.length; ++i) {
+  for (let i = 0; i < rawData.length; ++i) {
     outputArray[i] = rawData.charCodeAt(i);
   }
   return outputArray;
@@ -57,10 +57,14 @@ navigator.serviceWorker.ready
     const returnedSubscription = await subInfo.text();
 
     const convertedVapidKey = urlBase64ToUint8Array(returnedSubscription);
-    return sub.registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: convertedVapidKey,
-    });
+    if(sub.registration.pushManager.subscribe){
+      return sub.registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: convertedVapidKey,
+      });
+    }else{
+      throw new Error('No pushManager');
+    }
   })
   .then(async (subscription) => {
     await fetch("./resources/subscribe", {

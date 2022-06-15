@@ -425,7 +425,7 @@ export async function WebShareLink(url: string, title: string, text: string): Pr
  * @return {Promise<ResponseObject>} An object consisting of two properties: A status to indicate the status of the invocation and also an accompanying message.
  */
 export async function WebShareFile(title: string, data: any[], text: string): Promise<ResponseObject> {
-    let filesArray = [...data];
+    const filesArray = [...data];
     try {
         if (navigator.canShare && navigator.canShare({files: filesArray})) {
             await navigator.share({

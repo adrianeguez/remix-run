@@ -24,6 +24,9 @@ export function links() {
     return [
         {rel: "stylesheet", href: tailwind},
         {rel: "stylesheet", href: styles},
+        {rel: "stylesheet", href: "https://fonts.googleapis.com/icon?family=Material+Icons"},
+        {rel: "stylesheet", href: "https://fonts.googleapis.com/icon?family=Material+Icons"},
+
     ];
 }
 declare let window:any;
@@ -73,10 +76,13 @@ export default function App() {
 
             <Meta/>
           <link rel="manifest" href="/resources/manifest.json" />
+            <link
+                rel="stylesheet"
+                href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            />
           <Links/>
         </head>
         <body>
-
         <Outlet/> <ScrollRestoration/> <Scripts/> <LiveReload/>
         </body>
         </html>

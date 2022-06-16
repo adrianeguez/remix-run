@@ -1902,6 +1902,11 @@ body {
   background-color: currentColor;
 }
 
+.bg-green-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(34 197 94 / var(--tw-bg-opacity));
+}
+
 .bg-opacity-15 {
   --tw-bg-opacity: 0.15;
 }
@@ -2327,6 +2332,14 @@ body {
   transition-duration: 150ms;
 }
 
+.transition {
+  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
 .duration-300 {
   transition-duration: 300ms;
 }
@@ -2534,6 +2547,10 @@ body {
   margin-right: calc(var(--k-safe-area-right) + 1rem);
 }
 
+.right-\34-safe {
+  right: calc(var(--k-safe-area-right) + 1rem);
+}
+
 .pb-safe {
   padding-bottom: var(--k-safe-area-bottom);
 }
@@ -2544,6 +2561,10 @@ body {
 
 .pb-\33-safe {
   padding-bottom: calc(var(--k-safe-area-bottom) + 0.75rem);
+}
+
+.bottom-\34-safe {
+  bottom: calc(var(--k-safe-area-bottom) + 1rem);
 }
 
 .pl-safe {

@@ -5,8 +5,8 @@ import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca
 export const LibroBibliotecaHttp = () => {
     const url = '/libro-biblioteca';
     return {
-        find: async (libroBibliotecaFindDto: LibroBibliotecaFindDto): Promise<[LibroBibliotecaInterface[], number]> => {
-            const queryParams = new URLSearchParams(libroBibliotecaFindDto);
+        find: async (libroBibliotecaFindDto?: LibroBibliotecaFindDto): Promise<[LibroBibliotecaInterface[], number]> => {
+            const queryParams = new URLSearchParams(libroBibliotecaFindDto as any);
             try {
                 const respuesta = await fetch(`${CONFIG.urlBackend}${url}?` + queryParams)
                 return respuesta.json();

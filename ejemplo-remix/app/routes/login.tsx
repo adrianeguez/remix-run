@@ -7,11 +7,12 @@ import {json, redirect} from "@remix-run/node";
 import KonstaContainer from "~/components/KonstaContainer";
 
 //create a stylesheet ref for the auth.css file
-export let links = () => {
+export const links = () => {
     return [{rel: "stylesheet", href: authStyles}]
 }
 
 // use loader to check for existing session, if found, send the user to the blogs site
+// @ts-ignore
 export async function loader({request}) {
     const session = await getSession(
         request.headers.get("Cookie")
@@ -40,18 +41,19 @@ export async function loader({request}) {
 
 // our action function will be launched when the submit button is clicked
 // this will sign in our firebase user and create our session and cookie using user.getIDToken()
-export let action = async ({request}) => {
+// @ts-ignore
+export const action = async ({request}) => {
     // let formData = await request.formData();
     // console.log(formData);
-    let formData = await request.formData();
-    let email = formData.get("email");
-    let password = formData.get("password")
+    const formData = await request.formData();
+    const email = formData.get("email");
+    const password = formData.get("password")
     try {
-        const {user, error} = await signInWithEmailAndPassword(auth, email, password)
+        const {user} = await signInWithEmailAndPassword(auth, email, password)
         // if signin was successful then we have a user
         if (user) {
             // let's setup the session and cookie wth users idToken
-            let session = await getSession(request.headers.get("Cookie"))
+            const session = await getSession(request.headers.get("Cookie"))
             session.set("access_token", await user.getIdToken())
             // let's send the user to the main page after login
             return redirect("/admin", {

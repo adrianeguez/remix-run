@@ -25,7 +25,6 @@ export function links() {
         {rel: "stylesheet", href: tailwind},
         {rel: "stylesheet", href: styles},
         {rel: "stylesheet", href: "https://fonts.googleapis.com/icon?family=Material+Icons"},
-        {rel: "stylesheet", href: "https://fonts.googleapis.com/icon?family=Material+Icons"},
 
     ];
 }
@@ -76,10 +75,6 @@ export default function App() {
 
             <Meta/>
           <link rel="manifest" href="/resources/manifest.json" />
-            <link
-                rel="stylesheet"
-                href="https://fonts.googleapis.com/icon?family=Material+Icons"
-            />
           <Links/>
         </head>
         <body>

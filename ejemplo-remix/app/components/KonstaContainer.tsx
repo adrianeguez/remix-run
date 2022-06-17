@@ -1,6 +1,6 @@
 import {App} from "konsta/react";
 import LeftNavbarContainer from "~/components/LeftNavbarContainer";
-
+// @ts-ignore
 const KonstaContainer = ({children, titulo}) => {
     if (!titulo) {
         titulo = 'El amor';

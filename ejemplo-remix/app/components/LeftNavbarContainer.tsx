@@ -71,6 +71,7 @@ const DrawerHeader = styled('div')(({theme}) => ({
     justifyContent: 'flex-end',
 }));
 
+// @ts-ignore
 export default function LeftNavbarContainer({children, titulo}) {
     if (!titulo) {
         titulo = 'El amor';

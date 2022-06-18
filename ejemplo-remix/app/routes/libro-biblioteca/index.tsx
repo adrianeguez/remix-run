@@ -3,8 +3,7 @@ import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca
 import {json, LoaderFunction} from "@remix-run/node";
 import {LibroBibliotecaHttp} from "~/http/libro-biblioteca/libro-biblioteca.http";
 import {useLoaderData, useNavigate} from "@remix-run/react";
-import {Fab, Icon} from "konsta/react";
-import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
+import {Fab} from "konsta/react";
 
 type LoaderData = { librosBiblioteca?: [LibroBibliotecaInterface[], number], error?: string };
 export const loader: LoaderFunction = async () => {

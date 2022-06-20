@@ -5,3 +5,6 @@ body {
 .pop-up-konstaui{
     z-index: 1200;
 }
+.icon-small{
+    max-height: 10px;
+}

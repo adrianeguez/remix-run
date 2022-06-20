@@ -1,6 +1,6 @@
 import KonstaContainer from "~/components/KonstaContainer";
 import {Block, Navbar, Page, Popup} from "konsta/react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useLoaderData, useNavigate} from "@remix-run/react";
 import {motion} from "framer-motion";
 import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
@@ -13,6 +13,7 @@ export const loader: LoaderFunction = async ({params}) => {
         librosBiblioteca: undefined,
         error: undefined
     };
+
     console.log('params', params);
     try {
         returnData.librosBiblioteca = await LibroBibliotecaHttp().find({id: params.libroBibliotecaId ? +params.libroBibliotecaId : 0})
@@ -23,10 +24,27 @@ export const loader: LoaderFunction = async ({params}) => {
 };
 
 export default function LibroBibliotecaId() {
-    const [popupOpened, setPopupOpened] = useState(true);
+    const [popupOpened, setPopupOpened] = useState(false);
+    useEffect(
+        () => {
+            setTimeout(
+                () => {
+                    setPopupOpened(true);
+                },
+                1
+            )
+        },
+        []
+    )
     const navigate = useNavigate();
     const salir = () => {
-        navigate({pathname: "/libro-biblioteca"})
+        setPopupOpened(false);
+        setTimeout(
+            ()=>{
+                navigate({pathname: "/libro-biblioteca"})
+            },
+            500
+        );
     }
     const animationConfiguration = {
         animate: {opacity: 1},

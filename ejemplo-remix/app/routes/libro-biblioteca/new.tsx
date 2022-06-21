@@ -14,8 +14,6 @@ interface RequestData {
 
 export const action = async (req: RequestData): Promise<ActionFunction> => {
     const body = await req.request.formData();
-    console.log('name', body.get('name'))
-    console.log('lastname', body.get('lastname'))
     // fetc POST libro-biblioteca NESTJS
     return redirect('/libro-biblioteca/new') as any;
 }
@@ -132,8 +130,112 @@ export default function New() {
             validators: {
                 // no validators
             }
+        },
+        {
+            formControlName: 'fecha',
+            help: 'Ingrese la fecha de nacimiento',
+            label: 'Fecha nacimiento',
+            initialValue: new Date().toISOString().slice(0, 10),
+            actualValue: '',
+            type: CampoFormularioType.Date,
+            valid: false,
+            placeholder: 'EJ: 0995774444',
+            validators: {
+                // no validators
+            }
+        },
+        {
+            formControlName: 'fechaHora',
+            help: 'Ingrese la fecha hora de logeo',
+            label: 'Fecha hora logeo',
+            initialValue: new Date().toISOString().slice(0, 16),
+            actualValue: '',
+            type: CampoFormularioType.DateTime,
+            valid: false,
+            placeholder: 'EJ: 0995774444',
+            validators: {
+                // no validators
+            }
+        },
+        {
+            formControlName: 'textarea',
+            help: 'Ingrese una descripcion',
+            label: 'Descripcion',
+            initialValue: `Hola
+            descripcion`,
+            actualValue: '',
+            type: CampoFormularioType.Textarea,
+            valid: false,
+            placeholder: 'EJ: El dia 10 de ...',
+            validators: {
+                // no validators
+            }
+        },
+        {
+            formControlName: 'select',
+            help: 'Seleccione un dia de la semana',
+            label: 'Dia semana',
+            initialValue: `lunes`,
+            actualValue: '',
+            type: CampoFormularioType.Select,
+            valid: false,
+            placeholder: 'EJ: Lun/Mart',
+            validators: {
+                // no validators
+            },
+            select: {
+                opciones: [
+                    {
+                        id: 'lunes',
+                        label: 'Lunes',
+                        value: 'lunes',
+                    },
+                    {
+                        id: 'martes',
+                        label: 'Martes',
+                        value: 'martes',
+                    },
+                    {
+                        id: 'miercoles',
+                        label: 'Miercoles',
+                        value: 'miercoles',
+                    }
+                ]
+            }
+        },
+        {
+            formControlName: 'number',
+            help: 'Ingrese su sueldo',
+            label: 'Sueldo',
+            initialValue: 10.02,
+            actualValue: '',
+            type: CampoFormularioType.Number,
+            valid: false,
+            placeholder: 'EJ: 10.02',
+            validators: {
+                // no validators
+            },
+            select: {
+                opciones: [
+                    {
+                        id: 'lunes',
+                        label: 'Lunes',
+                        value: 'lunes',
+                    },
+                    {
+                        id: 'martes',
+                        label: 'Martes',
+                        value: 'martes',
+                    },
+                    {
+                        id: 'miercoles',
+                        label: 'Miercoles',
+                        value: 'miercoles',
+                    }
+                ]
+            }
         }
-    ]);
+    ] as CampoFormularioInterface[]);
     let defaultValuesObject: any = {};
     let defaultValues = () => {
         campos.forEach(
@@ -178,14 +280,13 @@ export default function New() {
     }
     const eliminarUltimo = () => {
         setCampos([
-        ...campos.filter((c, i) => i < campos.length - 2)
+            ...campos.filter((c, i) => i < campos.length - 2)
         ])
     }
     defaultValues();
     const useFormReturn = useForm<any>({defaultValues: {...defaultValuesObject}});
 
     const onSubmit: SubmitHandler<any> = data => {
-        console.log(data);
         const formData = new FormData(document.getElementById('form'))
         fetch('/libro-biblioteca/new', {method: 'POST', body: formData})
     };

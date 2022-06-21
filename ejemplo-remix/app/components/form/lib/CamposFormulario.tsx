@@ -1,10 +1,8 @@
-import {BlockTitle, Button, List, ListInput, useTheme} from "konsta/react";
-import {useState} from "react";
-import {useForm, Controller, SubmitHandler} from "react-hook-form";
-import {Form} from "@remix-run/react";
-import {ActionFunction, redirect} from "@remix-run/node";
+import {ListInput} from "konsta/react";
+import {Controller} from "react-hook-form";
 import {UseFormReturn} from "react-hook-form/dist/types";
 import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
+import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 
 export default function CamposFormulario(props: { useFormReturn: UseFormReturn<any, any>, campos: CampoFormularioInterface[] }) {
     const {
@@ -18,7 +16,6 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
         resetField
     } = props.useFormReturn;
     const mostrarErrores = (error: any, field, campoFormulario: CampoFormularioInterface) => {
-        console.log('error', error, field)
         let mensajeError = '';
         if (error && field) {
             if (error[field.name]) {
@@ -93,48 +90,71 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                 }
             }
         }
-        console.log('reglas', reglas);
-        return (
-            <Controller
-                key={campoFormulario.formControlName}
-                name={campoFormulario.formControlName as any}
-                control={control as any}
-                rules={reglas}
-                render={({field}) =>
-                {
-                    // IF mobile => xxxx
-                    // IF Web => xxxx
-                    return (
-                        <div>
-                            <ListInput
-                                label={campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'}
-                                type={campoFormulario.type}
-                                name={campoFormulario.formControlName}
-                                placeholder={campoFormulario.placeholder}
-                                clearButton={true}
-                                info={campoFormulario.help}
-                                value={field.value}
-                                error={mostrarErrores(errors, field, campoFormulario)}
-                                media={<><img className={'icon-small'}
-                                              src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
-                                              alt=""/></>}
-                                onChange={field.onChange}
-                                onClear={() => {
-                                    console.log(campoFormulario)
-                                    setValue(campoFormulario.formControlName, '', {
-                                        shouldValidate: true,
-                                        shouldDirty: true,
-                                        shouldTouch: true
-                                    })
-                                }}
-                            />
-                        </div> as any
-                    )
-                }
-                }
-            />)
+        console.log(watch('fechaHora'));
+        const esCampoComun = campoFormulario.type === CampoFormularioType.Url ||
+            campoFormulario.type === CampoFormularioType.Text ||
+            campoFormulario.type === CampoFormularioType.Password ||
+            campoFormulario.type === CampoFormularioType.Email ||
+            campoFormulario.type === CampoFormularioType.Tel ||
+            campoFormulario.type === CampoFormularioType.Date ||
+            campoFormulario.type === CampoFormularioType.DateTime ||
+            campoFormulario.type === CampoFormularioType.Textarea ||
+            campoFormulario.type === CampoFormularioType.Select ||
+            campoFormulario.type === CampoFormularioType.Number
+        if (esCampoComun) {
+            return (
+                <Controller
+                    key={campoFormulario.formControlName}
+                    name={campoFormulario.formControlName as any}
+                    control={control as any}
+                    rules={reglas}
+                    render={({field}) => {
+                        // IF mobile => xxxx
+                        // IF Web => xxxx
+                        return (
+                            <div>
+                                <ListInput
+                                    label={campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'}
+                                    type={campoFormulario.type}
+                                    name={campoFormulario.formControlName}
+                                    placeholder={campoFormulario.placeholder}
+                                    clearButton={(campoFormulario.type === CampoFormularioType.Date
+                                        || campoFormulario.type === CampoFormularioType.DateTime
+                                        || campoFormulario.type === CampoFormularioType.Textarea
+                                        || campoFormulario.type === CampoFormularioType.Select
+                                        || campoFormulario.type === CampoFormularioType.Number
+                                    ) ? false : true}
+                                    info={campoFormulario.help}
+                                    value={field.value}
+                                    error={mostrarErrores(errors, field, campoFormulario)}
+                                    media={<><img className={'icon-small'}
+                                                  src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
+                                                  alt=""/></>}
+                                    onChange={field.onChange}
+                                    onClear={() => {
+                                        setValue(campoFormulario.formControlName, '', {
+                                            shouldValidate: true,
+                                            shouldDirty: true,
+                                            shouldTouch: true
+                                        })
+                                    }}
+                                >
+                                    {
+                                        campoFormulario.type === CampoFormularioType.Select &&
+                                        campoFormulario.select &&
+                                        campoFormulario.select.opciones.map(
+                                            (opcion) => (
+                                                <option key={opcion.id} value={opcion.value}>{opcion.label}</option>)
+                                        )
+                                    }
+                                </ListInput>
+                            </div> as any
+                        )
+                    }
+                    }
+                />)
+        }
     }
-    console.log(watch("nombre"));
     return (
         <>
             {props.campos.map((f) => generarCampo(f))}

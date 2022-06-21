@@ -2,12 +2,13 @@ import {
     CampoFormularioValidatorsInterface
 } from "~/components/form/lib/interfaces/campo-formulario-validators.interface";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
+import {CampoFormularioSelectInterface} from "~/components/form/lib/interfaces/campo-formulario-select.interface";
 
 export interface CampoFormularioInterface {
     formControlName: string;
     help: string;
-    patternMessage?: string;
-    fileMessage?: string;
+    // patternMessage?: string;
+    // fileMessage?: string;
     initialValue: any;
     disabled?: boolean;
     validators: CampoFormularioValidatorsInterface;
@@ -16,6 +17,7 @@ export interface CampoFormularioInterface {
     actualValue?: any;
     placeholder?: string;
     label: string;
+    select?: CampoFormularioSelectInterface;
     // select?: SelectField;
     // mask?: Mask;
     // autoComplete?: AutoComplete;

@@ -1,5 +1,17 @@
 import {motion} from "framer-motion"
-import {Block, BlockTitle, Button, List, Navbar, Page, Popup, useTheme} from "konsta/react";
+import {
+    Actions, ActionsButton,
+    ActionsGroup, ActionsLabel,
+    Block,
+    BlockTitle,
+    Button,
+    List,
+    ListItem,
+    Navbar,
+    Page,
+    Popup,
+    useTheme
+} from "konsta/react";
 import {useEffect, useState} from "react";
 import {Form, useLoaderData, useNavigate} from "@remix-run/react";
 import {ActionFunction, redirect, Request} from "@remix-run/node";
@@ -8,11 +20,31 @@ import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-f
 import CamposFormulario from "~/components/form/lib/CamposFormulario";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {Controller} from "react-hook-form";
+import {
+    debounceTime,
+    defer,
+    delay, distinct,
+    fromEvent, mergeMap,
+    Observable,
+    of,
+    scan,
+    skipUntil,
+    take,
+    takeLast,
+    takeUntil,
+    timer
+} from 'rxjs';
+import {InputBusquedaAutocomplete} from "~/components/form/lib/InputBusquedaAutocomplete";
+import {GenerarObservableWatchCampo} from "~/components/form/lib/funcion/generar-observable-watch-campo";
+import {LibroBibliotecaHttp} from "~/http/libro-biblioteca/libro-biblioteca.http";
+import {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
+import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
 
 interface RequestData {
     request: Request
 }
 
+let evento;
 export const action = async (req: RequestData): Promise<ActionFunction> => {
     const body = await req.request.formData();
     // fetc POST libro-biblioteca NESTJS
@@ -21,33 +53,8 @@ export const action = async (req: RequestData): Promise<ActionFunction> => {
 
 export default function New() {
     const [popupOpened, setPopupOpened] = useState(false);
-    useEffect(
-        () => {
-            setTimeout(
-                () => {
-                    setPopupOpened(true);
-                },
-                1
-            )
-        },
-        []
-    )
-    const navigate = useNavigate();
-    const animationConfiguration = {
-        animate: {opacity: 1},
-    };
-    const salir = () => {
-        setPopupOpened(false);
-        setTimeout(
-            () => {
-                navigate({pathname: "/libro-biblioteca"})
-            },
-            500
-        );
-    }
-    const data = useLoaderData();
-    const theme = useTheme();
-    const hairlines = theme !== 'material';
+    const [autocompleteActual, setAutocompleteActual] = useState('');
+    const [listaAutocomplete, setListaAutocomplete] = useState([]);
     const [campos, setCampos] = useState([
         {
             formControlName: 'nombre',
@@ -226,8 +233,39 @@ export default function New() {
             number: {
                 step: 0.1,
             }
+        },
+        {
+            formControlName: 'autocomplete',
+            help: 'Seleccione un libro',
+            label: 'Libro',
+            initialValue: 'culeo',
+            actualValue: '',
+            type: CampoFormularioType.Autocomplete,
+            valid: false,
+            placeholder: 'EJ: 10.02',
+            validators: {},
         }
     ] as CampoFormularioInterface[]);
+    const navigate = useNavigate();
+    const animationConfiguration = {
+        animate: {opacity: 1},
+    };
+    const salir = () => {
+        setPopupOpened(false);
+        setTimeout(
+            () => {
+                navigate({pathname: "/libro-biblioteca"})
+            },
+            500
+        );
+    }
+    const cerrarAction = () => {
+        setEventoAutocomplete({});
+        setActionsOneOpened(false);
+    }
+    const data = useLoaderData();
+    const theme = useTheme();
+    const hairlines = theme !== 'material';
     let defaultValuesObject: any = {};
     let defaultValues = () => {
         campos.forEach(
@@ -277,25 +315,78 @@ export default function New() {
     }
     defaultValues();
     const useFormReturn = useForm<any>({defaultValues: {...defaultValuesObject}});
-
-    useFormReturn.watch((value, info) => {
-        console.log(value, info);
-        if (info.name === 'name') {
-            if (value.number) {
-                if (value.number > -5 && value.number < 15) {
-
-                } else {
-                    console.log('ERror');
-                }
-            }
-        }
-    })
-
+    const useFormAutocomplete = useForm<any>({defaultValues: {busqueda: ''}});
     const onSubmit: SubmitHandler<any> = data => {
         console.log('COSAS', useFormReturn.formState, data);
         // const formData = new FormData(document.getElementById('form'))
         // fetch('/libro-biblioteca/new', {method: 'POST', body: formData})
     };
+
+    const [actionsOneOpened, setActionsOneOpened] = useState(false);
+    const [eventoAutocomplete, setEventoAutocomplete, CamposFormularioComponente] = CamposFormulario({
+        useFormReturn,
+        campos
+    });
+    const tieneCampoFormulario = Object.keys(eventoAutocomplete).length > 0
+    useEffect(
+        () => {
+            setTimeout(
+                () => {
+                    setPopupOpened(true);
+                },
+                1
+            );
+            buscarAutocomplete();
+        },
+        []
+    )
+    const buscarAutocomplete = () => {
+        GenerarObservableWatchCampo(
+            'busqueda',
+            useFormAutocomplete
+        )
+            .subscribe(
+                {
+                    next: async (data) => {
+                        console.log('evento', evento, eventoAutocomplete)
+                        console.log('LLEGA DATA', data, evento);
+                        if (Object.keys(evento).length > 0) {
+                            console.log('eventoAutocomplete', evento);
+                            switch (evento.formControlName) {
+                                case 'autocomplete':
+                                    console.log('buscarLibroBiblioteca');
+                                    await buscarLibroBiblioteca(data, evento);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            );
+    }
+    const buscarLibroBiblioteca = async (data: ObservableWatchCampoInterface, campo: CampoFormularioInterface) => {
+        let librosBiblioteca;
+        if(Number.isNaN(Number(data.value))){
+            librosBiblioteca = await LibroBibliotecaHttp().find({});
+
+        }else{
+            librosBiblioteca = await LibroBibliotecaHttp().find({id: +data.value});
+        }
+        setListaAutocomplete(librosBiblioteca[0]);
+    }
+    useEffect(
+        () => {
+            evento = eventoAutocomplete;
+            if (tieneCampoFormulario) {
+                setActionsOneOpened(true);
+            } else {
+                setActionsOneOpened(false);
+            }
+        },
+        [eventoAutocomplete]
+    )
+
     return (
         <>
             <motion.div
@@ -322,22 +413,7 @@ export default function New() {
                             <List hairlines={hairlines}>
                                 <Form id="form" action="/libro-biblioteca/new" method="POST"
                                       onSubmit={useFormReturn.handleSubmit(onSubmit)} noValidate>
-                                    <CamposFormulario useFormReturn={useFormReturn} campos={campos}></CamposFormulario>
-                                    <Controller
-                                        name={'otherTest'}
-                                        control={useFormReturn.control}
-                                        rules={{
-                                            valueAsNumber: true,
-                                            min: 3,
-                                            max: 10
-                                        }}
-                                        render={({field}) => {
-                                            return (<input
-                                                type="number"
-                                            />)
-                                        }}
-                                    ></Controller>
-
+                                    {CamposFormularioComponente}
                                     <Button large typeof={'submit'}> submit </Button>
                                 </Form>
                             </List>
@@ -354,6 +430,41 @@ export default function New() {
                     </Page>
                 </Popup>
             </motion.div>
+            <div className={'action-konstaui'}>
+                <Actions
+                    className={'action-konstaui'}
+                    opened={actionsOneOpened}
+                    onBackdropClick={() => cerrarAction()}
+                >
+
+                    <ActionsGroup>
+                        <ActionsLabel>
+                            Buscando registros
+                        </ActionsLabel>
+                        <List className={'action-list-helper-konstaio'}>
+                            <InputBusquedaAutocomplete useFormAutocomplete={useFormAutocomplete}/>
+                            {listaAutocomplete.length === 0 &&
+                                <ListItem title={'0 Registros encontrados'}/>
+                            }
+                        </List>
+                        <List className={'action-list-konstaio'}>
+                            {listaAutocomplete.map(
+                                (v: LibroBibliotecaInterface) => (<ListItem key={v.id} title={'Libro biblioteca: ' + (v.id ? v.id.toString() : '')}/>)
+                            )}
+                        </List>
+                        {/*<List className={'action-list-helper-konstaio'}>*/}
+                        {/*    <ListItem title="Si no encuentras lo que buscas cierra y busca de nuevo"*/}
+                        {/*              className={'text-center'}/>*/}
+                        {/*</List>*/}
+                        <ActionsButton
+                            onClick={() => cerrarAction()}
+                            colors={{text: 'text-red-500'}}
+                        >
+                            Cancelar
+                        </ActionsButton>
+                    </ActionsGroup>
+                </Actions>
+            </div>
         </>
     )
 }

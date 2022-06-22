@@ -14,7 +14,6 @@ export const loader: LoaderFunction = async ({params}) => {
         error: undefined
     };
 
-    console.log('params', params);
     try {
         returnData.librosBiblioteca = await LibroBibliotecaHttp().find({id: params.libroBibliotecaId ? +params.libroBibliotecaId : 0})
     } catch (error: any) {
@@ -51,7 +50,6 @@ export default function LibroBibliotecaId() {
     };
 
     const data = useLoaderData<LoaderData>();
-    console.log(data);
 
     return (
         <>

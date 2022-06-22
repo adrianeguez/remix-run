@@ -1,10 +1,20 @@
-import {ListInput} from "konsta/react";
+import {
+    ListInput,
+    ListItem,
+} from "konsta/react";
 import {Controller} from "react-hook-form";
 import {UseFormReturn} from "react-hook-form/dist/types";
 import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
+import {motion} from "framer-motion";
+import {useState} from "react";
+import {GenerarReglas} from "~/components/form/lib/funcion/generar-reglas";
+import {MostrarErrores} from "~/components/form/lib/funcion/mostrar-errores";
 
 export default function CamposFormulario(props: { useFormReturn: UseFormReturn<any, any>, campos: CampoFormularioInterface[] }) {
+
+    const [autocompleteAbierto, setAutocompleteAbierto] = useState(false);
+    const [eventoAutocomplete, setEventoAutocomplete] = useState({} as CampoFormularioInterface);
     const {
         register,
         handleSubmit,
@@ -15,90 +25,9 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
         reset,
         resetField
     } = props.useFormReturn;
-    const mostrarErrores = (error: any, field, campoFormulario: CampoFormularioInterface) => {
-        let mensajeError = '';
-        console.log('MOSTRANDO ERRORES', error);
-        if (error && field) {
-            if (error[field.name]) {
-                switch (error[field.name].type) {
-                    case 'required':
-                        mensajeError += `Requerido, el campo es requerido\n`;
-                        break;
-                    case 'minLength':
-                        if (campoFormulario.validators.minLength) {
-                            mensajeError += `Tamano minimo, ${campoFormulario.validators.minLength.value}\n`;
-                        }
-                        break;
-                    case 'maxLength':
-                        if (campoFormulario.validators.maxLength) {
-                            mensajeError += `Tamano maximo, ${campoFormulario.validators.maxLength.value}\n`;
-                        }
-                        break;
-                    case 'pattern':
-                        if (campoFormulario.validators.pattern) {
-                            mensajeError += `Valor erroneo, ${campoFormulario.validators.pattern.mensaje}\n`;
-                        }
-                        break;
-                    default:
-                        mensajeError += `Error, ${error[field.name].message}\n`;
-                }
-            }
-        }
-        return mensajeError;
-    }
     const generarCampo = (campoFormulario: CampoFormularioInterface) => {
-        let reglas: any = {};
-        if (campoFormulario.validators) {
-            if (campoFormulario.validators.required) {
-                reglas['required'] = typeof campoFormulario.validators.required === 'string' ? campoFormulario.validators.required : 'Error'
-            }
-            if (campoFormulario.validators.minLength) {
-                reglas['minLength'] = {
-                    value: campoFormulario.validators.minLength.value,
-                    message: campoFormulario.validators.minLength.mensaje
-                }
-            }
-            if (campoFormulario.validators.maxLength) {
-                reglas['maxLength'] = {
-                    value: campoFormulario.validators.maxLength.value,
-                    message: campoFormulario.validators.maxLength.mensaje
-                }
-            }
-            if (campoFormulario.validators.max) {
-                reglas['max'] = campoFormulario.validators.max.value
-                reglas['validate'] = {
-                    ...reglas['validate'],
-                    maxValidateFn: campoFormulario.validators.max.validationFn
-                };
-                reglas['valueAsNumber'] = true;
-            }
-            if (campoFormulario.validators.min) {
-                reglas['min'] = campoFormulario.validators.min.value
-                reglas['validate'] = {
-                    ...reglas['validate'],
-                    minValidateFn: campoFormulario.validators.min.validationFn
-                };
-                reglas['valueAsNumber'] = true;
-            }
-            if (campoFormulario.validators.pattern) {
-                reglas['pattern'] = {
-                    value: campoFormulario.validators.pattern.pattern,
-                    message: campoFormulario.validators.pattern.mensaje
-                }
-            }
-            if (campoFormulario.validators.url) {
-                reglas['url'] = {
-                    message: campoFormulario.validators.url.mensaje
-                }
-            }
-            if (campoFormulario.validators.email) {
-                reglas['email'] = {
-                    message: campoFormulario.validators.email.mensaje
-                }
-            }
-        }
-        console.log('REGLAS', reglas, campoFormulario.formControlName);
-        console.log(watch('fechaHora'));
+        let reglas: any = GenerarReglas(campoFormulario);
+
         const esCampoComun = campoFormulario.type === CampoFormularioType.Url ||
             campoFormulario.type === CampoFormularioType.Text ||
             campoFormulario.type === CampoFormularioType.Password ||
@@ -135,7 +64,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                                     info={campoFormulario.help}
                                     step={(campoFormulario.type === CampoFormularioType.Number && campoFormulario.number) ? campoFormulario.number.step : ''}
                                     value={campoFormulario.type === CampoFormularioType.Number ? +field.value : field.value}
-                                    error={mostrarErrores(errors, field, campoFormulario)}
+                                    error={MostrarErrores(errors, field, campoFormulario)}
                                     media={<><img className={'icon-small'}
                                                   src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
                                                   alt=""/></>}
@@ -163,10 +92,112 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                     }
                 />)
         }
+        const esAutocomplete = campoFormulario.type === CampoFormularioType.Autocomplete;
+        if (esAutocomplete) {
+            return (
+                <div
+                    key={campoFormulario.formControlName}
+                    onClick={() => setEventoAutocomplete(campoFormulario)}>
+
+                    <motion.div
+                        whileTap={{scale: 1.01}}
+                    >
+
+                        <Controller
+                            name={campoFormulario.formControlName as any}
+                            control={control as any}
+                            rules={reglas}
+                            render={
+                                ({field}) => (
+                                    <div>
+                                        <input type="hidden" value={field.value}/>
+                                        <ListItem
+                                            media={<><img className={'icon-small'}
+                                                          src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
+                                                          alt=""/></>}
+                                            header={campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'}
+                                            title={field.value ? field.value : campoFormulario.placeholder}
+                                            titleWrapClassName={field.value ? '' : 'texto-placeholder'}
+                                            after={<><img className={'icon-small'}
+                                                          src="https://cdn2.iconfinder.com/data/icons/business-management-color/64/select-choose-right-person-hr-job-human-resource-512.png"
+                                                          alt=""/></>}
+                                            footer={(<><p>PENE</p></>)}
+                                        />
+                                    </div>
+                                )
+                            }
+                        />
+
+                    </motion.div>
+
+                    {/*<Controller*/}
+                    {/*    key={campoFormulario.formControlName}*/}
+                    {/*    name={campoFormulario.formControlName as any}*/}
+                    {/*    control={control as any}*/}
+                    {/*    rules={reglas}*/}
+                    {/*    render={({field}) => {*/}
+                    {/*        // IF mobile => xxxx*/}
+                    {/*        // IF Web => xxxx*/}
+                    {/*        return (*/}
+                    {/*            <div>*/}
+                    {/*                <ListInput*/}
+                    {/*                    label={campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'}*/}
+                    {/*                    type={campoFormulario.type}*/}
+                    {/*                    name={campoFormulario.formControlName}*/}
+                    {/*                    placeholder={campoFormulario.placeholder}*/}
+                    {/*                    info={campoFormulario.help}*/}
+                    {/*                    step={(campoFormulario.type === CampoFormularioType.Number && campoFormulario.number) ? campoFormulario.number.step : ''}*/}
+                    {/*                    value={campoFormulario.type === CampoFormularioType.Number ? +field.value : field.value}*/}
+                    {/*                    error={mostrarErrores(errors, field, campoFormulario)}*/}
+                    {/*                    media={<><img className={'icon-small'}*/}
+                    {/*                                  src="https://cdn-icons-png.flaticon.com/512/16/16363.png"*/}
+                    {/*                                  alt=""/></>}*/}
+                    {/*                    onChange={field.onChange}*/}
+                    {/*                >*/}
+                    {/*                </ListInput>*/}
+                    {/*            </div> as any*/}
+                    {/*        )*/}
+                    {/*    }*/}
+                    {/*    }*/}
+                    {/*/>*/}
+
+
+                    {/*<Sheet*/}
+                    {/*    className="pb-safe"*/}
+                    {/*    opened={autocompleteAbierto}*/}
+                    {/*    onBackdropClick={() => setAutocompleteAbierto(false)}*/}
+                    {/*>*/}
+                    {/*    <Toolbar top>*/}
+                    {/*        <div className="left" />*/}
+                    {/*        <div className="right">*/}
+                    {/*            <Link toolbar onClick={() => setAutocompleteAbierto(false)}>*/}
+                    {/*                Done*/}
+                    {/*            </Link>*/}
+                    {/*        </div>*/}
+                    {/*    </Toolbar>*/}
+                    {/*    <Block>*/}
+                    {/*        <p>*/}
+                    {/*            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum ad*/}
+                    {/*            excepturi nesciunt nobis aliquam. Quibusdam ducimus neque*/}
+                    {/*            necessitatibus, molestias cupiditate velit nihil alias incidunt,*/}
+                    {/*            excepturi voluptatem dolore itaque sapiente dolores!*/}
+                    {/*        </p>*/}
+                    {/*        <div className="mt-4">*/}
+                    {/*            <Button onClick={() => setAutocompleteAbierto(false)}>Action</Button>*/}
+                    {/*        </div>*/}
+                    {/*    </Block>*/}
+                    {/*</Sheet>*/}
+                </div>
+            )
+        }
     }
-    return (
-        <>
-            {props.campos.map((f) => generarCampo(f))}
-        </>
-    );
+    return [
+        eventoAutocomplete,
+        setEventoAutocomplete,
+        (
+            <>
+                {props.campos.map((f) => generarCampo(f))}
+            </>
+        ),
+    ];
 }

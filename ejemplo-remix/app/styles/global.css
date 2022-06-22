@@ -5,6 +5,30 @@ body {
 .pop-up-konstaui{
     z-index: 1200;
 }
+.action-konstaui{
+    z-index: 1300;
+}
+
+.action-konstaui > div{
+    z-index: 1300;
+}
 .icon-small{
     max-height: 10px;
+}
+.texto-placeholder{
+    color: #b8b8b8;
+}
+.elAmor{
+    background-color: blue;
+    overflow: unset;
+}
+.action-list-konstaio{
+    background-color: #f3f6fa;
+    margin: 0px;
+    max-height: 450px;
+    overflow-y: auto;
+}
+.action-list-helper-konstaio{
+    margin: 0px;
+    background-color: #e4e4e4;
 }

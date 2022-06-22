@@ -1085,6 +1085,10 @@ body {
   margin-bottom: -0.5rem;
 }
 
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -2138,6 +2142,11 @@ body {
   letter-spacing: 0.05em;
 }
 
+.text-red-500 {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
 .text-primary {
   --tw-text-opacity: 1;
   color: rgb(0 122 255 / var(--tw-text-opacity));
@@ -2155,11 +2164,6 @@ body {
 
 .text-current {
   color: currentColor;
-}
-
-.text-red-500 {
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 
 .text-opacity-55 {

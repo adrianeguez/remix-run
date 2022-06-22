@@ -7,6 +7,7 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 import CamposFormulario from "~/components/form/lib/CamposFormulario";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
+import {Controller} from "react-hook-form";
 
 interface RequestData {
     request: Request
@@ -70,12 +71,6 @@ export default function New() {
                 pattern: {
                     pattern: new RegExp(/([A-Z])\w+/),
                     mensaje: 'Ingrese solo letras'
-                },
-                url: {
-                    mensaje: 'Ingrese solo letras'
-                },
-                email: {
-                    mensaje: 'Ingrese solo letras'
                 }
             }
         },
@@ -103,6 +98,9 @@ export default function New() {
             placeholder: 'EJ: a@a.com',
             validators: {
                 // no validators
+                email: {
+                    mensaje: 'Ingrese un correo valido'
+                }
             }
         },
         {
@@ -116,6 +114,9 @@ export default function New() {
             placeholder: 'EJ: https://...',
             validators: {
                 // no validators
+                url: {
+                    mensaje: 'Ingrese un url correctamente'
+                }
             }
         },
         {
@@ -204,7 +205,7 @@ export default function New() {
             }
         },
         {
-            formControlName: 'number',
+            formControlName: 'numero',
             help: 'Ingrese su sueldo',
             label: 'Sueldo',
             initialValue: 10.02,
@@ -213,26 +214,17 @@ export default function New() {
             valid: false,
             placeholder: 'EJ: 10.02',
             validators: {
-                // no validators
+                max: {
+                    value: 15,
+                    validationFn: (v) => v < 15 ? true : 'No mayor a 15'
+                },
+                min: {
+                    value: -5,
+                    validationFn: (v) => v > -5 ? true : 'No menor a -5'
+                }
             },
-            select: {
-                opciones: [
-                    {
-                        id: 'lunes',
-                        label: 'Lunes',
-                        value: 'lunes',
-                    },
-                    {
-                        id: 'martes',
-                        label: 'Martes',
-                        value: 'martes',
-                    },
-                    {
-                        id: 'miercoles',
-                        label: 'Miercoles',
-                        value: 'miercoles',
-                    }
-                ]
+            number: {
+                step: 0.1,
             }
         }
     ] as CampoFormularioInterface[]);
@@ -286,9 +278,23 @@ export default function New() {
     defaultValues();
     const useFormReturn = useForm<any>({defaultValues: {...defaultValuesObject}});
 
+    useFormReturn.watch((value, info) => {
+        console.log(value, info);
+        if (info.name === 'name') {
+            if (value.number) {
+                if (value.number > -5 && value.number < 15) {
+
+                } else {
+                    console.log('ERror');
+                }
+            }
+        }
+    })
+
     const onSubmit: SubmitHandler<any> = data => {
-        const formData = new FormData(document.getElementById('form'))
-        fetch('/libro-biblioteca/new', {method: 'POST', body: formData})
+        console.log('COSAS', useFormReturn.formState, data);
+        // const formData = new FormData(document.getElementById('form'))
+        // fetch('/libro-biblioteca/new', {method: 'POST', body: formData})
     };
     return (
         <>
@@ -317,6 +323,21 @@ export default function New() {
                                 <Form id="form" action="/libro-biblioteca/new" method="POST"
                                       onSubmit={useFormReturn.handleSubmit(onSubmit)} noValidate>
                                     <CamposFormulario useFormReturn={useFormReturn} campos={campos}></CamposFormulario>
+                                    <Controller
+                                        name={'otherTest'}
+                                        control={useFormReturn.control}
+                                        rules={{
+                                            valueAsNumber: true,
+                                            min: 3,
+                                            max: 10
+                                        }}
+                                        render={({field}) => {
+                                            return (<input
+                                                type="number"
+                                            />)
+                                        }}
+                                    ></Controller>
+
                                     <Button large typeof={'submit'}> submit </Button>
                                 </Form>
                             </List>

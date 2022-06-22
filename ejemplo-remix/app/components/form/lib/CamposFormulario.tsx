@@ -17,6 +17,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
     } = props.useFormReturn;
     const mostrarErrores = (error: any, field, campoFormulario: CampoFormularioInterface) => {
         let mensajeError = '';
+        console.log('MOSTRANDO ERRORES', error);
         if (error && field) {
             if (error[field.name]) {
                 switch (error[field.name].type) {
@@ -38,6 +39,8 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                             mensajeError += `Valor erroneo, ${campoFormulario.validators.pattern.mensaje}\n`;
                         }
                         break;
+                    default:
+                        mensajeError += `Error, ${error[field.name].message}\n`;
                 }
             }
         }
@@ -62,16 +65,20 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                 }
             }
             if (campoFormulario.validators.max) {
-                reglas['max'] = {
-                    value: campoFormulario.validators.max.value,
-                    message: campoFormulario.validators.max.mensaje
-                }
+                reglas['max'] = campoFormulario.validators.max.value
+                reglas['validate'] = {
+                    ...reglas['validate'],
+                    maxValidateFn: campoFormulario.validators.max.validationFn
+                };
+                reglas['valueAsNumber'] = true;
             }
             if (campoFormulario.validators.min) {
-                reglas['min'] = {
-                    value: campoFormulario.validators.min.value,
-                    message: campoFormulario.validators.min.mensaje
-                }
+                reglas['min'] = campoFormulario.validators.min.value
+                reglas['validate'] = {
+                    ...reglas['validate'],
+                    minValidateFn: campoFormulario.validators.min.validationFn
+                };
+                reglas['valueAsNumber'] = true;
             }
             if (campoFormulario.validators.pattern) {
                 reglas['pattern'] = {
@@ -90,6 +97,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                 }
             }
         }
+        console.log('REGLAS', reglas, campoFormulario.formControlName);
         console.log(watch('fechaHora'));
         const esCampoComun = campoFormulario.type === CampoFormularioType.Url ||
             campoFormulario.type === CampoFormularioType.Text ||
@@ -125,7 +133,8 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                                         || campoFormulario.type === CampoFormularioType.Number
                                     ) ? false : true}
                                     info={campoFormulario.help}
-                                    value={field.value}
+                                    step={(campoFormulario.type === CampoFormularioType.Number && campoFormulario.number) ? campoFormulario.number.step : ''}
+                                    value={campoFormulario.type === CampoFormularioType.Number ? +field.value : field.value}
                                     error={mostrarErrores(errors, field, campoFormulario)}
                                     media={<><img className={'icon-small'}
                                                   src="https://cdn-icons-png.flaticon.com/512/16/16363.png"

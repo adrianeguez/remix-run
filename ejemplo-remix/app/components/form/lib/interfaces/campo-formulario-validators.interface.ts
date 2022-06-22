@@ -10,11 +10,11 @@ export interface CampoFormularioValidatorsInterface {
     };
     min?: {
         value: number;
-        mensaje?: string;
+        validationFn: (value: any) => boolean;
     };
     max?: {
         value: number;
-        mensaje?: string;
+        validationFn: (value: any) => boolean;
     };
     email?: {
         mensaje?: string;

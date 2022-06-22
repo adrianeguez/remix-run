@@ -3,6 +3,7 @@ import {
 } from "~/components/form/lib/interfaces/campo-formulario-validators.interface";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {CampoFormularioSelectInterface} from "~/components/form/lib/interfaces/campo-formulario-select.interface";
+import {CampoFormularioNumberInterface} from "~/components/form/lib/interfaces/campo-formulario-number.interface";
 
 export interface CampoFormularioInterface {
     formControlName: string;
@@ -18,6 +19,7 @@ export interface CampoFormularioInterface {
     placeholder?: string;
     label: string;
     select?: CampoFormularioSelectInterface;
+    number?: CampoFormularioNumberInterface;
     // select?: SelectField;
     // mask?: Mask;
     // autoComplete?: AutoComplete;

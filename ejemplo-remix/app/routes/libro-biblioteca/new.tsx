@@ -262,6 +262,12 @@ export default function New() {
     const cerrarAction = () => {
         setEventoAutocomplete({});
         setActionsOneOpened(false);
+        setListaAutocomplete([]);
+        useFormAutocomplete.setValue('busqueda' as any, '' as any, {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true
+        } as any)
     }
     const data = useLoaderData();
     const theme = useTheme();
@@ -350,6 +356,7 @@ export default function New() {
                     next: async (data) => {
                         console.log('evento', evento, eventoAutocomplete)
                         console.log('LLEGA DATA', data, evento);
+                        setListaAutocomplete([]);
                         if (Object.keys(evento).length > 0) {
                             console.log('eventoAutocomplete', evento);
                             switch (evento.formControlName) {
@@ -367,10 +374,10 @@ export default function New() {
     }
     const buscarLibroBiblioteca = async (data: ObservableWatchCampoInterface, campo: CampoFormularioInterface) => {
         let librosBiblioteca;
-        if(Number.isNaN(Number(data.value))){
+        if (Number.isNaN(Number(data.value))) {
             librosBiblioteca = await LibroBibliotecaHttp().find({});
 
-        }else{
+        } else {
             librosBiblioteca = await LibroBibliotecaHttp().find({id: +data.value});
         }
         setListaAutocomplete(librosBiblioteca[0]);
@@ -449,7 +456,18 @@ export default function New() {
                         </List>
                         <List className={'action-list-konstaio'}>
                             {listaAutocomplete.map(
-                                (v: LibroBibliotecaInterface) => (<ListItem key={v.id} title={'Libro biblioteca: ' + (v.id ? v.id.toString() : '')}/>)
+                                (v: LibroBibliotecaInterface, index) => (
+                                    <motion.div
+                                        initial={{opacity: 0, y: 10}}
+                                        animate={{opacity: 1, y: 0}}
+                                        exit={{opacity: 0, y: 0}}
+                                        transition={{delay: index * 0.1}}
+                                        key={v.id}
+                                    >
+                                        <ListItem
+                                            title={'Libro biblioteca: ' + (v.id ? v.id.toString() : '')}/>
+                                    </motion.div>
+                                )
                             )}
                         </List>
                         {/*<List className={'action-list-helper-konstaio'}>*/}

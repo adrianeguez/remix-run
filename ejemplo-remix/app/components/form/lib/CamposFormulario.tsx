@@ -117,7 +117,6 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                 <div
                     key={campoFormulario.formControlName}
                     onClick={() => setEventoAutocomplete({...campoFormulario,__key:new Date().getTime()})}>
-
                     <motion.div
                         whileTap={{scale: 1.01}}
                     >
@@ -147,66 +146,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                                 )
                             }
                         />
-
                     </motion.div>
-
-                    {/*<Controller*/}
-                    {/*    key={campoFormulario.formControlName}*/}
-                    {/*    name={campoFormulario.formControlName as any}*/}
-                    {/*    control={control as any}*/}
-                    {/*    rules={reglas}*/}
-                    {/*    render={({field}) => {*/}
-                    {/*        // IF mobile => xxxx*/}
-                    {/*        // IF Web => xxxx*/}
-                    {/*        return (*/}
-                    {/*            <div>*/}
-                    {/*                <ListInput*/}
-                    {/*                    label={campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'}*/}
-                    {/*                    type={campoFormulario.type}*/}
-                    {/*                    name={campoFormulario.formControlName}*/}
-                    {/*                    placeholder={campoFormulario.placeholder}*/}
-                    {/*                    info={campoFormulario.help}*/}
-                    {/*                    step={(campoFormulario.type === CampoFormularioType.Number && campoFormulario.number) ? campoFormulario.number.step : ''}*/}
-                    {/*                    value={campoFormulario.type === CampoFormularioType.Number ? +field.value : field.value}*/}
-                    {/*                    error={mostrarErrores(errors, field, campoFormulario)}*/}
-                    {/*                    media={<><img className={'icon-small'}*/}
-                    {/*                                  src="https://cdn-icons-png.flaticon.com/512/16/16363.png"*/}
-                    {/*                                  alt=""/></>}*/}
-                    {/*                    onChange={field.onChange}*/}
-                    {/*                >*/}
-                    {/*                </ListInput>*/}
-                    {/*            </div> as any*/}
-                    {/*        )*/}
-                    {/*    }*/}
-                    {/*    }*/}
-                    {/*/>*/}
-
-
-                    {/*<Sheet*/}
-                    {/*    className="pb-safe"*/}
-                    {/*    opened={autocompleteAbierto}*/}
-                    {/*    onBackdropClick={() => setAutocompleteAbierto(false)}*/}
-                    {/*>*/}
-                    {/*    <Toolbar top>*/}
-                    {/*        <div className="left" />*/}
-                    {/*        <div className="right">*/}
-                    {/*            <Link toolbar onClick={() => setAutocompleteAbierto(false)}>*/}
-                    {/*                Done*/}
-                    {/*            </Link>*/}
-                    {/*        </div>*/}
-                    {/*    </Toolbar>*/}
-                    {/*    <Block>*/}
-                    {/*        <p>*/}
-                    {/*            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum ad*/}
-                    {/*            excepturi nesciunt nobis aliquam. Quibusdam ducimus neque*/}
-                    {/*            necessitatibus, molestias cupiditate velit nihil alias incidunt,*/}
-                    {/*            excepturi voluptatem dolore itaque sapiente dolores!*/}
-                    {/*        </p>*/}
-                    {/*        <div className="mt-4">*/}
-                    {/*            <Button onClick={() => setAutocompleteAbierto(false)}>Action</Button>*/}
-                    {/*        </div>*/}
-                    {/*    </Block>*/}
-                    {/*</Sheet>*/}
                 </div>
             )
         }

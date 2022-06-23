@@ -1,5 +1,5 @@
 import {motion} from "framer-motion"
-import {Block, BlockTitle, Button, List, Navbar, Page, Popup, useTheme} from "konsta/react";
+import {Block, BlockTitle, Button, List, ListItem, Navbar, Page, Popup, useTheme} from "konsta/react";
 import {useEffect, useState} from "react";
 import {Form, useLoaderData, useNavigate} from "@remix-run/react";
 import {ActionFunction, redirect, Request} from "@remix-run/node";
@@ -11,12 +11,14 @@ import {GenerarObservableWatchCampo} from "~/components/form/lib/funcion/generar
 import {LibroBibliotecaHttp} from "~/http/libro-biblioteca/libro-biblioteca.http";
 import {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
 import CamposFormularioAction from "~/components/form/lib/CamposFormularioAction";
+import toast, {Toaster} from 'react-hot-toast';
+import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
 
 interface RequestData {
     request: Request
 }
 
-let evento: CampoFormularioInterface;
+let eventoAutocompleteLocal: CampoFormularioInterface;
 export const action = async (req: RequestData): Promise<ActionFunction> => {
     const body = await req.request.formData();
     // fetc POST libro-biblioteca NESTJS
@@ -264,9 +266,41 @@ export default function New() {
 
     // Funciones util
     const tieneCampoFormulario = Object.keys(eventoAutocomplete).length > 0;
+    const toastInfo = (mensaje) => {
+        toast(mensaje, {
+            icon: '📑'
+        })
+    }
+    const generarComponenteAutocompleteLibroBiblioteca = {
+        autocomplete: (registro: LibroBibliotecaInterface, campoFormulario: CampoFormularioInterface) => {
+            return (
+                <>
+                    <ListItem
+                        link
+                        title={registro.id?.toString()}
+                        subtitle={campoFormulario.formControlName}
+                        after={registro.sisCreado}
+                        text="Lleno"
+                    />
+                </>
+            )
+        }
+    }
+    const buscarAutocomplete = async (data: ObservableWatchCampoInterface) => {
+        console.log('eventoAutocomplete' ,eventoAutocomplete, 'eventoAutocompleteLocal', eventoAutocompleteLocal, 'popupOpened', popupOpened, 'actionsOneOpened', actionsOneOpened);
+        if ((Object.keys(eventoAutocompleteLocal).length > 0 && popupOpened) || (!tieneCampoFormulario)) {
+            switch (eventoAutocompleteLocal.formControlName) {
+                case 'autocomplete':
+                    await buscarLibroBiblioteca(data, eventoAutocompleteLocal);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     // Use Effects
-
+    // Use Effect - Componente inicializado
     useEffect(
         () => {
             setTimeout(
@@ -279,9 +313,10 @@ export default function New() {
         },
         []
     )
+    // Use Effect - eventoAutocomplete
     useEffect(
         () => {
-            evento = eventoAutocomplete;
+            eventoAutocompleteLocal = eventoAutocomplete;
             if (tieneCampoFormulario) {
                 setActionsOneOpened(true);
             } else {
@@ -290,10 +325,11 @@ export default function New() {
         },
         [eventoAutocomplete]
     )
+    // Use Effect - seleccionoListaAutocomplete
     useEffect(
         () => {
             if (Object.keys(seleccionoListaAutocomplete).length > 0) {
-                useFormReturn.setValue(evento.formControlName as any, seleccionoListaAutocomplete, {
+                useFormReturn.setValue(eventoAutocompleteLocal.formControlName as any, seleccionoListaAutocomplete, {
                     shouldValidate: true,
                     shouldDirty: true,
                     shouldTouch: true
@@ -302,6 +338,15 @@ export default function New() {
             }
         },
         [seleccionoListaAutocomplete]
+    )
+    useEffect(
+        () => {
+            console.log('actionsOneOpened', actionsOneOpened);
+            if(actionsOneOpened){
+                buscarAutocomplete({value: '', data: {}, info: {type: '', name: ''}}).then();
+            }
+        },
+        [actionsOneOpened]
     )
 
     // Metodos
@@ -363,8 +408,9 @@ export default function New() {
     };
     // Metodos Autocomplete
     const cerrarAction = () => {
-        setActionsOneOpened(false);
         setListaAutocomplete([]);
+        setEventoAutocomplete({} as any);
+        setActionsOneOpened(false);
         useFormAutocomplete.setValue('busqueda' as any, '' as any, {
             shouldValidate: true,
             shouldDirty: true,
@@ -380,29 +426,30 @@ export default function New() {
                 {
                     next: async (data) => {
                         setListaAutocomplete([]);
-                        if (Object.keys(evento).length > 0) {
-                            switch (evento.formControlName) {
-                                case 'autocomplete':
-                                    await buscarLibroBiblioteca(data, evento);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
+                        await buscarAutocomplete(data);
                     }
                 }
             );
     }
     // Metodos REST
     const buscarLibroBiblioteca = async (data: ObservableWatchCampoInterface, campo: CampoFormularioInterface) => {
-        let librosBiblioteca;
-        if (Number.isNaN(Number(data.value))) {
-            librosBiblioteca = await LibroBibliotecaHttp().find({});
+        try {
+            let librosBiblioteca;
+            if (Number.isNaN(Number(data.value)) || data.value === '') {
+                librosBiblioteca = await LibroBibliotecaHttp().find({});
 
-        } else {
-            librosBiblioteca = await LibroBibliotecaHttp().find({id: +data.value});
+            } else {
+                librosBiblioteca = await LibroBibliotecaHttp().find({id: +data.value});
+            }
+            toastInfo(`${librosBiblioteca[0].length} registros consultados`);
+            setListaAutocomplete(librosBiblioteca[0]);
+        } catch (error) {
+            console.error({
+                error,
+                mensaje: 'Error consultado autocomplete libro biblioteca'
+            });
+            toast.error('Error del servidor');
         }
-        setListaAutocomplete(librosBiblioteca[0]);
     }
 
     return (
@@ -442,8 +489,15 @@ export default function New() {
                                     cerrarAction={cerrarAction}
                                     useFormAutocomplete={useFormAutocomplete}
                                     listaAutocomplete={listaAutocomplete}
-                                    setSeleccionoListaAutocomplete={setSeleccionoListaAutocomplete}>
+                                    setSeleccionoListaAutocomplete={setSeleccionoListaAutocomplete}
+                                    generarComponente={generarComponenteAutocompleteLibroBiblioteca}
+                                    campoFormulario={eventoAutocompleteLocal}
+            >
             </CamposFormularioAction>
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
         </>
     )
 }

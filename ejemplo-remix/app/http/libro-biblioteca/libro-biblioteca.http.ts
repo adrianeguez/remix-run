@@ -11,7 +11,7 @@ export const LibroBibliotecaHttp = () => {
                 const respuesta = await fetch(`${CONFIG.urlBackend}${url}?` + queryParams)
                 return respuesta.json();
             } catch (error) {
-                console.error({error, mensaje: 'Error consultando libros biblioteca'})
+                console.error({error, mensaje: 'Error consultando libros biblioteca'});
                 throw new Error('Error');
             }
         }

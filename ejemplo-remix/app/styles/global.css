@@ -23,7 +23,7 @@ body {
     overflow: unset;
 }
 .action-list-konstaio{
-    background-color: #f3f6fa;
+    background-color: #FFF;
     margin: 0px;
     max-height: 450px;
     overflow-y: auto;

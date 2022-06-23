@@ -53,7 +53,7 @@ export default function CamposFormularioAction(props: {
                                     key={v.id}
                                     onClick={() => {
                                         cerrarAction();
-                                        setSeleccionoListaAutocomplete(v);
+                                        setSeleccionoListaAutocomplete({registro:v, campoFormulario});
                                     }}
                                 >
                                     {generarComponente[campoFormulario.formControlName](v, campoFormulario)}

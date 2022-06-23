@@ -1,5 +1,5 @@
 import {motion} from "framer-motion"
-import {Block, BlockTitle, Button, List, ListItem, Navbar, Page, Popup, useTheme} from "konsta/react";
+import {Block, BlockTitle, Button, List, ListItem, Navbar, Page, Popup, Preloader, useTheme} from "konsta/react";
 import {useEffect, useState} from "react";
 import {Form, useLoaderData, useNavigate} from "@remix-run/react";
 import {ActionFunction, redirect, Request} from "@remix-run/node";
@@ -13,6 +13,8 @@ import {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/ob
 import CamposFormularioAction from "~/components/form/lib/CamposFormularioAction";
 import toast, {Toaster} from 'react-hot-toast';
 import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
+import {Backdrop, CircularProgress} from "@mui/material";
+import {BackdropConstant} from "~/constantes/backdrop.constant";
 
 interface RequestData {
     request: Request
@@ -225,7 +227,8 @@ export default function New() {
         }
     ] as CampoFormularioInterface[]);
     const [actionsOneOpened, setActionsOneOpened] = useState(false);
-    const [seleccionoListaAutocomplete, setSeleccionoListaAutocomplete] = useState({} as any);
+    const [loading, setLoading] = useState(false);
+    const [seleccionoListaAutocomplete, setSeleccionoListaAutocomplete] = useState({} as { registro: any, campoFormulario: CampoFormularioInterface });
 
 
     // Hooks Librearias
@@ -287,7 +290,7 @@ export default function New() {
         }
     }
     const buscarAutocomplete = async (data: ObservableWatchCampoInterface) => {
-        console.log('eventoAutocomplete' ,eventoAutocomplete, 'eventoAutocompleteLocal', eventoAutocompleteLocal, 'popupOpened', popupOpened, 'actionsOneOpened', actionsOneOpened);
+        console.log('eventoAutocomplete', eventoAutocomplete, 'eventoAutocompleteLocal', eventoAutocompleteLocal, 'popupOpened', popupOpened, 'actionsOneOpened', actionsOneOpened);
         if ((Object.keys(eventoAutocompleteLocal).length > 0 && popupOpened) || (!tieneCampoFormulario)) {
             switch (eventoAutocompleteLocal.formControlName) {
                 case 'autocomplete':
@@ -329,12 +332,13 @@ export default function New() {
     useEffect(
         () => {
             if (Object.keys(seleccionoListaAutocomplete).length > 0) {
-                useFormReturn.setValue(eventoAutocompleteLocal.formControlName as any, seleccionoListaAutocomplete, {
+                useFormReturn.setValue(seleccionoListaAutocomplete.campoFormulario.formControlName as any, seleccionoListaAutocomplete.registro, {
                     shouldValidate: true,
                     shouldDirty: true,
                     shouldTouch: true
                 })
-                setEventoAutocomplete({} as any);
+                toast.success('Registro seleccionado');
+                setSeleccionoListaAutocomplete({} as any);
             }
         },
         [seleccionoListaAutocomplete]
@@ -342,7 +346,7 @@ export default function New() {
     useEffect(
         () => {
             console.log('actionsOneOpened', actionsOneOpened);
-            if(actionsOneOpened){
+            if (actionsOneOpened) {
                 buscarAutocomplete({value: '', data: {}, info: {type: '', name: ''}}).then();
             }
         },
@@ -435,6 +439,7 @@ export default function New() {
     const buscarLibroBiblioteca = async (data: ObservableWatchCampoInterface, campo: CampoFormularioInterface) => {
         try {
             let librosBiblioteca;
+            setLoading(true);
             if (Number.isNaN(Number(data.value)) || data.value === '') {
                 librosBiblioteca = await LibroBibliotecaHttp().find({});
 
@@ -443,12 +448,14 @@ export default function New() {
             }
             toastInfo(`${librosBiblioteca[0].length} registros consultados`);
             setListaAutocomplete(librosBiblioteca[0]);
+            setLoading(false);
         } catch (error) {
             console.error({
                 error,
                 mensaje: 'Error consultado autocomplete libro biblioteca'
             });
             toast.error('Error del servidor');
+            setLoading(false);
         }
     }
 
@@ -498,6 +505,14 @@ export default function New() {
                 position="top-center"
                 reverseOrder={false}
             />
+            <Backdrop
+                sx={
+                    BackdropConstant
+                }
+                open={loading}
+            >
+                <CircularProgress color="inherit"/>
+            </Backdrop>
         </>
     )
 }

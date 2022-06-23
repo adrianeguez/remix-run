@@ -94,10 +94,8 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
         }
         const esAutocomplete = campoFormulario.type === CampoFormularioType.Autocomplete;
         if (esAutocomplete && campoFormulario.autocomplete) {
-            console.log('Autocomplete', campoFormulario,);
             let mostrarValor = (field?: any) => {
                 let valorAMostrar = '';
-                console.log(field);
                 if (campoFormulario.autocomplete) {
                     if (!field) {
                         if (typeof campoFormulario.initialValue === 'object' && !Array.isArray(campoFormulario.initialValue)) {
@@ -118,7 +116,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
             return (
                 <div
                     key={campoFormulario.formControlName}
-                    onClick={() => setEventoAutocomplete(campoFormulario)}>
+                    onClick={() => setEventoAutocomplete({...campoFormulario,__key:new Date().getTime()})}>
 
                     <motion.div
                         whileTap={{scale: 1.01}}

@@ -293,19 +293,12 @@ export default function New() {
     useEffect(
         () => {
             if (Object.keys(seleccionoListaAutocomplete).length > 0) {
-                console.log('Selecciono', seleccionoListaAutocomplete)
                 useFormReturn.setValue(evento.formControlName as any, seleccionoListaAutocomplete, {
                     shouldValidate: true,
                     shouldDirty: true,
                     shouldTouch: true
                 })
                 setEventoAutocomplete({} as any);
-                setTimeout(
-                    () => {
-                        console.log(useFormReturn.getValues("autocomplete" as any));
-                    },
-                    1000
-                )
             }
         },
         [seleccionoListaAutocomplete]

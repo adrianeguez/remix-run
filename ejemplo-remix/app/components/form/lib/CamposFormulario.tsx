@@ -70,7 +70,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                                                   alt=""/></>}
                                     onChange={field.onChange}
                                     onClear={() => {
-                                        setValue(campoFormulario.formControlName, '', {
+                                        setValue(campoFormulario.formControlName as any, '', {
                                             shouldValidate: true,
                                             shouldDirty: true,
                                             shouldTouch: true
@@ -93,7 +93,28 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                 />)
         }
         const esAutocomplete = campoFormulario.type === CampoFormularioType.Autocomplete;
-        if (esAutocomplete) {
+        if (esAutocomplete && campoFormulario.autocomplete) {
+            console.log('Autocomplete', campoFormulario,);
+            let mostrarValor = (field?: any) => {
+                let valorAMostrar = '';
+                console.log(field);
+                if (campoFormulario.autocomplete) {
+                    if (!field) {
+                        if (typeof campoFormulario.initialValue === 'object' && !Array.isArray(campoFormulario.initialValue)) {
+                            valorAMostrar = campoFormulario.initialValue[campoFormulario.autocomplete.nombrePropiedadObjeto];
+                        } else {
+                            valorAMostrar = campoFormulario.initialValue;
+                        }
+                    } else {
+                        if (typeof field.value === 'object' && !Array.isArray(field.value)) {
+                            valorAMostrar = field.value[campoFormulario.autocomplete.nombrePropiedadObjeto];
+                        } else {
+                            valorAMostrar = field.value;
+                        }
+                    }
+                }
+                return valorAMostrar;
+            }
             return (
                 <div
                     key={campoFormulario.formControlName}
@@ -110,18 +131,19 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                             render={
                                 ({field}) => (
                                     <div>
-                                        <input type="hidden" value={field.value}/>
+                                        {/*<input type="hidden"*/}
+                                        {/*       value={campoFormulario.autocomplete ? field.value[campoFormulario.autocomplete.nombrePropiedadObjeto] : ''}/>*/}
                                         <ListItem
                                             media={<><img className={'icon-small'}
                                                           src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
                                                           alt=""/></>}
                                             header={campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'}
-                                            title={field.value ? field.value : campoFormulario.placeholder}
+                                            title={mostrarValor(field)}
                                             titleWrapClassName={field.value ? '' : 'texto-placeholder'}
                                             after={<><img className={'icon-small'}
                                                           src="https://cdn2.iconfinder.com/data/icons/business-management-color/64/select-choose-right-person-hr-job-human-resource-512.png"
                                                           alt=""/></>}
-                                            footer={(<><p>PENE</p></>)}
+                                            footer={campoFormulario.help}
                                         />
                                     </div>
                                 )

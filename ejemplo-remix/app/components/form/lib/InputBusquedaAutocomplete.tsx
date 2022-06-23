@@ -30,7 +30,6 @@ export const InputBusquedaAutocomplete = ({useFormAutocomplete}) => {
             // no validaciones
         }
     } as CampoFormularioInterface)
-    console.log(campoFormulario);
     if (Object.keys(campoFormulario).length > 0) {
         let reglas: any = GenerarReglas(campoFormulario);
         return (

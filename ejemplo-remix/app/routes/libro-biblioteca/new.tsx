@@ -15,6 +15,7 @@ import toast, {Toaster} from 'react-hot-toast';
 import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
 import {Backdrop, CircularProgress} from "@mui/material";
 import {BackdropConstant} from "~/constantes/backdrop.constant";
+import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
 
 interface RequestData {
     request: Request
@@ -276,17 +277,7 @@ export default function New() {
     }
     const generarComponenteAutocompleteLibroBiblioteca = {
         autocomplete: (registro: LibroBibliotecaInterface, campoFormulario: CampoFormularioInterface) => {
-            return (
-                <>
-                    <ListItem
-                        link
-                        title={registro.id?.toString()}
-                        subtitle={campoFormulario.formControlName}
-                        after={registro.sisCreado}
-                        text="Lleno"
-                    />
-                </>
-            )
+            return LibroBibliotecaMostrar({registro, campoFormulario});
         }
     }
     const buscarAutocomplete = async (data: ObservableWatchCampoInterface) => {
@@ -363,46 +354,6 @@ export default function New() {
             },
             500
         );
-    }
-    // Metodos UI
-    const anadirNuevo = () => {
-        setCampos([...campos,
-            {
-                formControlName: 'nombre' + Date.now(),
-                help: 'Ingrese un nombre',
-                label: 'Nombre',
-                initialValue: 'Adrian',
-                actualValue: '',
-                type: CampoFormularioType.Text,
-                valid: false,
-                placeholder: 'EJ: Adrian',
-                validators: {
-                    required: true,
-                    minLength: {
-                        value: 4,
-                        mensaje: 'No '
-                    },
-                    maxLength: {
-                        value: 9,
-                        mensaje: 'No '
-                    },
-                    pattern: {
-                        pattern: new RegExp(/([A-Z])\w+/),
-                        mensaje: 'Ingrese solo letras'
-                    },
-                    url: {
-                        mensaje: 'Ingrese solo letras'
-                    },
-                    email: {
-                        mensaje: 'Ingrese solo letras'
-                    }
-                }
-            },])
-    }
-    const eliminarUltimo = () => {
-        setCampos([
-            ...campos.filter((c, i) => i < campos.length - 2)
-        ])
     }
     // Metodos Formulario
     const onSubmit: SubmitHandler<any> = data => {

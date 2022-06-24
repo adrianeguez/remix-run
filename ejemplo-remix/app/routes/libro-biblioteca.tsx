@@ -7,6 +7,7 @@ import {Link, useLoaderData, useNavigate} from "@remix-run/react";
 import {Badge, Block, Fab, List, ListItem, Navbar, Page, Popup} from "konsta/react";
 import {useState} from "react";
 import { Outlet } from "@remix-run/react";
+import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
 
 type LoaderData = { librosBiblioteca?: [LibroBibliotecaInterface[], number], error?: string };
 export const loader: LoaderFunction = async () => {
@@ -37,7 +38,7 @@ export default function Index() {
                         {data.librosBiblioteca && data.librosBiblioteca[0].map(
                             (libro) => (
                                 <Link key={libro.id} to={`/libro-biblioteca/${libro.id}`}>
-                                    <ListItem title={libro.id ? libro.id.toString() : ''} after={<Badge title={'->'}>{'->'}</Badge>}></ListItem>
+                                    <LibroBibliotecaMostrar registro={libro}></LibroBibliotecaMostrar>
                                 </Link>
                             )
                         )}

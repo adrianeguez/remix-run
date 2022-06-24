@@ -87,7 +87,7 @@ export default function New() {
     };
     const generarComponenteAutocompleteLibroBiblioteca = {
         autocomplete: (registro: LibroBibliotecaInterface, campoFormulario: CampoFormularioInterface) => {
-            return LibroBibliotecaMostrar({registro, campoFormulario});
+            return LibroBibliotecaMostrar({registro});
         }
     };
     const buscarAutocomplete = async (data: ObservableWatchCampoInterface) => {

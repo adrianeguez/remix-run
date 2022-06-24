@@ -19,6 +19,7 @@ import {Backdrop, CircularProgress} from "@mui/material";
 import {BackdropConstant} from "~/constantes/backdrop.constant";
 import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
 import {LibroBibliotecaForm} from "~/http/libro-biblioteca/form/libro-biblioteca.form";
+import {LibroBibliotecaInstanceHttp} from "~/http/libro-biblioteca/libro-biblioteca-instance.http";
 
 interface RequestData {
     request: Request
@@ -27,8 +28,14 @@ interface RequestData {
 let eventoAutocompleteLocal: CampoFormularioInterface;
 export const action = async (req: RequestData): Promise<ActionFunction> => {
     const body = await req.request.formData();
-    // fetc POST libro-biblioteca NESTJS
-    return redirect('/libro-biblioteca/new') as any;
+    try{
+        // const respuesta = await
+        // fetc POST libro-biblioteca NESTJS
+        return redirect('/libro-biblioteca') as any;
+    }catch (error){
+
+    }
+
 }
 
 export default function New() {
@@ -168,8 +175,8 @@ export default function New() {
     // Metodos Formulario
     const onSubmit: SubmitHandler<any> = data => {
         console.log('COSAS', useFormReturn.formState, data);
-        // const formData = new FormData(document.getElementById('form'))
-        // fetch('/libro-biblioteca/new', {method: 'POST', body: formData})
+        const formData = new FormData(document.getElementById('form'))
+        fetch('/libro-biblioteca/new', {method: 'POST', body: formData})
     };
     // Metodos Autocomplete
     const cerrarAction = () => {
@@ -202,10 +209,10 @@ export default function New() {
             let librosBiblioteca;
             setLoading(true);
             if (Number.isNaN(Number(data.value)) || data.value === '') {
-                librosBiblioteca = await LibroBibliotecaHttp().find({});
+                librosBiblioteca = await LibroBibliotecaInstanceHttp.find({});
 
             } else {
-                librosBiblioteca = await LibroBibliotecaHttp().find({id: +data.value});
+                librosBiblioteca = await LibroBibliotecaInstanceHttp.find({id: +data.value});
             }
             toastInfo(`${librosBiblioteca[0].length} registros consultados`);
             setListaAutocomplete(librosBiblioteca[0]);

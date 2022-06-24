@@ -8,6 +8,7 @@ import {Badge, Block, Fab, List, ListItem, Navbar, Page, Popup} from "konsta/rea
 import {useState} from "react";
 import { Outlet } from "@remix-run/react";
 import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
+import {LibroBibliotecaInstanceHttp} from "~/http/libro-biblioteca/libro-biblioteca-instance.http";
 
 type LoaderData = { librosBiblioteca?: [LibroBibliotecaInterface[], number], error?: string };
 export const loader: LoaderFunction = async () => {
@@ -16,7 +17,7 @@ export const loader: LoaderFunction = async () => {
         error: undefined
     };
     try {
-        returnData.librosBiblioteca = await LibroBibliotecaHttp().find()
+        returnData.librosBiblioteca = await LibroBibliotecaInstanceHttp.find()
     } catch (error: any) {
         returnData.error = error;
     }

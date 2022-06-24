@@ -1,19 +1,26 @@
 import type {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-find.dto";
 import {CONFIG} from "~/config";
-import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
+import {AbstractHttp} from "~/classes/abstract.http";
 
-export const LibroBibliotecaHttp = () => {
-    const url = '/libro-biblioteca';
-    return {
-        find: async (libroBibliotecaFindDto?: LibroBibliotecaFindDto): Promise<[LibroBibliotecaInterface[], number]> => {
-            const queryParams = new URLSearchParams(libroBibliotecaFindDto as any);
-            try {
-                const respuesta = await fetch(`${CONFIG.urlBackend}${url}?` + queryParams)
-                return respuesta.json();
-            } catch (error) {
-                console.error({error, mensaje: 'Error consultando libros biblioteca'});
-                throw new Error('Error');
-            }
-        }
+export class LibroBibliotecaHttp extends AbstractHttp<LibroBibliotecaFindDto>{
+    constructor(url:string) {
+        super(
+            url
+        );
     }
 }
+// = () => {
+//     const url = '/libro-biblioteca';
+//     return {
+//         find: async (libroBibliotecaFindDto?: LibroBibliotecaFindDto): Promise<[LibroBibliotecaInterface[], number]> => {
+//             const queryParams = new URLSearchParams(libroBibliotecaFindDto as any);
+//             try {
+//                 const respuesta = await fetch(`${CONFIG.urlBackend}${url}?` + queryParams)
+//                 return respuesta.json();
+//             } catch (error) {
+//                 console.error({error, mensaje: 'Error consultando libros biblioteca'});
+//                 throw new Error('Error');
+//             }
+//         }
+//     }
+// }

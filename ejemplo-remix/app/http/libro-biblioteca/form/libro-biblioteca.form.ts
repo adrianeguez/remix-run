@@ -1,9 +1,10 @@
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
+import {LibroBibliotecaEnum} from "~/http/libro-biblioteca/form/libro-biblioteca.enum";
 
 export function LibroBibliotecaForm(){
     return [
         {
-            formControlName: 'nombre',
+            formControlName: LibroBibliotecaEnum.Nombre,
             help: 'Ingrese un nombre',
             label: 'Nombre',
             initialValue: 'Adrian',
@@ -28,7 +29,7 @@ export function LibroBibliotecaForm(){
             }
         },
         {
-            formControlName: 'password',
+            formControlName: LibroBibliotecaEnum.Password,
             help: 'Ingrese un password',
             label: 'Password',
             initialValue: 'p4ssword',
@@ -41,7 +42,7 @@ export function LibroBibliotecaForm(){
             }
         },
         {
-            formControlName: 'email',
+            formControlName: LibroBibliotecaEnum.Email,
             help: 'Ingrese un correo',
             label: 'Email',
             initialValue: 'a@a.com',
@@ -57,7 +58,7 @@ export function LibroBibliotecaForm(){
             }
         },
         {
-            formControlName: 'url',
+            formControlName: LibroBibliotecaEnum.URL,
             help: 'Ingrese un URL',
             label: 'URL',
             initialValue: '',
@@ -73,7 +74,7 @@ export function LibroBibliotecaForm(){
             }
         },
         {
-            formControlName: 'telefono',
+            formControlName: LibroBibliotecaEnum.Telefono,
             help: 'Ingrese su telefono',
             label: 'Telefono',
             initialValue: '',
@@ -86,7 +87,7 @@ export function LibroBibliotecaForm(){
             }
         },
         {
-            formControlName: 'fecha',
+            formControlName: LibroBibliotecaEnum.Fecha,
             help: 'Ingrese la fecha de nacimiento',
             label: 'Fecha nacimiento',
             initialValue: new Date().toISOString().slice(0, 10),
@@ -99,7 +100,7 @@ export function LibroBibliotecaForm(){
             }
         },
         {
-            formControlName: 'fechaHora',
+            formControlName: LibroBibliotecaEnum.FechaHora,
             help: 'Ingrese la fecha hora de logeo',
             label: 'Fecha hora logeo',
             initialValue: new Date().toISOString().slice(0, 16),
@@ -112,7 +113,7 @@ export function LibroBibliotecaForm(){
             }
         },
         {
-            formControlName: 'textarea',
+            formControlName: LibroBibliotecaEnum.Textarea,
             help: 'Ingrese una descripcion',
             label: 'Descripcion',
             initialValue: `Hola
@@ -126,7 +127,7 @@ export function LibroBibliotecaForm(){
             }
         },
         {
-            formControlName: 'select',
+            formControlName: LibroBibliotecaEnum.Select,
             help: 'Seleccione un dia de la semana',
             label: 'Dia semana',
             initialValue: `lunes`,
@@ -158,7 +159,7 @@ export function LibroBibliotecaForm(){
             }
         },
         {
-            formControlName: 'numero',
+            formControlName: LibroBibliotecaEnum.Numero,
             help: 'Ingrese su sueldo',
             label: 'Sueldo',
             initialValue: 10.02,
@@ -181,7 +182,7 @@ export function LibroBibliotecaForm(){
             }
         },
         {
-            formControlName: 'autocomplete',
+            formControlName: LibroBibliotecaEnum.Autocomplete,
             help: 'Seleccione un libro',
             label: 'Libro',
             initialValue: 2,

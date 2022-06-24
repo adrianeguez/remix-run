@@ -1,5 +1,5 @@
 import {motion} from "framer-motion"
-import {Block, BlockTitle, Button, List, ListItem, Navbar, Page, Popup, Preloader, useTheme} from "konsta/react";
+import {Block, BlockTitle, Button, List, Navbar, Page, Popup, useTheme} from "konsta/react";
 import {useEffect, useState} from "react";
 import {Form, useLoaderData, useNavigate} from "@remix-run/react";
 import type {ActionFunction, Request} from "@remix-run/node";
@@ -10,7 +10,6 @@ import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/ca
 import CamposFormulario from "~/components/form/lib/CamposFormulario";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {GenerarObservableWatchCampo} from "~/components/form/lib/funcion/generar-observable-watch-campo";
-import {LibroBibliotecaHttp} from "~/http/libro-biblioteca/libro-biblioteca.http";
 import type {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
 import CamposFormularioAction from "~/components/form/lib/CamposFormularioAction";
 import toast, {Toaster} from 'react-hot-toast';
@@ -20,6 +19,7 @@ import {BackdropConstant} from "~/constantes/backdrop.constant";
 import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
 import {LibroBibliotecaForm} from "~/http/libro-biblioteca/form/libro-biblioteca.form";
 import {LibroBibliotecaInstanceHttp} from "~/http/libro-biblioteca/libro-biblioteca-instance.http";
+import {SisHabilitadoEnum} from "~/enum/sis-habilitado.enum";
 
 interface RequestData {
     request: Request
@@ -28,14 +28,15 @@ interface RequestData {
 let eventoAutocompleteLocal: CampoFormularioInterface;
 export const action = async (req: RequestData): Promise<ActionFunction> => {
     const body = await req.request.formData();
-    try{
-        // const respuesta = await
+    console.log('EN LA ACCION', body);
+    try {
+        const respuesta = await LibroBibliotecaInstanceHttp.create({sisHabilitado: SisHabilitadoEnum.Activo});
         // fetc POST libro-biblioteca NESTJS
-        return redirect('/libro-biblioteca') as any;
-    }catch (error){
-
+        return redirect(`/libro-biblioteca?mensaje=Registro libro biblioteca creado`) as any;
+    } catch (error) {
+        console.error({error, mensaje: 'Error creando libro biblioteca'});
+        return new Response(null as any, {status: 500}) as any;
     }
-
 }
 
 export default function New() {
@@ -173,10 +174,27 @@ export default function New() {
         );
     }
     // Metodos Formulario
-    const onSubmit: SubmitHandler<any> = data => {
+    const onSubmit: SubmitHandler<any> = async (data) => {
         console.log('COSAS', useFormReturn.formState, data);
         const formData = new FormData(document.getElementById('form'))
-        fetch('/libro-biblioteca/new', {method: 'POST', body: formData})
+        setLoading(true);
+        try {
+            const respuesta = await fetch('/libro-biblioteca/new', {method: 'POST', body: formData})
+            console.log(respuesta);
+            if (respuesta.redirected) {
+                setLoading(false);
+                window.location.replace(respuesta.url);
+            } else {
+                setLoading(false);
+                toast.error('Error del servidor');
+                console.error({error:respuesta, mensaje: 'Error creando nuevo registro'});
+            }
+        } catch (error) {
+            setLoading(false);
+            toast.error('Error del servidor');
+            console.error({error, mensaje: 'Error creando nuevo registro'});
+        }
+
     };
     // Metodos Autocomplete
     const cerrarAction = () => {

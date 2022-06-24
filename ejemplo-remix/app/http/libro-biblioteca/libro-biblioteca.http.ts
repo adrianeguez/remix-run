@@ -1,8 +1,9 @@
 import type {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-find.dto";
 import {CONFIG} from "~/config";
 import {AbstractHttp} from "~/classes/abstract.http";
+import {LibroBibliotecaCreateDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-create.dto";
 
-export class LibroBibliotecaHttp extends AbstractHttp<LibroBibliotecaFindDto>{
+export class LibroBibliotecaHttp extends AbstractHttp<LibroBibliotecaFindDto, LibroBibliotecaCreateDto>{
     constructor(url:string) {
         super(
             url

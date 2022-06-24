@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "npm-run-all -p build:*",
-    "lint": "eslint app/*.tsx app/**/*.ts --fix",
+    "lint": "eslint './app/**/*.tsx' --fix && eslint './app/**/*.ts' --fix",
     "build:css": "npm run generate:css -- --minify",
     "build:remix": "cross-env NODE_ENV=production remix build",
     "dev": "npm-run-all -p dev:*",

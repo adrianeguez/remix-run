@@ -1,6 +1,6 @@
-import {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-find.dto";
+import type {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-find.dto";
 import {CONFIG} from "~/config";
-import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
+import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
 
 export const LibroBibliotecaHttp = () => {
     const url = '/libro-biblioteca';

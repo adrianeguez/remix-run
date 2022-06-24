@@ -3,8 +3,8 @@ import {
     ListItem,
 } from "konsta/react";
 import {Controller} from "react-hook-form";
-import {UseFormReturn} from "react-hook-form/dist/types";
-import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
+import type {UseFormReturn} from "react-hook-form/dist/types";
+import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {motion} from "framer-motion";
 import {useState} from "react";
@@ -26,7 +26,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
         resetField
     } = props.useFormReturn;
     const generarCampo = (campoFormulario: CampoFormularioInterface) => {
-        let reglas: any = GenerarReglas(campoFormulario);
+        const reglas: any = GenerarReglas(campoFormulario);
 
         const esCampoComun = campoFormulario.type === CampoFormularioType.Url ||
             campoFormulario.type === CampoFormularioType.Text ||
@@ -94,7 +94,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
         }
         const esAutocomplete = campoFormulario.type === CampoFormularioType.Autocomplete;
         if (esAutocomplete && campoFormulario.autocomplete) {
-            let mostrarValor = (field?: any) => {
+            const mostrarValor = (field?: any) => {
                 let valorAMostrar = '';
                 if (campoFormulario.autocomplete) {
                     if (!field) {

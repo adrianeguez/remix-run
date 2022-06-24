@@ -1,5 +1,5 @@
 export function GenerarReglas(campoFormulario) {
-    let reglas: any = {};
+    const reglas: any = {};
     if (campoFormulario.validators) {
         if (campoFormulario.validators.required) {
             reglas['required'] = typeof campoFormulario.validators.required === 'string' ? campoFormulario.validators.required : 'Error'

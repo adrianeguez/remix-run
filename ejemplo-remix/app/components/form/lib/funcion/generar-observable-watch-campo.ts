@@ -1,5 +1,5 @@
 import {debounceTime, Observable} from "rxjs";
-import {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
+import type {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
 
 export function GenerarObservableWatchCampo(nombreCampo: string, useForm: any, debounceTimeParameter = 1000): Observable<ObservableWatchCampoInterface> {
     return new Observable(

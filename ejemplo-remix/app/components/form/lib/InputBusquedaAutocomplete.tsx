@@ -4,7 +4,7 @@ import {GenerarReglas} from "~/components/form/lib/funcion/generar-reglas";
 import {MostrarErrores} from "~/components/form/lib/funcion/mostrar-errores";
 import {useState} from "react";
 import {ListInput} from "konsta/react";
-import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
+import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 
 export const InputBusquedaAutocomplete = ({useFormAutocomplete}) => {
     const {
@@ -31,7 +31,7 @@ export const InputBusquedaAutocomplete = ({useFormAutocomplete}) => {
         }
     } as CampoFormularioInterface)
     if (Object.keys(campoFormulario).length > 0) {
-        let reglas: any = GenerarReglas(campoFormulario);
+        const reglas: any = GenerarReglas(campoFormulario);
         return (
             <Controller
                 key={campoFormulario.formControlName}

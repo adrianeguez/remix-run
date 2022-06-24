@@ -2,17 +2,19 @@ import {motion} from "framer-motion"
 import {Block, BlockTitle, Button, List, ListItem, Navbar, Page, Popup, Preloader, useTheme} from "konsta/react";
 import {useEffect, useState} from "react";
 import {Form, useLoaderData, useNavigate} from "@remix-run/react";
-import {ActionFunction, redirect, Request} from "@remix-run/node";
-import {SubmitHandler, useForm} from "react-hook-form";
-import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
+import type {ActionFunction, Request} from "@remix-run/node";
+import { redirect} from "@remix-run/node";
+import type {SubmitHandler} from "react-hook-form";
+import { useForm} from "react-hook-form";
+import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 import CamposFormulario from "~/components/form/lib/CamposFormulario";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {GenerarObservableWatchCampo} from "~/components/form/lib/funcion/generar-observable-watch-campo";
 import {LibroBibliotecaHttp} from "~/http/libro-biblioteca/libro-biblioteca.http";
-import {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
+import type {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
 import CamposFormularioAction from "~/components/form/lib/CamposFormularioAction";
 import toast, {Toaster} from 'react-hot-toast';
-import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
+import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
 import {Backdrop, CircularProgress} from "@mui/material";
 import {BackdropConstant} from "~/constantes/backdrop.constant";
 import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
@@ -237,7 +239,7 @@ export default function New() {
     const data = useLoaderData();
     const theme = useTheme();
     const defaultValues = () => {
-        let defaultValuesObject: any = {};
+        const defaultValuesObject: any = {};
         campos.forEach(
             (campo) => {
                 if (campo.type === CampoFormularioType.Autocomplete && campo.autocomplete) {
@@ -274,12 +276,12 @@ export default function New() {
         toast(mensaje, {
             icon: '📑'
         })
-    }
+    };
     const generarComponenteAutocompleteLibroBiblioteca = {
         autocomplete: (registro: LibroBibliotecaInterface, campoFormulario: CampoFormularioInterface) => {
             return LibroBibliotecaMostrar({registro, campoFormulario});
         }
-    }
+    };
     const buscarAutocomplete = async (data: ObservableWatchCampoInterface) => {
         console.log('eventoAutocomplete', eventoAutocomplete, 'eventoAutocompleteLocal', eventoAutocompleteLocal, 'popupOpened', popupOpened, 'actionsOneOpened', actionsOneOpened);
         if ((Object.keys(eventoAutocompleteLocal).length > 0 && popupOpened) || (!tieneCampoFormulario)) {
@@ -291,7 +293,7 @@ export default function New() {
                     break;
             }
         }
-    }
+    };
 
     // Use Effects
     // Use Effect - Componente inicializado

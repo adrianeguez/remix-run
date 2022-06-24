@@ -2,7 +2,7 @@ import {Actions, ActionsButton, ActionsGroup, ActionsLabel, List, ListItem} from
 import {InputBusquedaAutocomplete} from "~/components/form/lib/InputBusquedaAutocomplete";
 import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
 import {motion} from "framer-motion";
-import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
+import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 
 export default function CamposFormularioAction(props: {
     actionsOneOpened,

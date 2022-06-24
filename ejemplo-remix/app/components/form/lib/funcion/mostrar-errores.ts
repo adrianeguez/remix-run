@@ -1,4 +1,4 @@
-import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
+import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 
 export function MostrarErrores(error: any, field, campoFormulario: CampoFormularioInterface) {
     let mensajeError = '';

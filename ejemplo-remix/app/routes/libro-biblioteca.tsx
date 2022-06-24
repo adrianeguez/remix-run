@@ -1,6 +1,7 @@
 import KonstaContainer from "~/components/KonstaContainer";
-import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
-import {json, LoaderFunction} from "@remix-run/node";
+import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
+import type { LoaderFunction} from "@remix-run/node";
+import {json} from "@remix-run/node";
 import {LibroBibliotecaHttp} from "~/http/libro-biblioteca/libro-biblioteca.http";
 import {Link, useLoaderData, useNavigate} from "@remix-run/react";
 import {Badge, Block, Fab, List, ListItem, Navbar, Page, Popup} from "konsta/react";

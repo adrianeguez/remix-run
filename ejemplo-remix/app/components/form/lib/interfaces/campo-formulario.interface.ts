@@ -1,10 +1,10 @@
-import {
+import type {
     CampoFormularioValidatorsInterface
 } from "~/components/form/lib/interfaces/campo-formulario-validators.interface";
-import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
-import {CampoFormularioSelectInterface} from "~/components/form/lib/interfaces/campo-formulario-select.interface";
-import {CampoFormularioNumberInterface} from "~/components/form/lib/interfaces/campo-formulario-number.interface";
-import {
+import type {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
+import type {CampoFormularioSelectInterface} from "~/components/form/lib/interfaces/campo-formulario-select.interface";
+import type {CampoFormularioNumberInterface} from "~/components/form/lib/interfaces/campo-formulario-number.interface";
+import type {
     CampoFormularioAutocompleteInterface
 } from "~/components/form/lib/interfaces/campo-formulario-autocomplete.interface";
 

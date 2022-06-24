@@ -3,8 +3,9 @@ import {Block, Navbar, Page, Popup} from "konsta/react";
 import {useEffect, useState} from "react";
 import {useLoaderData, useNavigate} from "@remix-run/react";
 import {motion} from "framer-motion";
-import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
-import {json, LoaderFunction} from "@remix-run/node";
+import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
+import type { LoaderFunction} from "@remix-run/node";
+import {json} from "@remix-run/node";
 import {LibroBibliotecaHttp} from "~/http/libro-biblioteca/libro-biblioteca.http";
 
 type LoaderData = { librosBiblioteca?: [LibroBibliotecaInterface[], number], error?: string };

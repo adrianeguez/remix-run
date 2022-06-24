@@ -59,8 +59,9 @@ export default function Index() {
             }
             if (data.mensaje) {
                 toast.success(data.mensaje);
+            } else {
+                toast.success('Cargo datos exitosamente');
             }
-            toast.success()
         }, []
     )
     const openPopover = (targetRef) => {
@@ -81,7 +82,8 @@ export default function Index() {
                             badge="id"
                             badgeColors={{bg: 'bg-red-500'}}
                             onClick={() => setRightPanelOpened(true)}
-                        ><img className={'icon-medium'} src="https://iconape.com/wp-content/png_logo_vector/sort-amount-asc.png"
+                        ><img className={'icon-medium'}
+                              src="https://iconape.com/wp-content/png_logo_vector/sort-amount-asc.png"
                               alt=""/></Icon>
 
                     }

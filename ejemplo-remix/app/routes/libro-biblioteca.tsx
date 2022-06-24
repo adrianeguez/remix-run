@@ -4,7 +4,7 @@ import type {LoaderFunction} from "@remix-run/node";
 import {json} from "@remix-run/node";
 import {LibroBibliotecaHttp} from "~/http/libro-biblioteca/libro-biblioteca.http";
 import {Link, useLoaderData, useNavigate} from "@remix-run/react";
-import {Badge, Block, Fab, Icon, List, ListItem, Navbar, Page, Panel, Popover, Popup} from "konsta/react";
+import {Badge, Block, Button, Fab, Icon, List, ListItem, Navbar, Page, Panel, Popover, Popup} from "konsta/react";
 import {useEffect, useRef, useState} from "react";
 import {Outlet} from "@remix-run/react";
 import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
@@ -60,6 +60,7 @@ export default function Index() {
             if (data.mensaje) {
                 toast.success(data.mensaje);
             }
+            toast.success()
         }, []
     )
     const openPopover = (targetRef) => {
@@ -74,9 +75,19 @@ export default function Index() {
                 <br/>
                 <Navbar
                     title="Badge"
+
+                    left={
+                        <Icon
+                            badge="id"
+                            badgeColors={{bg: 'bg-red-500'}}
+                            onClick={() => setRightPanelOpened(true)}
+                        ><img className={'icon-medium'} src="https://iconape.com/wp-content/png_logo_vector/sort-amount-asc.png"
+                              alt=""/></Icon>
+
+                    }
                     right={
                         <Icon
-                            badge="filtro"
+                            badge="filtros"
                             badgeColors={{bg: 'bg-red-500'}}
                             onClick={() => setRightPanelOpened(true)}
                         ><img className={'icon-medium'} src="https://cdn-icons-png.flaticon.com/512/107/107799.png"
@@ -135,11 +146,23 @@ export default function Index() {
                     <br/>
                     <br/>
                     <Navbar
-                        title="Right Panel"
+                        title="Filtros"
                         right={
-                            <div onClick={() => setRightPanelOpened(false)}>
-                                Close
-                            </div>
+                            <Button onClick={() => setRightPanelOpened(false)}>
+                                Buscar
+                            </Button>
+                        }
+
+                        left={
+                            <Button colors={{
+                                text: 'text-red-500',
+                                border: 'border-red-500',
+                                bg: 'bg-red-500',
+                                activeBg: 'active:bg-red-500',
+                                activeBgDark: 'active:bg-red-600',
+                            }} onClick={() => setRightPanelOpened(false)}>
+                                Cerrar
+                            </Button>
                         }
                     />
                     <Block className="space-y-4">

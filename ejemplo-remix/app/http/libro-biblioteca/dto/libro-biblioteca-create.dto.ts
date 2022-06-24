@@ -1,5 +1,3 @@
 import {CreateDto} from "~/interfaces/create.dto";
 
-export interface LibroBibliotecaCreateDto extends CreateDto {
-
-}
+export type LibroBibliotecaCreateDto = CreateDto

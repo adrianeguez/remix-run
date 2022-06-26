@@ -1,8 +1,7 @@
 import {SortOrderEnum} from "~/enum/sort-order.enum";
 
-export interface FindDto {
-    skip?: number;
-    take?: number;
+export interface SortFieldInterface {
     sortField?: string;
     sortOrder?: SortOrderEnum;
+    sortFieldLabel?: string;
 }

@@ -2,28 +2,54 @@ import KonstaContainer from "~/components/KonstaContainer";
 import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
 import type {LoaderFunction} from "@remix-run/node";
 import {json} from "@remix-run/node";
-import {LibroBibliotecaHttp} from "~/http/libro-biblioteca/libro-biblioteca.http";
-import {Link, useLoaderData, useNavigate} from "@remix-run/react";
-import {Badge, Block, Button, Fab, Icon, List, ListItem, Navbar, Page, Panel, Popover, Popup} from "konsta/react";
+import {Link, Outlet, useLoaderData, useNavigate} from "@remix-run/react";
+import {
+    Actions,
+    ActionsButton,
+    ActionsGroup,
+    ActionsLabel,
+    Block,
+    Button,
+    Fab,
+    Icon,
+    List,
+    ListItem,
+    Navbar,
+    Page,
+    Panel,
+    Popover
+} from "konsta/react";
 import {useEffect, useRef, useState} from "react";
-import {Outlet} from "@remix-run/react";
 import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
 import {LibroBibliotecaInstanceHttp} from "~/http/libro-biblioteca/libro-biblioteca-instance.http";
-import {Backdrop, CircularProgress} from "@mui/material";
-import {BackdropConstant} from "~/constantes/backdrop.constant";
 import toast, {Toaster} from "react-hot-toast";
+import {CommonSortFieldsConstant} from "~/constantes/common-sort-fields.constant";
+import {SortFieldInterface} from "~/interfaces/sort-field.interface";
+import {SortOrderEnum} from "~/enum/sort-order.enum";
+import {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-find.dto";
+import {convertirQueryParams} from "~/functions/http/convertir-query-params";
+import {eliminarUndNullVacio} from "~/functions/util/eliminar-und-null-vacio";
+import ArrowUpwardSharpIcon from '@mui/icons-material/ArrowUpwardSharp';
+import ArrowDownwardSharpIcon from '@mui/icons-material/ArrowDownwardSharp';
+import NavbarTitulo from "~/components/ruta/NavbarTitulo";
 
 type LoaderData = { librosBiblioteca?: [LibroBibliotecaInterface[], number], error?: string, mensaje?: string; };
 export const loader: LoaderFunction = async ({request}) => {
+    console.log('QUE CHUCHA', request);
     const returnData: LoaderData = {
         librosBiblioteca: undefined,
         error: undefined,
         mensaje: undefined,
     };
+    const findDto: LibroBibliotecaFindDto = {sortOrder: undefined, sortField: undefined};
     const url = new URL(request.url);
     returnData.mensaje = url.searchParams.get("mensaje") as string;
+    // Setear findDTO
+    findDto.sortField = url.searchParams.get("sortField") as string;
+    findDto.sortOrder = url.searchParams.get("sortOrder") as SortOrderEnum;
+    console.log('findDto', findDto);
     try {
-        returnData.librosBiblioteca = await LibroBibliotecaInstanceHttp.find()
+        returnData.librosBiblioteca = await LibroBibliotecaInstanceHttp.find(eliminarUndNullVacio(findDto))
     } catch (error: any) {
         returnData.error = error;
     }
@@ -36,6 +62,11 @@ export default function Index() {
     const [popoverOpened, setPopoverOpened] = useState(false);
     const popoverTargetRef = useRef(null);
     const [rightPanelOpened, setRightPanelOpened] = useState(false);
+    const [sortFields, setSortFields] = useState([...CommonSortFieldsConstant] as SortFieldInterface[]);
+    const [sortFieldSeleccionado, setSortFieldSeleccionado] = useState({} as SortFieldInterface);
+    const [actionSortFieldOpened, setActionSortFieldOpened] = useState(false);
+
+    const path = '/libro-biblioteca';
 
     // Hooks Librearias
     const data = useLoaderData<LoaderData>();
@@ -64,10 +95,37 @@ export default function Index() {
             }
         }, []
     )
+    useEffect(
+        () => {
+            navegarParametros();
+        },
+        [sortFieldSeleccionado]
+    )
+
+    // Funciones UI
     const openPopover = (targetRef) => {
+        console.log('targetRef', targetRef);
         popoverTargetRef.current = targetRef;
         setPopoverOpened(true);
     };
+    const seleccionarSortField = (sortField: SortFieldInterface) => {
+        setSortFieldSeleccionado(sortField);
+        openPopover('.sort_action' + sortField.sortField)
+    };
+    const seleccionarSortFieldOrder = (sortOrder: SortOrderEnum) => {
+        setSortFieldSeleccionado({
+            sortField: sortFieldSeleccionado.sortField,
+            sortFieldLabel: sortFieldSeleccionado.sortFieldLabel,
+            sortOrder: sortOrder
+        });
+        setPopoverOpened(false);
+        setActionSortFieldOpened(false);
+    };
+
+    const navegarParametros = () => {
+        const queryParams = convertirQueryParams(sortFieldSeleccionado);
+        navigate(`${path}?${queryParams}`);
+    }
     return (
         <KonstaContainer titulo="Libro biblioteca">
             <Page>
@@ -75,16 +133,24 @@ export default function Index() {
                 <br/>
                 <br/>
                 <Navbar
-                    title="Badge"
+                    className={'navbar-ruta'}
+                    style={{backgroundColor: '#7070a7'}}
+                    title={
+                        <NavbarTitulo titulo={'Libro biblioteca'}/> as any
+                    }
 
                     left={
                         <Icon
-                            badge="id"
+                            className={'badge-sort-order icon-medium'}
+                            badge={sortFieldSeleccionado.sortFieldLabel}
                             badgeColors={{bg: 'bg-red-500'}}
-                            onClick={() => setRightPanelOpened(true)}
-                        ><img className={'icon-medium'}
-                              src="https://iconape.com/wp-content/png_logo_vector/sort-amount-asc.png"
-                              alt=""/></Icon>
+                            onClick={() => setActionSortFieldOpened(true)}
+                        >
+                            {sortFieldSeleccionado.sortOrder === SortOrderEnum.Desc ?
+                                <ArrowDownwardSharpIcon className={'icon-medium'}/> :
+                                <ArrowUpwardSharpIcon className={'icon-medium'}/>
+                            }
+                        </Icon>
 
                     }
                     right={
@@ -96,7 +162,7 @@ export default function Index() {
                               alt=""/></Icon>
                     }
                 />
-
+                <p class={'text-center'}>Registre</p>
                 <List>
                     {data.librosBiblioteca && data.librosBiblioteca[0].map(
                         (libro) => (
@@ -184,22 +250,52 @@ export default function Index() {
                     </Block>
                 </Page>
             </Panel>
-            {/*<Page>*/}
-            {/*    <Navbar*/}
-            {/*        title="Badge"*/}
-            {/*        right={*/}
-            {/*                <Icon*/}
-            {/*                    badge="5"*/}
-            {/*                    badgeColors={{ bg: 'bg-red-500' }}*/}
-            {/*                />*/}
-            {/*        }*/}
-            {/*    />*/}
-
-            {/*    <div>*/}
-            {/*        <h1 className={'text-center'}>Libros</h1>*/}
-            {/*        {error && (<><p>{error}</p></>)}*/}
-            {/*    </div>*/}
-            {/*</Page>*/}
+            <Actions
+                opened={actionSortFieldOpened}
+                onBackdropClick={() => setActionSortFieldOpened(false)}
+            >
+                <ActionsGroup>
+                    <ActionsLabel>Seleccione un campo para ordenar</ActionsLabel>
+                    {sortFields.map(
+                        (sF) => (
+                            <ActionsButton key={sF.sortField}
+                                           className={'sort_action' + sF.sortField}
+                                           bold
+                                           onClick={
+                                               () => seleccionarSortField(sF)
+                                           }>
+                                {sF.sortFieldLabel}
+                            </ActionsButton>
+                        )
+                    )}
+                    <ActionsButton
+                        onClick={() => setActionSortFieldOpened(false)}
+                        colors={{text: 'text-red-500'}}
+                    >
+                        Cancel
+                    </ActionsButton>
+                </ActionsGroup>
+            </Actions>
+            <Popover
+                opened={popoverOpened}
+                target={popoverTargetRef.current}
+                onBackdropClick={() => setPopoverOpened(false)}
+            >
+                <List nested hairlines={false} colors={{bg: 'bg-transparent'}}>
+                    <ListItem
+                        title="Ascendentemente"
+                        onClick={() => {
+                            seleccionarSortFieldOrder(SortOrderEnum.Asc)
+                        }}
+                    />
+                    <ListItem
+                        title="Descendenente"
+                        onClick={() => {
+                            seleccionarSortFieldOrder(SortOrderEnum.Desc)
+                        }}
+                    />
+                </List>
+            </Popover>
         </KonstaContainer>
     )
 }

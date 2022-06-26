@@ -2,36 +2,67 @@ body {
     background-color: beige;
 }
 
-.pop-up-konstaui{
+.pop-up-konstaui {
     z-index: 1200;
 }
-.action-konstaui{
+
+.action-konstaui {
     z-index: 1300;
 }
 
-.action-konstaui > div{
+.action-konstaui > div {
     z-index: 1300;
 }
-.icon-small{
+
+.icon-small {
     max-height: 10px;
 }
-.icon-medium{
+
+.icon-medium {
     max-height: 40px;
 }
-.texto-placeholder{
+
+.icon-medium > svg {
+    font-size: 40px;
+}
+
+.texto-placeholder {
     color: #b8b8b8;
 }
-.elAmor{
+
+.elAmor {
     background-color: blue;
     overflow: unset;
 }
-.action-list-konstaio{
+
+.action-list-konstaio {
     background-color: #FFF;
     margin: 0px;
     max-height: 450px;
     overflow-y: auto;
 }
-.action-list-helper-konstaio{
+
+.action-list-helper-konstaio {
     margin: 0px;
     background-color: #e4e4e4;
+}
+
+.badge-sort-order > span {
+    padding: 4px;
+    transform: translateX(40px);
+}
+
+.navbar-ruta {
+    min-height: 75px;
+    padding-top: 12px;
+}
+
+.navbar-ruta-titulo {
+    padding-top: 12px;
+    float: left;
+}
+
+.navbar-ruta-imagen {
+    float: right;
+    margin-left: 10px;
 }

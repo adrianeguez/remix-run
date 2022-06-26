@@ -7,6 +7,7 @@ import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-bibli
 import type { LoaderFunction} from "@remix-run/node";
 import {json} from "@remix-run/node";
 import {LibroBibliotecaHttp} from "~/http/libro-biblioteca/libro-biblioteca.http";
+import {LibroBibliotecaInstanceHttp} from "~/http/libro-biblioteca/libro-biblioteca-instance.http";
 
 type LoaderData = { librosBiblioteca?: [LibroBibliotecaInterface[], number], error?: string };
 export const loader: LoaderFunction = async ({params}) => {
@@ -16,7 +17,7 @@ export const loader: LoaderFunction = async ({params}) => {
     };
 
     try {
-        returnData.librosBiblioteca = await LibroBibliotecaHttp().find({id: params.libroBibliotecaId ? +params.libroBibliotecaId : 0})
+        returnData.librosBiblioteca = await LibroBibliotecaInstanceHttp.find({id: params.libroBibliotecaId ? +params.libroBibliotecaId : 0})
     } catch (error: any) {
         returnData.error = error;
     }

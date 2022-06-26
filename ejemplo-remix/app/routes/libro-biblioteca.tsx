@@ -3,43 +3,34 @@ import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-bibli
 import type {LoaderFunction} from "@remix-run/node";
 import {json} from "@remix-run/node";
 import {Link, Outlet, useLoaderData, useNavigate} from "@remix-run/react";
-import {
-    Actions,
-    ActionsButton,
-    ActionsGroup,
-    ActionsLabel,
-    Block,
-    Button,
-    Fab,
-    Icon,
-    List,
-    ListItem,
-    Navbar,
-    Page,
-    Panel,
-    Popover
-} from "konsta/react";
+import {Button, Fab, List, ListItem, Page} from "konsta/react";
 import {useEffect, useRef, useState} from "react";
 import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
 import {LibroBibliotecaInstanceHttp} from "~/http/libro-biblioteca/libro-biblioteca-instance.http";
-import toast, {Toaster} from "react-hot-toast";
+import toast from "react-hot-toast";
 import {CommonSortFieldsConstant} from "~/constantes/common-sort-fields.constant";
 import {SortFieldInterface} from "~/interfaces/sort-field.interface";
 import {SortOrderEnum} from "~/enum/sort-order.enum";
 import {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-find.dto";
 import {convertirQueryParams} from "~/functions/http/convertir-query-params";
 import {eliminarUndNullVacio} from "~/functions/util/eliminar-und-null-vacio";
-import ArrowUpwardSharpIcon from '@mui/icons-material/ArrowUpwardSharp';
-import ArrowDownwardSharpIcon from '@mui/icons-material/ArrowDownwardSharp';
 import NavbarTitulo from "~/components/ruta/NavbarTitulo";
+import BackdropToaster from "~/components/util/backdrop-toaster";
+import PanelActionPopover from "~/components/ruta/PanelActionPopover";
+import {SkipTakeConstant} from "~/constantes/skip-take.constant";
 
-type LoaderData = { librosBiblioteca?: [LibroBibliotecaInterface[], number], error?: string, mensaje?: string; };
+type LoaderData = {
+    librosBiblioteca?: [LibroBibliotecaInterface[], number],
+    error?: string,
+    mensaje?: string;
+    findDto?: LibroBibliotecaFindDto;
+};
 export const loader: LoaderFunction = async ({request}) => {
-    console.log('QUE CHUCHA', request);
     const returnData: LoaderData = {
         librosBiblioteca: undefined,
         error: undefined,
         mensaje: undefined,
+        findDto: undefined
     };
     const findDto: LibroBibliotecaFindDto = {sortOrder: undefined, sortField: undefined};
     const url = new URL(request.url);
@@ -47,7 +38,20 @@ export const loader: LoaderFunction = async ({request}) => {
     // Setear findDTO
     findDto.sortField = url.searchParams.get("sortField") as string;
     findDto.sortOrder = url.searchParams.get("sortOrder") as SortOrderEnum;
-    console.log('findDto', findDto);
+    if(!findDto.sortOrder && !findDto.sortField){
+        findDto.sortField = 'sisCreado';
+        findDto.sortOrder = SortOrderEnum.Desc;
+    }
+
+    findDto.skip = url.searchParams.get("skip") as string;
+    if (!findDto.skip) {
+        findDto.skip = 0 + '';
+    }
+    findDto.take = url.searchParams.get("take") as string;
+    if (!findDto.take) {
+        findDto.take = SkipTakeConstant.take.toString();
+    }
+    returnData.findDto = findDto;
     try {
         returnData.librosBiblioteca = await LibroBibliotecaInstanceHttp.find(eliminarUndNullVacio(findDto))
     } catch (error: any) {
@@ -56,6 +60,14 @@ export const loader: LoaderFunction = async ({request}) => {
     return json(returnData);
 };
 export default function Index() {
+    // Hooks Librearias
+    const data = useLoaderData<LoaderData>();
+    const navigate = useNavigate();
+    let totalRegistros = 0;
+    if (data.librosBiblioteca) {
+        totalRegistros = data.librosBiblioteca[1];
+    }
+
     // Inicializar variables
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -65,12 +77,14 @@ export default function Index() {
     const [sortFields, setSortFields] = useState([...CommonSortFieldsConstant] as SortFieldInterface[]);
     const [sortFieldSeleccionado, setSortFieldSeleccionado] = useState({} as SortFieldInterface);
     const [actionSortFieldOpened, setActionSortFieldOpened] = useState(false);
+    const [skipTake, setSkipTake] = useState({
+            skip: data.findDto ? data.findDto.skip : 0,
+            take: data.findDto ? data.findDto.take : SkipTakeConstant.take,
+        }
+    );
+
 
     const path = '/libro-biblioteca';
-
-    // Hooks Librearias
-    const data = useLoaderData<LoaderData>();
-    const navigate = useNavigate();
 
     // Funciones Util
     const toastInfo = (mensaje) => {
@@ -83,7 +97,6 @@ export default function Index() {
     // Use Effect - Componente inicializado
     useEffect(
         () => {
-            console.log('data', data);
             if (data.error) {
                 setError('Error obteniendo registros');
                 toast.error('Error del servidor');
@@ -97,14 +110,27 @@ export default function Index() {
     )
     useEffect(
         () => {
-            navegarParametros();
+            if (Object.keys(sortFieldSeleccionado).length > 0) {
+                navegarParametros();
+            }
         },
         [sortFieldSeleccionado]
+    )
+    useEffect(
+        () => {
+            if (skipTake.skip !== 0 && skipTake.take !== 0) {
+                navegarParametros();
+            } else {
+                if (skipTake.take > 0 && skipTake.skip >= 0) {
+                    navegarParametros();
+                }
+            }
+        },
+        [skipTake]
     )
 
     // Funciones UI
     const openPopover = (targetRef) => {
-        console.log('targetRef', targetRef);
         popoverTargetRef.current = targetRef;
         setPopoverOpened(true);
     };
@@ -123,8 +149,39 @@ export default function Index() {
     };
 
     const navegarParametros = () => {
-        const queryParams = convertirQueryParams(sortFieldSeleccionado);
+        const skipTakeLocal = {
+            skip: 0,
+            take: 0,
+        }
+        if (skipTake.skip === 0 && skipTake.take === 0) {
+            skipTakeLocal.take = SkipTakeConstant.take;
+        } else {
+            skipTakeLocal.skip = skipTake.skip;
+            skipTakeLocal.take = skipTake.take;
+        }
+        const queryParams = convertirQueryParams({...sortFieldSeleccionado, ...skipTakeLocal});
         navigate(`${path}?${queryParams}`);
+    };
+    const cargarMas = (siguiente: boolean) => {
+        if (siguiente) {
+            setSkipTake({
+                skip: +skipTake.skip + +SkipTakeConstant.take,
+                take: +SkipTakeConstant.take,
+            });
+        } else {
+            setSkipTake({
+                skip: +skipTake.skip - +SkipTakeConstant.take,
+                take: +SkipTakeConstant.take,
+            });
+
+        }
+    };
+    const calcularPagina = () => {
+        if (data.librosBiblioteca) {
+            const paginaActual = (+skipTake.skip + +data.librosBiblioteca[0].length);
+            return `Registros actuales ${paginaActual}/${totalRegistros}`
+        }
+        return ``
     }
     return (
         <KonstaContainer titulo="Libro biblioteca">
@@ -132,37 +189,11 @@ export default function Index() {
                 <br/>
                 <br/>
                 <br/>
-                <Navbar
-                    className={'navbar-ruta'}
-                    style={{backgroundColor: '#7070a7'}}
-                    title={
-                        <NavbarTitulo titulo={'Libro biblioteca'}/> as any
-                    }
-
-                    left={
-                        <Icon
-                            className={'badge-sort-order icon-medium'}
-                            badge={sortFieldSeleccionado.sortFieldLabel}
-                            badgeColors={{bg: 'bg-red-500'}}
-                            onClick={() => setActionSortFieldOpened(true)}
-                        >
-                            {sortFieldSeleccionado.sortOrder === SortOrderEnum.Desc ?
-                                <ArrowDownwardSharpIcon className={'icon-medium'}/> :
-                                <ArrowUpwardSharpIcon className={'icon-medium'}/>
-                            }
-                        </Icon>
-
-                    }
-                    right={
-                        <Icon
-                            badge="filtros"
-                            badgeColors={{bg: 'bg-red-500'}}
-                            onClick={() => setRightPanelOpened(true)}
-                        ><img className={'icon-medium'} src="https://cdn-icons-png.flaticon.com/512/107/107799.png"
-                              alt=""/></Icon>
-                    }
-                />
-                <p class={'text-center'}>Registre</p>
+                <NavbarTitulo sortFieldSeleccionado={sortFieldSeleccionado}
+                              setRightPanelOpened={setRightPanelOpened}
+                              setActionSortFieldOpened={setActionSortFieldOpened}
+                              titulo={'Libro Biblioteca'}
+                ></NavbarTitulo>
                 <List>
                     {data.librosBiblioteca && data.librosBiblioteca[0].map(
                         (libro) => (
@@ -172,130 +203,47 @@ export default function Index() {
                         )
                     )}
                 </List>
-                <Popover
-                    opened={popoverOpened}
-                    target={popoverTargetRef.current}
-                    onBackdropClick={() => setPopoverOpened(false)}
-                >
-                    <List nested hairlines={false} colors={{bg: 'bg-transparent'}}>
-                        <ListItem
-                            title="Create"
-                            className={'text-center w-100'}
-                            link
-                            onClick={() => setPopoverOpened(false)}
-                        />
-                        <ListItem
-                            title="Refresh"
-                            link
-                            onClick={() => setPopoverOpened(false)}
-                        />
-                    </List>
-                </Popover>
-                <Toaster
-                    position="top-center"
-                    reverseOrder={false}
-                />
+                <List>
+                    <ListItem
+                        className={'skip-take-page'}
+                        title={calcularPagina()}
+                    />
+                </List>
+                <div className="grid grid-cols-2 gap-x-6">
+
+                    {+skipTake.skip > 0 && <Button onClick={() => cargarMas(false)}>Anterior</Button>}
+                    {+skipTake.skip === 0 && <Button disabled={true} aria-disabled={true} style={{
+                        opacity: 0.2,
+                        pointerEvents: 'none'
+                    }}>Anterior</Button>}
+                    {(+skipTake.skip + +skipTake.take) <= totalRegistros &&
+                        <Button onClick={() => cargarMas(true)}>Siguiente</Button>}
+                    {(+skipTake.skip + +skipTake.take) > totalRegistros &&
+                        <Button disabled={true} style={{
+                            opacity: 0.2,
+                            pointerEvents: 'none'
+                        }}>Siguiente</Button>}
+                </div>
                 <Fab
                     className="fixed right-4-safe bottom-4-safe z-20 fab-opened"
                     onClick={() => {
-                        // openPopover('.fab-opened')
                         navigate({pathname: "/libro-biblioteca/new"})
                     }}
                     text="+"/>
                 <Outlet/>
             </Page>
-            <Panel
-                side="right"
-                opened={rightPanelOpened}
-                onBackdropClick={() => setRightPanelOpened(false)}
-            >
-                <Page>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <Navbar
-                        title="Filtros"
-                        right={
-                            <Button onClick={() => setRightPanelOpened(false)}>
-                                Buscar
-                            </Button>
-                        }
-
-                        left={
-                            <Button colors={{
-                                text: 'text-red-500',
-                                border: 'border-red-500',
-                                bg: 'bg-red-500',
-                                activeBg: 'active:bg-red-500',
-                                activeBgDark: 'active:bg-red-600',
-                            }} onClick={() => setRightPanelOpened(false)}>
-                                Cerrar
-                            </Button>
-                        }
-                    />
-                    <Block className="space-y-4">
-                        <p>Here comes right panel.</p>
-                        <p>
-                            Duis ut mauris sollicitudin, venenatis nisi sed, luctus ligula.
-                            Phasellus blandit nisl ut lorem semper pharetra. Nullam tortor
-                            nibh, suscipit in consequat vel, feugiat sed quam. Nam risus
-                            libero, auctor vel tristique ac, malesuada ut ante. Sed molestie,
-                            est in eleifend sagittis, leo tortor ullamcorper erat, at
-                            vulputate eros sapien nec libero. Mauris dapibus laoreet nibh quis
-                            bibendum. Fusce dolor sem, suscipit in iaculis id, pharetra at
-                            urna. Pellentesque tempor congue massa quis faucibus. Vestibulum
-                            nunc eros, convallis blandit dui sit amet, gravida adipiscing
-                            libero.
-                        </p>
-                    </Block>
-                </Page>
-            </Panel>
-            <Actions
-                opened={actionSortFieldOpened}
-                onBackdropClick={() => setActionSortFieldOpened(false)}
-            >
-                <ActionsGroup>
-                    <ActionsLabel>Seleccione un campo para ordenar</ActionsLabel>
-                    {sortFields.map(
-                        (sF) => (
-                            <ActionsButton key={sF.sortField}
-                                           className={'sort_action' + sF.sortField}
-                                           bold
-                                           onClick={
-                                               () => seleccionarSortField(sF)
-                                           }>
-                                {sF.sortFieldLabel}
-                            </ActionsButton>
-                        )
-                    )}
-                    <ActionsButton
-                        onClick={() => setActionSortFieldOpened(false)}
-                        colors={{text: 'text-red-500'}}
-                    >
-                        Cancel
-                    </ActionsButton>
-                </ActionsGroup>
-            </Actions>
-            <Popover
-                opened={popoverOpened}
-                target={popoverTargetRef.current}
-                onBackdropClick={() => setPopoverOpened(false)}
-            >
-                <List nested hairlines={false} colors={{bg: 'bg-transparent'}}>
-                    <ListItem
-                        title="Ascendentemente"
-                        onClick={() => {
-                            seleccionarSortFieldOrder(SortOrderEnum.Asc)
-                        }}
-                    />
-                    <ListItem
-                        title="Descendenente"
-                        onClick={() => {
-                            seleccionarSortFieldOrder(SortOrderEnum.Desc)
-                        }}
-                    />
-                </List>
-            </Popover>
+            <PanelActionPopover actionSortFieldOpened={actionSortFieldOpened}
+                                popoverOpened={popoverOpened}
+                                popoverTargetRef={popoverTargetRef}
+                                setActionSortFieldOpened={setActionSortFieldOpened}
+                                rightPanelOpened={rightPanelOpened}
+                                setPopoverOpened={setPopoverOpened}
+                                seleccionarSortField={seleccionarSortField}
+                                seleccionarSortFieldOrder={seleccionarSortFieldOrder}
+                                setRightPanelOpened={setRightPanelOpened}
+                                sortFields={sortFields}
+            ></PanelActionPopover>
+            <BackdropToaster loading={loading}></BackdropToaster>
         </KonstaContainer>
     )
 }

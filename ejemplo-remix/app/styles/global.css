@@ -66,3 +66,6 @@ body {
     float: right;
     margin-left: 10px;
 }
+.skip-take-page > div> div> div{
+    justify-content: center;
+}

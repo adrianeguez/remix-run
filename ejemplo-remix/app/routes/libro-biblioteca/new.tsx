@@ -11,7 +11,6 @@ import CamposFormulario from "~/components/form/lib/CamposFormulario";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {GenerarObservableWatchCampo} from "~/components/form/lib/funcion/generar-observable-watch-campo";
 import type {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
-import CamposFormularioAction from "~/components/form/lib/CamposFormularioAction";
 import toast, {Toaster} from 'react-hot-toast';
 import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
 import {Backdrop, CircularProgress} from "@mui/material";
@@ -24,6 +23,9 @@ import {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-bibliote
 import {LoaderSetQueryparams} from "~/functions/http/loader-set-queryparams";
 import {eliminarUndNullVacio} from "~/functions/util/eliminar-und-null-vacio";
 import {convertirQueryParams} from "~/functions/http/convertir-query-params";
+import BackdropToaster from "~/components/util/backdrop-toaster";
+import CamposFormularioActionAutocomplete from "~/components/form/lib/CamposFormularioActionAutocomplete";
+import {LibroBibliotecaCreateDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-create.dto";
 
 interface RequestData {
     request: Request
@@ -32,7 +34,9 @@ interface RequestData {
 type LoaderData = {
     findDto?: LibroBibliotecaFindDto;
 };
+// Objeto necesario para que funcione la ruta
 let eventoAutocompleteLocal: CampoFormularioInterface;
+// Setear query params
 export const loader: LoaderFunction = async ({request}) => {
     const requestUrl = request.url;
     const findDto: LibroBibliotecaFindDto = LoaderSetQueryparams(requestUrl);
@@ -41,12 +45,17 @@ export const loader: LoaderFunction = async ({request}) => {
 };
 
 export const action = async (req: RequestData): Promise<ActionFunction> => {
-    const body = await req.request.formData();
+    // Cargar Queryparams
     const requestUrl = req.request.url;
     const findDto = LoaderSetQueryparams(requestUrl);
 
+    // Generar Body
+    const body = await req.request.formData();
+    const createDto: LibroBibliotecaCreateDto = {
+        sisHabilitado: SisHabilitadoEnum.Activo
+    };
     try {
-        const respuesta = await LibroBibliotecaInstanceHttp.create({sisHabilitado: SisHabilitadoEnum.Activo});
+        const respuesta = await LibroBibliotecaInstanceHttp.create(createDto);
         // fetc POST libro-biblioteca NESTJS
         return redirect(`/libro-biblioteca?${convertirQueryParams(eliminarUndNullVacio(findDto))}&mensaje=Registro libro biblioteca creado`) as any;
     } catch (error) {
@@ -58,10 +67,9 @@ export const action = async (req: RequestData): Promise<ActionFunction> => {
 export default function New() {
     // Inicializar variables
     const [popupOpened, setPopupOpened] = useState(false);
-    const [autocompleteActual, setAutocompleteActual] = useState('');
     const [listaAutocomplete, setListaAutocomplete] = useState([] as any[]);
     const [campos, setCampos] = useState([...LibroBibliotecaForm()] as CampoFormularioInterface[]);
-    const [actionsOneOpened, setActionsOneOpened] = useState(false);
+    const [actionAutocompleteAbierto, setActionAutocompleteAbierto] = useState(false);
     const [loading, setLoading] = useState(false);
     const [seleccionoListaAutocomplete, setSeleccionoListaAutocomplete] = useState({} as { registro: any, campoFormulario: CampoFormularioInterface });
 
@@ -91,52 +99,24 @@ export default function New() {
     const useFormAutocomplete = useForm<any>({defaultValues: {busqueda: ''}});
 
     // Custom Hooks
+    // Custom Hooks - Campo Formulario
     const [eventoAutocomplete, setEventoAutocomplete, CamposFormularioComponente] = CamposFormulario({
         useFormReturn,
         campos
     });
 
-    // Variables util
-    const animationConfiguration = {
-        animate: {opacity: 1},
-    };
-    const hairlines = theme !== 'material';
-
-    // Funciones util
-    const tieneCampoFormulario = Object.keys(eventoAutocomplete).length > 0;
-    const toastInfo = (mensaje) => {
-        toast(mensaje, {
-            icon: '📑'
-        })
-    };
-    const generarComponenteAutocompleteLibroBiblioteca = {
-        autocomplete: (registro: LibroBibliotecaInterface, campoFormulario: CampoFormularioInterface) => {
-            return (<><LibroBibliotecaMostrar registro={registro}/></>)
-        },
-    };
-    const buscarAutocomplete = async (data: ObservableWatchCampoInterface) => {
-        if ((Object.keys(eventoAutocompleteLocal).length > 0 && popupOpened) || (!tieneCampoFormulario)) {
-            switch (eventoAutocompleteLocal.formControlName) {
-                case 'autocomplete':
-                    await buscarLibroBiblioteca(data, eventoAutocompleteLocal);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     // Use Effects
     // Use Effect - Componente inicializado
     useEffect(
         () => {
+            escucharEventoAutocompleteBusqueda();
             setTimeout(
                 () => {
                     setPopupOpened(true);
                 },
                 1
             );
-            escucharEventoAutocompleteBusqueda();
         },
         []
     )
@@ -145,9 +125,9 @@ export default function New() {
         () => {
             eventoAutocompleteLocal = eventoAutocomplete;
             if (tieneCampoFormulario) {
-                setActionsOneOpened(true);
+                setActionAutocompleteAbierto(true);
             } else {
-                setActionsOneOpened(false);
+                setActionAutocompleteAbierto(false);
             }
         },
         [eventoAutocomplete]
@@ -167,16 +147,40 @@ export default function New() {
         },
         [seleccionoListaAutocomplete]
     )
+    // Use Effect - Buscar autocomplete
     useEffect(
         () => {
-            if (actionsOneOpened) {
+            if (actionAutocompleteAbierto) {
                 buscarAutocomplete({value: '', data: {}, info: {type: '', name: ''}}).then();
             }
         },
-        [actionsOneOpened]
+        [actionAutocompleteAbierto]
     )
 
-    // Metodos
+    // Metodos y Funciones
+    // Funciones util
+    const tieneCampoFormulario = Object.keys(eventoAutocomplete).length > 0;
+    const generarComponenteAutocompletePorFormControlName = {
+        autocomplete: (registro: LibroBibliotecaInterface, campoFormulario: CampoFormularioInterface) => {
+            return (<><LibroBibliotecaMostrar registro={registro}/></>)
+        },
+    };
+    const buscarAutocomplete = async (data: ObservableWatchCampoInterface) => {
+        if ((Object.keys(eventoAutocompleteLocal).length > 0 && popupOpened) || (!tieneCampoFormulario)) {
+            switch (eventoAutocompleteLocal.formControlName) {
+                case 'autocomplete':
+                    await buscarLibroBiblioteca(data, eventoAutocompleteLocal);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    const toastInfo = (mensaje) => {
+        toast(mensaje, {
+            icon: '📑'
+        })
+    };
     // Metodos Page
     const salir = () => {
         setPopupOpened(false);
@@ -189,40 +193,29 @@ export default function New() {
     }
     // Metodos Formulario
     const onSubmit: SubmitHandler<any> = async (dataForm) => {
-        console.log('dataForm',dataForm);
-        // const formData = new FormData(document.getElementById('form'))
-        // setLoading(true);
-        // try {
-        //     const respuesta = await fetch(`/libro-biblioteca/new?${convertirQueryParams(data.findDto)}`, {
-        //         method: 'POST',
-        //         body: formData
-        //     })
-        //     if (respuesta.redirected) {
-        //         setLoading(false);
-        //         window.location.replace(respuesta.url);
-        //     } else {
-        //         setLoading(false);
-        //         toast.error('Error del servidor');
-        //         console.error({error: respuesta, mensaje: 'Error creando nuevo registro'});
-        //     }
-        // } catch (error) {
-        //     setLoading(false);
-        //     toast.error('Error del servidor');
-        //     console.error({error, mensaje: 'Error creando nuevo registro'});
-        // }
-
+        console.log('dataForm', dataForm);
+        const formData = new FormData(document.getElementById('form'))
+        setLoading(true);
+        try {
+            const respuesta = await fetch(`/libro-biblioteca/new?${convertirQueryParams(data.findDto)}`, {
+                method: 'POST',
+                body: formData
+            })
+            if (respuesta.redirected) {
+                setLoading(false);
+                window.location.replace(respuesta.url);
+            } else {
+                setLoading(false);
+                toast.error('Error del servidor');
+                console.error({error: respuesta, mensaje: 'Error creando nuevo registro'});
+            }
+        } catch (error) {
+            setLoading(false);
+            toast.error('Error del servidor');
+            console.error({error, mensaje: 'Error creando nuevo registro'});
+        }
     };
     // Metodos Autocomplete
-    const cerrarAction = () => {
-        setListaAutocomplete([]);
-        setEventoAutocomplete({} as any);
-        setActionsOneOpened(false);
-        useFormAutocomplete.setValue('busqueda' as any, '' as any, {
-            shouldValidate: true,
-            shouldDirty: true,
-            shouldTouch: true
-        } as any)
-    }
     const escucharEventoAutocompleteBusqueda = () => {
         GenerarObservableWatchCampo(
             'busqueda',
@@ -264,7 +257,9 @@ export default function New() {
     return (
         <>
             <motion.div
-                variants={animationConfiguration}
+                variants={{
+                    animate: {opacity: 1},
+                }}
                 initial="initial"
                 animate="animate"
                 exit="exit"
@@ -273,48 +268,39 @@ export default function New() {
                 <Popup className={"pop-up-konstaui"} opened={popupOpened} onBackdropClick={() => salir()}>
                     <>
                         <Navbar
-                            title="Nuevo"
+                            title="Nuevo libro biblioteca"
                             right={
                                 <div onClick={() => salir()}>
-                                    Close
+                                    Cerrar
                                 </div>
                             }
                         />
                         <Block className="space-y-4 popup-modal">
                             <BlockTitle>Ejemplo de formulario</BlockTitle>
                             <br/>
-                            <List hairlines={hairlines}>
+                            <List hairlines={true}>
                                 <Form id="form" action="/libro-biblioteca/new" method="POST"
                                       onSubmit={useFormReturn.handleSubmit(onSubmit)} noValidate>
                                     {CamposFormularioComponente}
-                                    <Button large typeof={'submit'}> submit </Button>
                                 </Form>
                             </List>
                         </Block>
+                        <Button large typeof={'submit'}> Crear </Button>
                     </>
                 </Popup>
             </motion.div>
-            <CamposFormularioAction actionsOneOpened={actionsOneOpened}
-                                    cerrarAction={cerrarAction}
-                                    useFormAutocomplete={useFormAutocomplete}
-                                    listaAutocomplete={listaAutocomplete}
-                                    setSeleccionoListaAutocomplete={setSeleccionoListaAutocomplete}
-                                    generarComponente={generarComponenteAutocompleteLibroBiblioteca}
-                                    campoFormulario={eventoAutocompleteLocal}
+            <CamposFormularioActionAutocomplete actionsOneOpened={actionAutocompleteAbierto}
+                                                useFormAutocomplete={useFormAutocomplete}
+                                                listaAutocomplete={listaAutocomplete}
+                                                setSeleccionoListaAutocomplete={setSeleccionoListaAutocomplete}
+                                                generarComponente={generarComponenteAutocompletePorFormControlName}
+                                                campoFormulario={eventoAutocompleteLocal}
+                                                setListaAutocomplete={setListaAutocomplete}
+                                                setActionsOneOpened={setActionAutocompleteAbierto}
+                                                setEventoAutocomplete={setEventoAutocomplete}
             >
-            </CamposFormularioAction>
-            <Toaster
-                position="top-center"
-                reverseOrder={false}
-            />
-            <Backdrop
-                sx={
-                    BackdropConstant
-                }
-                open={loading}
-            >
-                <CircularProgress color="inherit"/>
-            </Backdrop>
+            </CamposFormularioActionAutocomplete>
+            <BackdropToaster loading={loading}></BackdropToaster>
         </>
     )
 }

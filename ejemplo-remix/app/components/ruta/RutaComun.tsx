@@ -170,6 +170,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                                 setRightPanelOpened={setRightPanelOpened}
                                 sortFields={sortFields}
             ></PanelActionPopover>
-            <BackdropToaster loading={loading}></BackdropToaster>        </>
+            <BackdropToaster loading={loading}></BackdropToaster>
+        </>
     )
 }

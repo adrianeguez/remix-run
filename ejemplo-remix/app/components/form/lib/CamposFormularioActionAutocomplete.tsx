@@ -2,28 +2,33 @@ import {Actions, ActionsButton, ActionsGroup, ActionsLabel, List, ListItem} from
 import {InputBusquedaAutocomplete} from "~/components/form/lib/InputBusquedaAutocomplete";
 import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
 import {motion} from "framer-motion";
-import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
+import {
+    CampoFormularioActionAutocompleteInterface
+} from "~/components/form/lib/interfaces/campo-formulario-action-autocomplete.interface";
 
-export default function CamposFormularioAction(props: {
-    actionsOneOpened,
-    cerrarAction,
-    useFormAutocomplete,
-    listaAutocomplete,
-    setSeleccionoListaAutocomplete,
-    generarComponente: {
-        [key: string]: (registro: any, campoFormulario: CampoFormularioInterface) => JSX.Element;
-    },
-    campoFormulario: CampoFormularioInterface
-}) {
+export default function CamposFormularioActionAutocomplete(props: CampoFormularioActionAutocompleteInterface) {
     const {
         actionsOneOpened,
-        cerrarAction,
         useFormAutocomplete,
         listaAutocomplete,
         setSeleccionoListaAutocomplete,
         generarComponente,
-        campoFormulario
+        campoFormulario,
+        setListaAutocomplete,
+        setEventoAutocomplete,
+        setActionsOneOpened,
     } = props;
+
+    const cerrarAction = () => {
+        setListaAutocomplete([]);
+        setEventoAutocomplete({} as any);
+        setActionsOneOpened(false);
+        useFormAutocomplete.setValue('busqueda' as any, '' as any, {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true
+        } as any)
+    }
     return (
         <div className={'action-konstaui'}>
             <Actions
@@ -53,7 +58,7 @@ export default function CamposFormularioAction(props: {
                                     key={v.id}
                                     onClick={() => {
                                         cerrarAction();
-                                        setSeleccionoListaAutocomplete({registro:v, campoFormulario});
+                                        setSeleccionoListaAutocomplete({registro: v, campoFormulario});
                                     }}
                                 >
                                     {generarComponente[campoFormulario.formControlName](v, campoFormulario)}

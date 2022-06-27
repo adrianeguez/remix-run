@@ -16,6 +16,8 @@ import {NavigateFunction} from "react-router";
 import RutaComun from "~/components/ruta/RutaComun";
 import {NavbarSoloTituloInterface} from "~/components/ruta/interfaces/navbar-solo-titulo.interface";
 import {motion} from "framer-motion";
+import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-parametros";
+import {SkipTakeConstant} from "~/constantes/skip-take.constant";
 
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
@@ -78,9 +80,14 @@ export default function LibroBiblioteca() {
     const navegarParametrosNuevo = (queryParams: string) => {
         navigate(`${path}/new?` + queryParams);
     };
-    const navegarParametrosEditar = (queryParams: string, registro:LibroBibliotecaInterface) => {
+    const navegarParametrosEditar = (queryParams: string, registro: LibroBibliotecaInterface) => {
         return `${path}/${registro.id}?` + queryParams;
     };
+    const eventoSeleccionoSort = (sortField: SortFieldInterface, skipTake: { skip: number, take: number }) => {
+        if (sortField && skipTake) {
+            navigate(`${path}?${generarNavegarParametros(skipTake, sortField)}`)
+        }
+    }
     return (
         <KonstaContainer titulo="Libro biblioteca">
             {data.registros &&
@@ -92,19 +99,21 @@ export default function LibroBiblioteca() {
                                                      navigateFabNewFunction={navegarParametrosNuevo}
                                                      registrosEncontrados={data.registros}
                                                      sortFieldsArray={sortFields}
+                                                     eventoSeleccionoSort={eventoSeleccionoSort}
+                                                     mostrarFab={true}
                                                      mostrarItemEnLista={(registro, skipTake, indice) => (<>
-                                                     <motion.div
-                                                         initial={{opacity: 0, y: 10}}
-                                                         animate={{opacity: 1, y: 0}}
-                                                         exit={{opacity: 0, y: 0}}
-                                                         transition={{delay: indice * 0.1}}
-                                                         key={registro.id}>
-                                                         <Link to={navegarParametrosEditar(skipTake, registro)}>
-                                                             <LibroBibliotecaMostrar
-                                                                 registro={registro}></LibroBibliotecaMostrar>
-                                                         </Link>
+                                                         <motion.div
+                                                             initial={{opacity: 0, y: 10}}
+                                                             animate={{opacity: 1, y: 0}}
+                                                             exit={{opacity: 0, y: 0}}
+                                                             transition={{delay: indice * 0.1}}
+                                                             key={registro.id}>
+                                                             <Link to={navegarParametrosEditar(skipTake, registro)}>
+                                                                 <LibroBibliotecaMostrar
+                                                                     registro={registro}></LibroBibliotecaMostrar>
+                                                             </Link>
 
-                                                     </motion.div>
+                                                         </motion.div>
                                                      </>)
                                                      }
                 />}

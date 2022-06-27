@@ -9,17 +9,10 @@ export interface RutaComunInterface<T = any> {
     registrosEncontrados: [T[], number];
     findDto: any;
     sortFieldsArray: SortFieldInterface[];
-    mostrarItemEnLista: (registro:T, queryParams: string, indice:number) => JSX.Element;
+    mostrarItemEnLista: (registro: T, queryParams: string, indice: number) => JSX.Element;
     navbar: NavbarSoloTituloInterface;
     navigate: NavigateFunction;
     path: string;
-    // titulo: string;
-    // imagen?: string;
-    // color?: string;
-    // tituloColor?: string;
-    // backgroundColor?: string;
-    // textoDescripcion?: string;
-    // sortFieldSeleccionado: SortFieldInterface;
-    // setActionSortFieldOpened: (value: (((prevState: boolean) => boolean) | boolean)) => void;
-    // setRightPanelOpened: (value: (((prevState: boolean) => boolean) | boolean)) => void;
+    eventoSeleccionoSort: (sortField: SortFieldInterface, skipTake?: { skip: number, take: number }) => void;
+    mostrarFab: boolean;
 }

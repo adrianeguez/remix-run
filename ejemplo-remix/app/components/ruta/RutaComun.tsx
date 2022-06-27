@@ -22,7 +22,9 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
         sortFieldsArray,
         mostrarItemEnLista,
         navigate,
-        path
+        path,
+        eventoSeleccionoSort,
+        mostrarFab = false
     } = props;
     const {titulo, colorTituloClase, colorClaseBanner, textoDescripcion, imagen} = props.navbar;
     // Variables locales
@@ -51,19 +53,15 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
     useEffect(
         () => {
             if (Object.keys(sortFieldSeleccionado).length > 0) {
-                navegarParametros();
+                eventoSeleccionoSort(sortFieldSeleccionado)
             }
         },
         [sortFieldSeleccionado]
     )
     useEffect(
         () => {
-            if (skipTake.skip !== 0 && skipTake.take !== 0) {
-                navegarParametros();
-            } else {
-                if (skipTake.take > 0 && skipTake.skip >= 0) {
-                    navegarParametros();
-                }
+            if (Object.keys(skipTake).length > 0) {
+                eventoSeleccionoSort(sortFieldSeleccionado, skipTake)
             }
         },
         [skipTake]
@@ -76,7 +74,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
     };
     const seleccionarSortField = (sortField: SortFieldInterface) => {
         setSortFieldSeleccionado(sortField);
-        openPopover('.sort_action' + sortField.sortField)
+        openPopover('.sort_action' + sortFieldSeleccionado.sortField)
     };
     const seleccionarSortFieldOrder = (sortOrder: SortOrderEnum) => {
         setPopoverOpened(false);
@@ -113,9 +111,6 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
         <>
 
             <>
-                <br/>
-                <br/>
-                <br/>
                 <NavbarTitulo sortFieldSeleccionado={sortFieldSeleccionado}
                               setRightPanelOpened={setRightPanelOpened}
                               setActionSortFieldOpened={setActionSortFieldOpened}
@@ -155,12 +150,12 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                             pointerEvents: 'none'
                         }}>Siguiente</Button>}
                 </div>
-                <Fab
+                {mostrarFab && <Fab
                     className="fixed right-4-safe bottom-4-safe z-20 fab-opened"
                     onClick={() => {
                         navigateFabNewFunction(generarNavegarParametros(skipTake, sortFieldSeleccionado))
                     }}
-                    text="+"/>
+                    text="+"/>}
                 <Outlet/>
             </>
             <PanelActionPopover actionSortFieldOpened={actionSortFieldOpened}

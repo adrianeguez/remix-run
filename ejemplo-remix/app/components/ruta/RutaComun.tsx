@@ -112,7 +112,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
     return (
         <>
 
-            <Page>
+            <>
                 <br/>
                 <br/>
                 <br/>
@@ -162,7 +162,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                     }}
                     text="+"/>
                 <Outlet/>
-            </Page>
+            </>
             <PanelActionPopover actionSortFieldOpened={actionSortFieldOpened}
                                 popoverOpened={popoverOpened}
                                 popoverTargetRef={popoverTargetRef}

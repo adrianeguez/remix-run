@@ -11,7 +11,7 @@ import {
     Popover
 } from "konsta/react";
 import {SortOrderEnum} from "~/enum/sort-order.enum";
-import {PanelActionPopoverInterface} from "~/components/ruta/interfaces/PanelActionPopover.interface";
+import {PanelActionPopoverInterface} from "~/components/ruta/interfaces/panel-action-popover.interface";
 
 export default function PanelActionPopover(props: PanelActionPopoverInterface) {
     const {

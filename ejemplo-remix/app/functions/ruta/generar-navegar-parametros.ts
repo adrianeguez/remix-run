@@ -1,11 +1,9 @@
 import {SkipTakeConstant} from "~/constantes/skip-take.constant";
 import {convertirQueryParams} from "~/functions/http/convertir-query-params";
 import {SortFieldInterface} from "~/interfaces/sort-field.interface";
+import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 
-export function generarNavegarParametros(skipTake: {
-    skip: number;
-    take: number;
-}, sortFieldSeleccionado: SortFieldInterface) {
+export function generarNavegarParametros(skipTake: SkipTakeInterface, sortFieldSeleccionado: SortFieldInterface) {
     const skipTakeLocal = {
         skip: 0,
         take: 0,

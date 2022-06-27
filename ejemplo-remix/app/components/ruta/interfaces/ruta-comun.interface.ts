@@ -2,6 +2,7 @@ import {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca
 import {SortFieldInterface} from "~/interfaces/sort-field.interface";
 import {NavigateFunction} from "react-router";
 import {NavbarSoloTituloInterface} from "~/components/ruta/interfaces/navbar-solo-titulo.interface";
+import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 
 export interface RutaComunInterface<T = any> {
     loading: boolean;
@@ -13,6 +14,6 @@ export interface RutaComunInterface<T = any> {
     navbar: NavbarSoloTituloInterface;
     navigate: NavigateFunction;
     path: string;
-    eventoSeleccionoSort: (sortField: SortFieldInterface, skipTake?: { skip: number, take: number }) => void;
+    eventoSeleccionoSort: (sortField: SortFieldInterface, skipTake?: SkipTakeInterface) => void;
     mostrarFab: boolean;
 }

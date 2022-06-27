@@ -18,6 +18,7 @@ import {NavbarSoloTituloInterface} from "~/components/ruta/interfaces/navbar-sol
 import {motion} from "framer-motion";
 import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-parametros";
 import {SkipTakeConstant} from "~/constantes/skip-take.constant";
+import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
@@ -83,7 +84,7 @@ export default function LibroBiblioteca() {
     const navegarParametrosEditar = (queryParams: string, registro: LibroBibliotecaInterface) => {
         return `${path}/${registro.id}?` + queryParams;
     };
-    const eventoSeleccionoSort = (sortField: SortFieldInterface, skipTake: { skip: number, take: number }) => {
+    const eventoSeleccionoSort = (sortField: SortFieldInterface, skipTake: SkipTakeInterface) => {
         if (sortField && skipTake) {
             navigate(`${path}?${generarNavegarParametros(skipTake, sortField)}`)
         }

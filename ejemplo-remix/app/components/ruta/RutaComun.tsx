@@ -12,6 +12,7 @@ import {SkipTakeConstant} from "~/constantes/skip-take.constant";
 import {SortOrderEnum} from "~/enum/sort-order.enum";
 import {convertirQueryParams} from "~/functions/http/convertir-query-params";
 import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-parametros";
+import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 
 export default function RutaComun<T>(props: RutaComunInterface<T>) {
     const {
@@ -45,7 +46,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
     const [skipTake, setSkipTake] = useState({
             skip: findDto.skip ? findDto.skip : 0,
             take: findDto.take ? findDto.take : SkipTakeConstant.take,
-        }
+        } as SkipTakeInterface
     );
 
     // UseEffect

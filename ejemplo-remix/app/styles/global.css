@@ -49,12 +49,23 @@ body {
 
 .badge-sort-order > span {
     padding: 4px;
-    transform: translateX(40px);
+    transform: translateX(15px);
 }
 
+.badge-sort-order-right > span {
+    padding: 4px;
+    transform: translateX(-25px);
+}
+.black{
+    background-color: black;
+}
+.white{
+    color: #FFF;
+}
 .navbar-ruta {
     min-height: 75px;
     padding-top: 12px;
+    color:#fff;
 }
 
 .navbar-ruta-titulo {

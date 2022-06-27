@@ -3,6 +3,7 @@ import KonstaContainer from "~/components/KonstaContainer";
 import ButtonMui from '@mui/material/Button';
 
 export default function Index() {
+
     return (
         <>
             <KonstaContainer titulo="Inicio">

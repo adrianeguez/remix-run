@@ -3,7 +3,7 @@ import {Block, BlockTitle, Button, List, Navbar, Page, Popup, useTheme} from "ko
 import {useEffect, useState} from "react";
 import {Form, useLoaderData, useNavigate} from "@remix-run/react";
 import type {ActionFunction, Request} from "@remix-run/node";
-import {redirect} from "@remix-run/node";
+import {json, LoaderFunction, redirect} from "@remix-run/node";
 import type {SubmitHandler} from "react-hook-form";
 import {useForm} from "react-hook-form";
 import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
@@ -20,19 +20,35 @@ import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliot
 import {LibroBibliotecaForm} from "~/http/libro-biblioteca/form/libro-biblioteca.form";
 import {LibroBibliotecaInstanceHttp} from "~/http/libro-biblioteca/libro-biblioteca-instance.http";
 import {SisHabilitadoEnum} from "~/enum/sis-habilitado.enum";
+import {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-find.dto";
+import {LoaderSetQueryparams} from "~/functions/http/loader-set-queryparams";
+import {eliminarUndNullVacio} from "~/functions/util/eliminar-und-null-vacio";
+import {convertirQueryParams} from "~/functions/http/convertir-query-params";
 
 interface RequestData {
     request: Request
 }
 
+type LoaderData = {
+    findDto?: LibroBibliotecaFindDto;
+};
 let eventoAutocompleteLocal: CampoFormularioInterface;
+export const loader: LoaderFunction = async ({request}) => {
+    const requestUrl = request.url;
+    const findDto: LibroBibliotecaFindDto = LoaderSetQueryparams(requestUrl);
+    const url = new URL(requestUrl);
+    return json({findDto});
+};
+
 export const action = async (req: RequestData): Promise<ActionFunction> => {
     const body = await req.request.formData();
-    console.log('EN LA ACCION', body);
+    const requestUrl = req.request.url;
+    const findDto = LoaderSetQueryparams(requestUrl);
+
     try {
         const respuesta = await LibroBibliotecaInstanceHttp.create({sisHabilitado: SisHabilitadoEnum.Activo});
         // fetc POST libro-biblioteca NESTJS
-        return redirect(`/libro-biblioteca?mensaje=Registro libro biblioteca creado`) as any;
+        return redirect(`/libro-biblioteca?${convertirQueryParams(eliminarUndNullVacio(findDto))}&mensaje=Registro libro biblioteca creado`) as any;
     } catch (error) {
         console.error({error, mensaje: 'Error creando libro biblioteca'});
         return new Response(null as any, {status: 500}) as any;
@@ -52,7 +68,7 @@ export default function New() {
 
     // Hooks Librearias
     const navigate = useNavigate();
-    const data = useLoaderData();
+    const data: LoaderData = useLoaderData();
     const theme = useTheme();
     const defaultValues = () => {
         const defaultValuesObject: any = {};
@@ -99,7 +115,6 @@ export default function New() {
         }
     };
     const buscarAutocomplete = async (data: ObservableWatchCampoInterface) => {
-        console.log('eventoAutocomplete', eventoAutocomplete, 'eventoAutocompleteLocal', eventoAutocompleteLocal, 'popupOpened', popupOpened, 'actionsOneOpened', actionsOneOpened);
         if ((Object.keys(eventoAutocompleteLocal).length > 0 && popupOpened) || (!tieneCampoFormulario)) {
             switch (eventoAutocompleteLocal.formControlName) {
                 case 'autocomplete':
@@ -154,7 +169,6 @@ export default function New() {
     )
     useEffect(
         () => {
-            console.log('actionsOneOpened', actionsOneOpened);
             if (actionsOneOpened) {
                 buscarAutocomplete({value: '', data: {}, info: {type: '', name: ''}}).then();
             }
@@ -168,26 +182,27 @@ export default function New() {
         setPopupOpened(false);
         setTimeout(
             () => {
-                navigate({pathname: "/libro-biblioteca"})
+                navigate({pathname: `/libro-biblioteca?${convertirQueryParams(data.findDto)}`})
             },
             500
         );
     }
     // Metodos Formulario
-    const onSubmit: SubmitHandler<any> = async (data) => {
-        console.log('COSAS', useFormReturn.formState, data);
+    const onSubmit: SubmitHandler<any> = async (dataForm) => {
         const formData = new FormData(document.getElementById('form'))
         setLoading(true);
         try {
-            const respuesta = await fetch('/libro-biblioteca/new', {method: 'POST', body: formData})
-            console.log(respuesta);
+            const respuesta = await fetch(`/libro-biblioteca/new?${convertirQueryParams(data.findDto)}`, {
+                method: 'POST',
+                body: formData
+            })
             if (respuesta.redirected) {
                 setLoading(false);
                 window.location.replace(respuesta.url);
             } else {
                 setLoading(false);
                 toast.error('Error del servidor');
-                console.error({error:respuesta, mensaje: 'Error creando nuevo registro'});
+                console.error({error: respuesta, mensaje: 'Error creando nuevo registro'});
             }
         } catch (error) {
             setLoading(false);

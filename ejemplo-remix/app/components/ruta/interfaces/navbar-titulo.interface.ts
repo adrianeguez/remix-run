@@ -4,6 +4,7 @@ export interface NavbarTituloInterface {
     titulo: string;
     imagen?: string;
     color?: string;
+    tituloColor?: string;
     backgroundColor?: string;
     textoDescripcion?: string;
     sortFieldSeleccionado: SortFieldInterface;

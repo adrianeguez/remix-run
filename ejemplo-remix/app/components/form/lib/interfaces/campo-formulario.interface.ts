@@ -7,6 +7,7 @@ import type {CampoFormularioNumberInterface} from "~/components/form/lib/interfa
 import type {
     CampoFormularioAutocompleteInterface
 } from "~/components/form/lib/interfaces/campo-formulario-autocomplete.interface";
+import {CampoFormularioToggleInterface} from "~/components/form/lib/interfaces/campo-formulario-toggle.interface";
 
 export interface CampoFormularioInterface {
     formControlName: string;
@@ -24,6 +25,7 @@ export interface CampoFormularioInterface {
     select?: CampoFormularioSelectInterface;
     number?: CampoFormularioNumberInterface;
     autocomplete?: CampoFormularioAutocompleteInterface;
+    toggle?: CampoFormularioToggleInterface;
     // select?: SelectField;
     // mask?: Mask;
     // autoComplete?: AutoComplete;

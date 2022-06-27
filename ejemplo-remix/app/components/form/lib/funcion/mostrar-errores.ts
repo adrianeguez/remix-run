@@ -1,7 +1,6 @@
 import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 
 export function MostrarErrores(error: any, field, campoFormulario: CampoFormularioInterface) {
-    console.log(campoFormulario, error, field);
     let mensajeError = '';
     if (error && field) {
         if (error[field.name]) {

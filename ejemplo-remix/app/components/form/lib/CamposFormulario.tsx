@@ -130,8 +130,6 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                             render={
                                 ({field}) => (
                                     <div>
-                                        {/*<input type="hidden"*/}
-                                        {/*       value={campoFormulario.autocomplete ? field.value[campoFormulario.autocomplete.nombrePropiedadObjeto] : ''}/>*/}
                                         <ListItem
                                             media={<><img className={'icon-small'}
                                                           src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
@@ -158,7 +156,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
             )
         }
         const esToggle = campoFormulario.type === CampoFormularioType.Toggle;
-        if (esToggle) {
+        if (esToggle && campoFormulario.toggle) {
             return (
                 <div
                     key={campoFormulario.formControlName}>
@@ -169,14 +167,13 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                         render={
                             ({field}) => (
                                 <div>
-                                    {/*<input type="hidden"*/}
-                                    {/*       value={campoFormulario.autocomplete ? field.value[campoFormulario.autocomplete.nombrePropiedadObjeto] : ''}/>*/}
                                     <ListItem
                                         media={<><img className={'icon-small'}
                                                       src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
                                                       alt=""/></>}
                                         header={campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'}
                                         titleWrapClassName={field.value ? '' : 'texto-placeholder'}
+                                        title={field.value ? campoFormulario.toggle?.opcionPositivaLabel : campoFormulario.toggle?.opcionNegativaLabel}
                                         after={
                                             <Toggle
                                                 className="-my-1"
@@ -184,7 +181,6 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                                                 onChange={field.onChange}
                                             />
                                         }
-
                                         footer={campoFormulario.help}
                                     />
                                 </div>

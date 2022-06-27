@@ -1,5 +1,6 @@
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {LibroBibliotecaEnum} from "~/http/libro-biblioteca/form/libro-biblioteca.enum";
+import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 
 export function LibroBibliotecaForm() {
     return [
@@ -218,8 +219,12 @@ export function LibroBibliotecaForm() {
             actualValue: '',
             type: CampoFormularioType.Toggle,
             valid: false,
-            placeholder: 'EJ: Adrian',
-            validators: {}
+            placeholder: '',
+            validators: {},
+            toggle: {
+                opcionNegativaLabel: 'Deshabilitado',
+                opcionPositivaLabel: 'Habilitado'
+            }
         },
-    ]
+    ] as CampoFormularioInterface[]
 }

@@ -60,6 +60,7 @@ body {
 .black {
     background-color: black;
 }
+
 .texto-oscuro {
     color: black;
 }
@@ -93,4 +94,9 @@ body {
 
 .skip-take-page > div > div > div {
     justify-content: center;
+}
+
+.popup-modal {
+    overflow-y: auto;
+    max-height: 80%;
 }

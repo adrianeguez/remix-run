@@ -271,7 +271,7 @@ export default function New() {
                 transition={{duration: 1}}
             >
                 <Popup className={"pop-up-konstaui"} opened={popupOpened} onBackdropClick={() => salir()}>
-                    <Page>
+                    <>
                         <Navbar
                             title="Nuevo"
                             right={
@@ -280,7 +280,7 @@ export default function New() {
                                 </div>
                             }
                         />
-                        <Block className="space-y-4">
+                        <Block className="space-y-4 popup-modal">
                             <BlockTitle>Ejemplo de formulario</BlockTitle>
                             <br/>
                             <List hairlines={hairlines}>
@@ -291,7 +291,7 @@ export default function New() {
                                 </Form>
                             </List>
                         </Block>
-                    </Page>
+                    </>
                 </Popup>
             </motion.div>
             <CamposFormularioAction actionsOneOpened={actionsOneOpened}

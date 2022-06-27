@@ -2,7 +2,7 @@ import {SortOrderEnum} from "~/enum/sort-order.enum";
 import {SkipTakeConstant} from "~/constantes/skip-take.constant";
 
 export function LoaderSetQueryparams(requestUrl: string) {
-    let findDto: any = {};
+    const findDto: any = {};
     const url = new URL(requestUrl);
     findDto.sortField = url.searchParams.get("sortField") as string;
     findDto.sortOrder = url.searchParams.get("sortOrder") as SortOrderEnum;

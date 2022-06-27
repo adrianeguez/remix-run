@@ -7,7 +7,7 @@ export function LibroBibliotecaForm() {
             formControlName: LibroBibliotecaEnum.Nombre,
             help: 'Ingrese un nombre',
             label: 'Nombre',
-            initialValue: 'Adrian',
+            initialValue: '',
             actualValue: '',
             type: CampoFormularioType.Text,
             valid: false,
@@ -32,12 +32,13 @@ export function LibroBibliotecaForm() {
             formControlName: LibroBibliotecaEnum.Password,
             help: 'Ingrese un password',
             label: 'Password',
-            initialValue: 'p4ssword',
+            initialValue: '',
             actualValue: '',
             type: CampoFormularioType.Password,
             valid: false,
             placeholder: 'EJ: xxxxxxxx',
             validators: {
+                required: true,
                 // no validators
             }
         },
@@ -45,12 +46,13 @@ export function LibroBibliotecaForm() {
             formControlName: LibroBibliotecaEnum.Email,
             help: 'Ingrese un correo',
             label: 'Email',
-            initialValue: 'a@a.com',
+            initialValue: '',
             actualValue: '',
             type: CampoFormularioType.Email,
             valid: false,
             placeholder: 'EJ: a@a.com',
             validators: {
+                required: true,
                 // no validators
                 email: {
                     mensaje: 'Ingrese un correo valido'
@@ -67,6 +69,7 @@ export function LibroBibliotecaForm() {
             valid: false,
             placeholder: 'EJ: https://...',
             validators: {
+                required: true,
                 // no validators
                 url: {
                     mensaje: 'Ingrese un url correctamente'
@@ -83,6 +86,7 @@ export function LibroBibliotecaForm() {
             valid: false,
             placeholder: 'EJ: 0995774444',
             validators: {
+                required: true,
                 // no validators
             }
         },
@@ -90,12 +94,13 @@ export function LibroBibliotecaForm() {
             formControlName: LibroBibliotecaEnum.Fecha,
             help: 'Ingrese la fecha de nacimiento',
             label: 'Fecha nacimiento',
-            initialValue: new Date().toISOString().slice(0, 10),
+            initialValue: '', //new Date().toISOString().slice(0, 10),
             actualValue: '',
             type: CampoFormularioType.Date,
             valid: false,
             placeholder: 'EJ: 0995774444',
             validators: {
+                required: true,
                 // no validators
             }
         },
@@ -103,12 +108,13 @@ export function LibroBibliotecaForm() {
             formControlName: LibroBibliotecaEnum.FechaHora,
             help: 'Ingrese la fecha hora de logeo',
             label: 'Fecha hora logeo',
-            initialValue: new Date().toISOString().slice(0, 16),
+            initialValue: '', //new Date().toISOString().slice(0, 16),
             actualValue: '',
             type: CampoFormularioType.DateTime,
             valid: false,
             placeholder: 'EJ: 0995774444',
             validators: {
+                required: true,
                 // no validators
             }
         },
@@ -116,13 +122,13 @@ export function LibroBibliotecaForm() {
             formControlName: LibroBibliotecaEnum.Textarea,
             help: 'Ingrese una descripcion',
             label: 'Descripcion',
-            initialValue: `Hola
-            descripcion`,
+            initialValue: ``,
             actualValue: '',
             type: CampoFormularioType.Textarea,
             valid: false,
             placeholder: 'EJ: El dia 10 de ...',
             validators: {
+                required: true,
                 // no validators
             }
         },
@@ -130,16 +136,22 @@ export function LibroBibliotecaForm() {
             formControlName: LibroBibliotecaEnum.Select,
             help: 'Seleccione un dia de la semana',
             label: 'Dia semana',
-            initialValue: `lunes`,
+            initialValue: ``,
             actualValue: '',
             type: CampoFormularioType.Select,
             valid: false,
             placeholder: 'EJ: Lun/Mart',
             validators: {
+                required: true,
                 // no validators
             },
             select: {
                 opciones: [
+                    {
+                        id: 'x',
+                        label: 'Seleccione uno',
+                        value: '',
+                    },
                     {
                         id: 'lunes',
                         label: 'Lunes',
@@ -162,12 +174,13 @@ export function LibroBibliotecaForm() {
             formControlName: LibroBibliotecaEnum.Numero,
             help: 'Ingrese su sueldo',
             label: 'Sueldo',
-            initialValue: 10.02,
+            initialValue: '',
             actualValue: '',
             type: CampoFormularioType.Number,
             valid: false,
             placeholder: 'EJ: 10.02',
             validators: {
+                required: true,
                 max: {
                     value: 15,
                     validationFn: (v) => v < 15 ? true : 'No mayor a 15'
@@ -185,15 +198,28 @@ export function LibroBibliotecaForm() {
             formControlName: LibroBibliotecaEnum.Autocomplete,
             help: 'Seleccione un libro',
             label: 'Libro',
-            initialValue: 2,
+            initialValue: '',
             actualValue: '',
             type: CampoFormularioType.Autocomplete,
             valid: false,
-            placeholder: 'EJ: 10.02',
-            validators: {},
+            placeholder: 'EJ: Libro 1',
+            validators: {
+                required: true,
+            },
             autocomplete: {
                 nombrePropiedadObjeto: 'id'
             }
-        }
+        },
+        {
+            formControlName: LibroBibliotecaEnum.Toggle,
+            help: 'Selecciono si esta habilitado',
+            label: 'Habilitado',
+            initialValue: false,
+            actualValue: '',
+            type: CampoFormularioType.Toggle,
+            valid: false,
+            placeholder: 'EJ: Adrian',
+            validators: {}
+        },
     ]
 }

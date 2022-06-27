@@ -1,6 +1,6 @@
 import {
     ListInput,
-    ListItem,
+    ListItem, Toggle,
 } from "konsta/react";
 import {Controller} from "react-hook-form";
 import type {UseFormReturn} from "react-hook-form/dist/types";
@@ -27,7 +27,9 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
     } = props.useFormReturn;
     const generarCampo = (campoFormulario: CampoFormularioInterface) => {
         const reglas: any = GenerarReglas(campoFormulario);
-
+        const generarLabel = ()=>{
+            return campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'
+        }
         const esCampoComun = campoFormulario.type === CampoFormularioType.Url ||
             campoFormulario.type === CampoFormularioType.Text ||
             campoFormulario.type === CampoFormularioType.Password ||
@@ -116,7 +118,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
             return (
                 <div
                     key={campoFormulario.formControlName}
-                    onClick={() => setEventoAutocomplete({...campoFormulario,__key:new Date().getTime()})}>
+                    onClick={() => setEventoAutocomplete({...campoFormulario, __key: new Date().getTime()})}>
                     <motion.div
                         whileTap={{scale: 1.01}}
                     >
@@ -134,19 +136,61 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                                             media={<><img className={'icon-small'}
                                                           src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
                                                           alt=""/></>}
-                                            header={campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'}
-                                            title={mostrarValor(field)}
+                                            header={errors[campoFormulario.formControlName] ?
+                                                <span className={'text-red-500'}>{generarLabel()}</span> :
+                                                generarLabel()}
+                                            title={mostrarValor(field) === '' ? campoFormulario.placeholder : mostrarValor(field)}
                                             titleWrapClassName={field.value ? '' : 'texto-placeholder'}
                                             after={<><img className={'icon-small'}
                                                           src="https://cdn2.iconfinder.com/data/icons/business-management-color/64/select-choose-right-person-hr-job-human-resource-512.png"
                                                           alt=""/></>}
-                                            footer={campoFormulario.help}
+                                            footer={errors[campoFormulario.formControlName] ?
+                                                <span className={'text-red-500'}>{MostrarErrores(errors, field, campoFormulario)}</span> :
+                                                campoFormulario.help
+                                            }
                                         />
                                     </div>
                                 )
                             }
                         />
                     </motion.div>
+                </div>
+            )
+        }
+        const esToggle = campoFormulario.type === CampoFormularioType.Toggle;
+        if (esToggle) {
+            return (
+                <div
+                    key={campoFormulario.formControlName}>
+                    <Controller
+                        name={campoFormulario.formControlName as any}
+                        control={control as any}
+                        rules={reglas}
+                        render={
+                            ({field}) => (
+                                <div>
+                                    {/*<input type="hidden"*/}
+                                    {/*       value={campoFormulario.autocomplete ? field.value[campoFormulario.autocomplete.nombrePropiedadObjeto] : ''}/>*/}
+                                    <ListItem
+                                        media={<><img className={'icon-small'}
+                                                      src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
+                                                      alt=""/></>}
+                                        header={campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'}
+                                        titleWrapClassName={field.value ? '' : 'texto-placeholder'}
+                                        after={
+                                            <Toggle
+                                                className="-my-1"
+                                                checked={field.value}
+                                                onChange={field.onChange}
+                                            />
+                                        }
+
+                                        footer={campoFormulario.help}
+                                    />
+                                </div>
+                            )
+                        }
+                    />
                 </div>
             )
         }

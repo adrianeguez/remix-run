@@ -189,26 +189,27 @@ export default function New() {
     }
     // Metodos Formulario
     const onSubmit: SubmitHandler<any> = async (dataForm) => {
-        const formData = new FormData(document.getElementById('form'))
-        setLoading(true);
-        try {
-            const respuesta = await fetch(`/libro-biblioteca/new?${convertirQueryParams(data.findDto)}`, {
-                method: 'POST',
-                body: formData
-            })
-            if (respuesta.redirected) {
-                setLoading(false);
-                window.location.replace(respuesta.url);
-            } else {
-                setLoading(false);
-                toast.error('Error del servidor');
-                console.error({error: respuesta, mensaje: 'Error creando nuevo registro'});
-            }
-        } catch (error) {
-            setLoading(false);
-            toast.error('Error del servidor');
-            console.error({error, mensaje: 'Error creando nuevo registro'});
-        }
+        console.log('dataForm',dataForm);
+        // const formData = new FormData(document.getElementById('form'))
+        // setLoading(true);
+        // try {
+        //     const respuesta = await fetch(`/libro-biblioteca/new?${convertirQueryParams(data.findDto)}`, {
+        //         method: 'POST',
+        //         body: formData
+        //     })
+        //     if (respuesta.redirected) {
+        //         setLoading(false);
+        //         window.location.replace(respuesta.url);
+        //     } else {
+        //         setLoading(false);
+        //         toast.error('Error del servidor');
+        //         console.error({error: respuesta, mensaje: 'Error creando nuevo registro'});
+        //     }
+        // } catch (error) {
+        //     setLoading(false);
+        //     toast.error('Error del servidor');
+        //     console.error({error, mensaje: 'Error creando nuevo registro'});
+        // }
 
     };
     // Metodos Autocomplete

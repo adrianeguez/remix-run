@@ -10,6 +10,7 @@ export enum CampoFormularioType {
     Select = 'select',
     Number = 'number',
     Autocomplete = 'autocomplete',
+    Toggle = 'toggle',
     // textarea = 'textarea',
     // mask = 'mask',
     // autoComplete = 'autoComplete',

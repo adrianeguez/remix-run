@@ -10,4 +10,5 @@ export enum LibroBibliotecaEnum {
     Select = 'select',
     Numero = 'numero',
     Autocomplete = 'autocomplete',
+    Toggle = 'toggle',
 }

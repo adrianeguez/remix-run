@@ -1,7 +1,7 @@
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {LibroBibliotecaEnum} from "~/http/libro-biblioteca/form/libro-biblioteca.enum";
 
-export function LibroBibliotecaForm(){
+export function LibroBibliotecaForm() {
     return [
         {
             formControlName: LibroBibliotecaEnum.Nombre,

@@ -15,6 +15,7 @@ import {LoaderSetQueryparams} from "~/functions/http/loader-set-queryparams";
 import {NavigateFunction} from "react-router";
 import RutaComun from "~/components/ruta/RutaComun";
 import {NavbarSoloTituloInterface} from "~/components/ruta/interfaces/navbar-solo-titulo.interface";
+import {motion} from "framer-motion";
 
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
@@ -22,6 +23,7 @@ type LoaderData = {
     mensaje?: string;
     findDto: LibroBibliotecaFindDto;
 };
+// Carga de datos en backend
 export const loader: LoaderFunction = async ({request}) => {
     const returnData: LoaderData = {} as any;
     const requestUrl = request.url;
@@ -36,14 +38,19 @@ export const loader: LoaderFunction = async ({request}) => {
     }
     return json(returnData);
 };
+// Ruta
 export default function LibroBiblioteca() {
     // Hooks Librearias y variables globales
     const data = useLoaderData<LoaderData>();
     const navigate: NavigateFunction = useNavigate();
     const path = '/libro-biblioteca';
     const navbar: NavbarSoloTituloInterface = {
-        titulo: 'Libros biblioteca'
-    }
+        titulo: 'El diablo es gay',
+        imagen: 'https://www.adslzone.net/app/uploads-adslzone.net/2019/04/borrar-fondo-imagen.jpg',
+        textoDescripcion: 'Me gusta el diablo',
+        colorClaseBanner: 'libro-biblioteca-banner',
+        colorTituloClase: 'texto-oscuro',
+    };
 
     // Inicializar variables useState
     const [loading, setLoading] = useState(false);
@@ -71,8 +78,8 @@ export default function LibroBiblioteca() {
     const navegarParametrosNuevo = (queryParams: string) => {
         navigate(`${path}/new?` + queryParams);
     };
-    const navegarParametrosEditar = (queryParams: string) => {
-        return `${path}?` + queryParams;
+    const navegarParametrosEditar = (queryParams: string, registro:LibroBibliotecaInterface) => {
+        return `${path}/${registro.id}?` + queryParams;
     };
     return (
         <KonstaContainer titulo="Libro biblioteca">
@@ -85,11 +92,19 @@ export default function LibroBiblioteca() {
                                                      navigateFabNewFunction={navegarParametrosNuevo}
                                                      registrosEncontrados={data.registros}
                                                      sortFieldsArray={sortFields}
-                                                     mostrarItemEnLista={(registro, skipTake) => (<>
-                                                         <Link key={registro.id} to={navegarParametrosEditar(skipTake)}>
+                                                     mostrarItemEnLista={(registro, skipTake, indice) => (<>
+                                                     <motion.div
+                                                         initial={{opacity: 0, y: 10}}
+                                                         animate={{opacity: 1, y: 0}}
+                                                         exit={{opacity: 0, y: 0}}
+                                                         transition={{delay: indice * 0.1}}
+                                                         key={registro.id}>
+                                                         <Link to={navegarParametrosEditar(skipTake, registro)}>
                                                              <LibroBibliotecaMostrar
                                                                  registro={registro}></LibroBibliotecaMostrar>
                                                          </Link>
+
+                                                     </motion.div>
                                                      </>)
                                                      }
                 />}

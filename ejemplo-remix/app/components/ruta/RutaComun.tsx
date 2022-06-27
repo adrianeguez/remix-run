@@ -129,7 +129,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                     {registrosEncontrados[0].map(
                         (registro, indice) => (
                             <div key={indice + Date.now()}>
-                                {mostrarItemEnLista(registro, generarNavegarParametros(skipTake, sortFieldSeleccionado))}
+                                {mostrarItemEnLista(registro, generarNavegarParametros(skipTake, sortFieldSeleccionado), indice)}
                             </div>
                         )
                     )}
@@ -158,7 +158,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                 <Fab
                     className="fixed right-4-safe bottom-4-safe z-20 fab-opened"
                     onClick={() => {
-                        navigateFabNewFunction(generarNavegarParametros(skipTake, sortFieldSeleccionado), this)
+                        navigateFabNewFunction(generarNavegarParametros(skipTake, sortFieldSeleccionado))
                     }}
                     text="+"/>
                 <Outlet/>

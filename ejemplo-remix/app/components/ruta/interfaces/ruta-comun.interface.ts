@@ -9,7 +9,7 @@ export interface RutaComunInterface<T = any> {
     registrosEncontrados: [T[], number];
     findDto: any;
     sortFieldsArray: SortFieldInterface[];
-    mostrarItemEnLista: (registro:T, queryParams: string) => JSX.Element;
+    mostrarItemEnLista: (registro:T, queryParams: string, indice:number) => JSX.Element;
     navbar: NavbarSoloTituloInterface;
     navigate: NavigateFunction;
     path: string;

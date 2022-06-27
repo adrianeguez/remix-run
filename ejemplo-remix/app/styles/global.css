@@ -60,6 +60,14 @@ body {
 .black {
     background-color: black;
 }
+.texto-oscuro {
+    color: black;
+}
+
+
+.libro-biblioteca-banner {
+    background-color: #fbd300;
+}
 
 .white {
     color: #FFF;
@@ -79,6 +87,8 @@ body {
 .navbar-ruta-imagen {
     float: right;
     margin-left: 10px;
+    height: 30px;
+    width: 30px;
 }
 
 .skip-take-page > div > div > div {

@@ -56,16 +56,19 @@ body {
     padding: 4px;
     transform: translateX(-25px);
 }
-.black{
+
+.black {
     background-color: black;
 }
-.white{
+
+.white {
     color: #FFF;
 }
+
 .navbar-ruta {
     min-height: 75px;
     padding-top: 12px;
-    color:#fff;
+    color: #fff;
 }
 
 .navbar-ruta-titulo {
@@ -77,6 +80,7 @@ body {
     float: right;
     margin-left: 10px;
 }
-.skip-take-page > div> div> div{
+
+.skip-take-page > div > div > div {
     justify-content: center;
 }

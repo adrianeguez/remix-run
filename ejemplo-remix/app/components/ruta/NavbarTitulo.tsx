@@ -9,8 +9,8 @@ export default function NavbarTitulo(props: NavbarTituloInterface) {
     const {
         titulo = 'Titulo',
         imagen = 'https://cdn-icons-png.flaticon.com/512/2232/2232688.png',
-        color = 'black',
-        tituloColor = 'white',
+        colorClaseBanner = 'black',
+        colorTituloClase = 'white',
         textoDescripcion = 'Ingrese la informacion necesaria',
         sortFieldSeleccionado,
         setActionSortFieldOpened,
@@ -20,10 +20,10 @@ export default function NavbarTitulo(props: NavbarTituloInterface) {
         <>
             <Navbar
                 className={'navbar-ruta'}
-                colors={{bgIos:'black', bgMaterial:'black', title:'white'}}
+                colors={{bgIos:colorClaseBanner, bgMaterial:colorClaseBanner}}
                 title={
                     <>
-                        <div className={'navbar-ruta-titulo ' +tituloColor}>{titulo}</div>
+                        <div className={'navbar-ruta-titulo ' +colorTituloClase}>{titulo}</div>
                         <img className={'icon-medium navbar-ruta-imagen'}
                              src={imagen} alt=""/>
                     </> as any

@@ -20,6 +20,10 @@ import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-paramet
 import {SkipTakeConstant} from "~/constantes/skip-take.constant";
 import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 import ComponenteError from "~/components/error/ComponenteError";
+import {Actions, ActionsButton, ActionsGroup, ActionsLabel, Block, Button, Sheet, Toolbar} from "konsta/react";
+import {LibroBibliotecaMostrarEnum} from "~/components/libro-biblioteca/enums/libro-biblioteca-mostrar.enum";
+import {DeshabilitarRegistroHttp} from "~/functions/http/deshabilitar-registro.http";
+import SheetContenedor from "~/components/util/sheet-contenedor";
 
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
@@ -60,6 +64,10 @@ export default function LibroBiblioteca() {
     // Inicializar variables useState
     const [loading, setLoading] = useState(false);
     const [sortFields, setSortFields] = useState([...CommonSortFieldsConstant] as SortFieldInterface[]);
+    const [abrioOpciones, setAbrioOpciones] = useState(false);
+    const [registroSeleccionado, setRegistroSeleccionado] = useState({} as LibroBibliotecaInterface);
+    const [visualizacionAbierto, setVisualizacionAbierto] = useState(false);
+    // const [registros, setRegistros] = useState([...data.registros] as [LibroBibliotecaInterface[], number]);
 
     // Funciones Util
 
@@ -68,11 +76,9 @@ export default function LibroBiblioteca() {
     // Use Effect - Componente inicializado
     useEffect(
         () => {
-            console.log('data', data);
             if (data.error) {
-                console.log('EL AMOR');
                 toast.error('Error del servidor');
-            }else{
+            } else {
                 if (data.mensaje) {
                     toast.success(data.mensaje);
                 } else {
@@ -93,36 +99,93 @@ export default function LibroBiblioteca() {
         if (sortField && skipTake) {
             navigate(`${path}?${generarNavegarParametros(skipTake, sortField)}`)
         }
-    }
+    };
+    const dioClicBoton = (registro: LibroBibliotecaInterface, nombreEvento: LibroBibliotecaMostrarEnum, queryParams?: string) => {
+        setRegistroSeleccionado(registro);
+        switch (nombreEvento) {
+            case LibroBibliotecaMostrarEnum.IconoNavegar:
+                if (queryParams) {
+                    navigate(navegarParametrosEditar(queryParams, registro));
+                }
+                break;
+            case LibroBibliotecaMostrarEnum.IconoOpciones:
+                setAbrioOpciones(true);
+                break;
+            default:
+                break;
+        }
+    };
+    const deshabilitarRecurso = async () => {
+        await DeshabilitarRegistroHttp(LibroBibliotecaInstanceHttp, registroSeleccionado);
+        setAbrioOpciones(false);
+        navigate(`${path}?${LoaderSetQueryparams(window.location.href)}`);
+    };
+    const visualizarRegistro = () => {
+        console.log('Visualizando');
+        setAbrioOpciones(false);
+        setVisualizacionAbierto(true);
+    };
     return (
         <KonstaContainer titulo="Libro biblioteca">
             {data.registros &&
-                <RutaComun<LibroBibliotecaInterface> navigate={navigate}
-                                                     loading={loading}
-                                                     findDto={data.findDto}
-                                                     path={path}
-                                                     navbar={navbar}
-                                                     navigateFabNewFunction={navegarParametrosNuevo}
-                                                     registrosEncontrados={data.registros}
-                                                     sortFieldsArray={sortFields}
-                                                     eventoSeleccionoSort={eventoSeleccionoSort}
-                                                     mostrarFab={true}
-                                                     mostrarItemEnLista={(registro, queryParams, indice) => (<>
-                                                         <motion.div
-                                                             initial={{opacity: 0, y: 10}}
-                                                             animate={{opacity: 1, y: 0}}
-                                                             exit={{opacity: 0, y: 0}}
-                                                             transition={{delay: indice * 0.1}}
-                                                             key={registro.id}>
-                                                             <Link to={navegarParametrosEditar(queryParams, registro)}>
-                                                                 <LibroBibliotecaMostrar
-                                                                     registro={registro}></LibroBibliotecaMostrar>
-                                                             </Link>
+                <>
+                    <RutaComun<LibroBibliotecaInterface> navigate={navigate}
+                                                         loading={loading}
+                                                         findDto={data.findDto}
+                                                         path={path}
+                                                         navbar={navbar}
+                                                         navigateFabNewFunction={navegarParametrosNuevo}
+                                                         registrosEncontrados={data.registros}
+                                                         sortFieldsArray={sortFields}
+                                                         eventoSeleccionoSort={eventoSeleccionoSort}
+                                                         mostrarFab={true}
+                                                         mostrarItemEnLista={(registro, queryParams, indice) => (<>
+                                                             <motion.div
+                                                                 initial={{opacity: 0, y: 10}}
+                                                                 animate={{opacity: 1, y: 0}}
+                                                                 exit={{opacity: 0, y: 0}}
+                                                                 transition={{delay: indice * 0.1}}
+                                                                 key={registro.id}>
+                                                                 <LibroBibliotecaMostrar queryParams={queryParams}
+                                                                                         registro={registro}
+                                                                                         dioClicBoton={dioClicBoton}/>
+                                                             </motion.div>
+                                                         </>)
+                                                         }
+                    />
 
-                                                         </motion.div>
-                                                     </>)
-                                                     }
-                />}
+
+                </>
+            }
+            <Actions
+                opened={abrioOpciones}
+                onBackdropClick={() => setAbrioOpciones(false)}
+            >
+                <ActionsGroup>
+                    <ActionsLabel>Seleccione una accion</ActionsLabel>
+                    <ActionsButton onClick={() => visualizarRegistro()} bold>
+                        Visualizar
+                    </ActionsButton>
+                    <ActionsButton onClick={() => deshabilitarRecurso()} bold>
+                        <div
+                            className={registroSeleccionado.sisHabilitado ? 'text-red-500' : ''}>
+                            {registroSeleccionado.sisHabilitado ? 'Deshabiliar' : 'Habilitar'}{` ${registroSeleccionado.id}`}
+                        </div>
+                    </ActionsButton>
+                    <ActionsButton
+                        onClick={() => setAbrioOpciones(false)}
+                        colors={{text: 'text-red-500'}}
+                    >
+                        Cancelar
+                    </ActionsButton>
+                </ActionsGroup>
+            </Actions>
+            <SheetContenedor setVisualizacionAbierto={setVisualizacionAbierto}
+                             visualizacionAbierto={visualizacionAbierto}>
+                <p>
+                    Lorem ipsum
+                </p>
+            </SheetContenedor>
             {data.error && <ComponenteError linkTo={path}/>}
         </KonstaContainer>
     )

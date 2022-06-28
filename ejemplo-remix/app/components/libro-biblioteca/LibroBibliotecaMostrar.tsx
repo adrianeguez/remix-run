@@ -1,16 +1,44 @@
-import {ListItem} from "konsta/react";
+import {Actions, ActionsButton, ActionsGroup, ActionsLabel, Button, ListItem} from "konsta/react";
 import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
-import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import {useState} from "react";
+import {
+    LibroBibliotecaMostrarInterface
+} from "~/components/libro-biblioteca/interfaces/libro-biblioteca-mostrar.interface";
+import {LibroBibliotecaMostrarEnum} from "~/components/libro-biblioteca/enums/libro-biblioteca-mostrar.enum";
 
-export function LibroBibliotecaMostrar(props:{registro: LibroBibliotecaInterface}){
-    const {registro, campoFormulario} = props;
+export function LibroBibliotecaMostrar(props: LibroBibliotecaMostrarInterface) {
+    const {registro, dioClicBoton, queryParams} = props;
     return (
         <>
             <ListItem
-                title={registro.id?.toString()}
+                className={'list-item-mlabs ' + (registro.sisHabilitado ? '' : 'deshabilitado')}
+                media={<MenuBookIcon className={'text-yellow-500'}/>}
+                title={(<>
+                        <div className={'justify-items-stretch'}>
+                            <div style={{float: 'left'}}>
+                                {registro.id?.toString()}
+                            </div>
+                            <div className={'ml-2'} style={{float: 'right'}}>
+                                {dioClicBoton &&
+                                    <Button
+                                        onClick={() => dioClicBoton && dioClicBoton(registro, LibroBibliotecaMostrarEnum.IconoOpciones, queryParams)}><MoreVertIcon/></Button>}
+                            </div>
+                        </div>
+                    </>
+                ) as any}
                 subtitle={registro.id?.toString()}
-                after={(<img width={'15px'} height={'26px'} src={'https://www.freeiconspng.com/uploads/arrow-icon--icon-search-engine-2.png'}/>)}
-                text={'Fecha: ' + registro.sisCreado}
+                after={(<NavigateNextIcon
+                    className={'ml-4'}
+                    onClick={() => dioClicBoton && dioClicBoton(registro, LibroBibliotecaMostrarEnum.IconoNavegar, queryParams)}/>)}
+                text={
+                    <div className={'grid grid-cols-2 gap-4'}>
+                        <div>Fecha: {registro.sisCreado}</div>
+                        <div>Otro</div>
+                    </div>
+                }
             />
         </>
     )

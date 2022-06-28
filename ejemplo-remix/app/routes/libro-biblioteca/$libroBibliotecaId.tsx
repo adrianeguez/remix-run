@@ -1,5 +1,5 @@
 import {motion} from "framer-motion"
-import {Block, BlockTitle, Button, List, Navbar, Page, Popup, useTheme} from "konsta/react";
+import {Block, BlockTitle, Button, List, Navbar, Popup} from "konsta/react";
 import {useEffect, useState} from "react";
 import {Form, useLoaderData, useNavigate} from "@remix-run/react";
 import type {ActionFunction, Request} from "@remix-run/node";
@@ -11,10 +11,9 @@ import CamposFormulario from "~/components/form/lib/CamposFormulario";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {GenerarObservableWatchCampo} from "~/components/form/lib/funcion/generar-observable-watch-campo";
 import type {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
-import toast, {Toaster} from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
-import {Backdrop, CircularProgress} from "@mui/material";
-import {BackdropConstant} from "~/constantes/backdrop.constant";
+import {Backdrop} from "@mui/material";
 import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
 import {LibroBibliotecaForm} from "~/http/libro-biblioteca/form/libro-biblioteca.form";
 import {LibroBibliotecaInstanceHttp} from "~/http/libro-biblioteca/libro-biblioteca-instance.http";
@@ -26,6 +25,9 @@ import {convertirQueryParams} from "~/functions/http/convertir-query-params";
 import Backdrop from "~/components/util/backdrop-toaster";
 import CamposFormularioActionAutocomplete from "~/components/form/lib/CamposFormularioActionAutocomplete";
 import {LibroBibliotecaCreateDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-create.dto";
+import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+import EditIcon from '@mui/icons-material/Edit';
+import RestorePageIcon from '@mui/icons-material/RestorePage';
 
 interface RequestData {
     request: Request
@@ -250,10 +252,9 @@ export default function New() {
             let librosBiblioteca;
             setLoading(true);
             if (Number.isNaN(Number(data.value)) || data.value === '') {
-                librosBiblioteca = await LibroBibliotecaInstanceHttp.find({});
-
+                librosBiblioteca = await LibroBibliotecaInstanceHttp.find({sisHabilitado:SisHabilitadoEnum.Activo});
             } else {
-                librosBiblioteca = await LibroBibliotecaInstanceHttp.find({id: +data.value});
+                librosBiblioteca = await LibroBibliotecaInstanceHttp.find({id: +data.value, sisHabilitado:SisHabilitadoEnum.Activo});
             }
             toastInfo(`${librosBiblioteca[0].length} registros consultados`);
             setListaAutocomplete(librosBiblioteca[0]);
@@ -279,27 +280,34 @@ export default function New() {
                 exit="exit"
                 transition={{duration: 1}}
             >
-                <Popup className={"pop-up-konstaui"} opened={popupOpened} onBackdropClick={() => salir()}>
+                <Popup className={"pop-up-konstaui p-4"} opened={popupOpened} onBackdropClick={() => salir()}>
                     <>
                         <Navbar
-                            title={`${estaEditando ? 'Editando registro ' + estaEditando.id  : 'Creando un nuevo registro' }`}
+                            title={
+                            <div>
+                                <span className={'mr-2'}>{estaEditando? <RestorePageIcon/> : <EditIcon/> }</span> {`${estaEditando ? 'Editando ' + estaEditando.id  : 'Creando' }`}
+                            </div> as any
+                            }
+                            className={'navbar-titulo-popup'}
                             right={
-                                <div onClick={() => salir()}>
-                                    Cerrar
+                                <div className={'mr-3'} onClick={() => salir()}>
+                                    <CancelPresentationIcon/>
+
                                 </div>
                             }
                         />
-                        <Block className="space-y-4 popup-modal">
                             <BlockTitle>Ejemplo de formulario</BlockTitle>
                             <br/>
-                            <List hairlines={true}>
-                                <Form id="form" action="/libro-biblioteca/new" method="POST"
-                                      onSubmit={useFormReturn.handleSubmit(onSubmit)} noValidate>
-                                    {CamposFormularioComponente}
-                                </Form>
-                            </List>
-                        </Block>
-                        <Button large typeof={'submit'}> Crear </Button>
+                            <div className="space-y-4 popup-modal m-4">
+                                <List hairlines={true}>
+                                    <Form id="form" action="/libro-biblioteca/new" method="POST"
+                                          onSubmit={useFormReturn.handleSubmit(onSubmit)} noValidate>
+                                        {CamposFormularioComponente}
+                                    </Form>
+                                </List>
+
+                            </div>
+                            <Button className={'mb-4'} large typeof={'submit'}> Crear </Button>
                     </>
                 </Popup>
             </motion.div>

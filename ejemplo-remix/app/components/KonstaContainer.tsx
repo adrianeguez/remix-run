@@ -1,4 +1,4 @@
-import {App} from "konsta/react";
+import {App, useTheme} from "konsta/react";
 import LeftNavbarContainer from "~/components/LeftNavbarContainer";
 import {createContext, useState} from "react";
 import BackdropToaster from "~/components/util/backdrop-toaster";
@@ -15,10 +15,11 @@ const KonstaContainer = ({children, titulo}) => {
         titulo = 'El amor';
     }
     const [loading, setLoading] = useState(false);
+    const theme = useTheme();
 
     return (
         <>
-            <App theme="ios">
+            <App theme={'ios'}>
                 <KonstaContainerContext.Provider value={{loading, setLoading}}>
                     <LeftNavbarContainer titulo={titulo}>
                         {children}

@@ -98,5 +98,33 @@ body {
 
 .popup-modal {
     overflow-y: auto;
+    max-height: 66%;
+}
+
+.list-item-mlabs > div > div > div > div.shrink {
+    width: 100%;
+}
+
+.deshabilitado {
+    background-color: #e4e4e4;
+}
+
+.sheet-visualizar {
     max-height: 75%;
+    min-height: 50%;
+    /*height: 300px;*/
+    overflow-y: auto;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+
+.navbar-titulo-popup > div > div {
+    color: #FFF;
+}
+
+.navbar-titulo-popup > div {
+    background-color: #007aff;
 }

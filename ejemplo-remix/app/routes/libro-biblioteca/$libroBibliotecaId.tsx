@@ -22,12 +22,10 @@ import {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-bibliote
 import {LoaderSetQueryparams} from "~/functions/http/loader-set-queryparams";
 import {eliminarUndNullVacio} from "~/functions/util/eliminar-und-null-vacio";
 import {convertirQueryParams} from "~/functions/http/convertir-query-params";
-import Backdrop from "~/components/util/backdrop-toaster";
 import CamposFormularioActionAutocomplete from "~/components/form/lib/CamposFormularioActionAutocomplete";
 import {LibroBibliotecaCreateDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-create.dto";
-import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
-import EditIcon from '@mui/icons-material/Edit';
-import RestorePageIcon from '@mui/icons-material/RestorePage';
+import PopUpContenedor from "~/components/util/PopUpContenedor";
+import BackdropToaster from "~/components/util/BackdropToaster";
 
 interface RequestData {
     request: Request
@@ -278,36 +276,21 @@ export default function New() {
                 exit="exit"
                 transition={{duration: 1}}
             >
-                <Popup className={"pop-up-konstaui p-4"} opened={popupOpened} onBackdropClick={() => salir()}>
-                    <>
-                        <Navbar
-                            title={
-                            <div>
-                                <span className={'mr-2'}>{estaEditando? <RestorePageIcon/> : <EditIcon/> }</span> {`${estaEditando ? 'Editando ' + estaEditando.id  : 'Creando' }`}
-                            </div> as any
-                            }
-                            className={'navbar-titulo-popup'}
-                            right={
-                                <div className={'mr-3'} onClick={() => salir()}>
-                                    <CancelPresentationIcon/>
+                <PopUpContenedor popupOpened={popupOpened} estaEditando={estaEditando} eventoSalir={salir}>
 
-                                </div>
-                            }
-                        />
-                            <BlockTitle>Ejemplo de formulario</BlockTitle>
-                            <br/>
-                            <div className="space-y-4 popup-modal m-4">
-                                <List hairlines={true}>
-                                    <Form id="form" action="/libro-biblioteca/new" method="POST"
-                                          onSubmit={useFormReturn.handleSubmit(onSubmit)} noValidate>
-                                        {CamposFormularioComponente}
-                                    </Form>
-                                </List>
+                    <BlockTitle>El amor</BlockTitle>
+                    <br/>
+                    <div className="space-y-4 popup-modal m-4">
+                        <List hairlines={true}>
+                            <Form id="form" action="/libro-biblioteca/new" method="POST"
+                                  onSubmit={useFormReturn.handleSubmit(onSubmit)} noValidate>
+                                {CamposFormularioComponente}
+                            </Form>
+                        </List>
 
-                            </div>
-                            <Button className={'mb-4'} large typeof={'submit'}> Crear </Button>
-                    </>
-                </Popup>
+                    </div>
+                    <Button className={'mb-4'} large typeof={'submit'}> Crear </Button>
+                </PopUpContenedor>
             </motion.div>
             <CamposFormularioActionAutocomplete actionsOneOpened={actionAutocompleteAbierto}
                                                 useFormAutocomplete={useFormAutocomplete}
@@ -320,7 +303,7 @@ export default function New() {
                                                 setEventoAutocomplete={setEventoAutocomplete}
             >
             </CamposFormularioActionAutocomplete>
-            <Backdrop loading={loading}></Backdrop>
+            <BackdropToaster loading={loading}></BackdropToaster>
         </>
     )
 }

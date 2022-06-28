@@ -1,7 +1,7 @@
 import {App, useTheme} from "konsta/react";
 import LeftNavbarContainer from "~/components/LeftNavbarContainer";
 import {createContext, useState} from "react";
-import BackdropToaster from "~/components/util/backdrop-toaster";
+import BackdropToaster from "~/components/util/BackdropToaster";
 
 export interface KonstaContainerInterface {
     loading: boolean,

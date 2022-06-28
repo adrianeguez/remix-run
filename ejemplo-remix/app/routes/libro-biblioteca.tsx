@@ -23,10 +23,10 @@ import ComponenteError from "~/components/error/ComponenteError";
 import {Actions, ActionsButton, ActionsGroup, ActionsLabel, Block, Button, Sheet, Toolbar} from "konsta/react";
 import {LibroBibliotecaMostrarEnum} from "~/components/libro-biblioteca/enums/libro-biblioteca-mostrar.enum";
 import {DeshabilitarRegistroHttp} from "~/functions/http/deshabilitar-registro.http";
-import SheetContenedor from "~/components/util/sheet-contenedor";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import SheetContenedor from "~/components/util/SheetContenedor";
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
     error?: string,

@@ -1093,6 +1093,22 @@ body {
   margin-left: 0.5rem;
 }
 
+.ml-4 {
+  margin-left: 1rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.mr-3 {
+  margin-right: 0.75rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -1157,10 +1173,6 @@ body {
   margin-bottom: -0.25rem;
 }
 
-.mr-2 {
-  margin-right: 0.5rem;
-}
-
 .mt-1 {
   margin-top: 0.25rem;
 }
@@ -1199,22 +1211,6 @@ body {
 
 .\!ml-0 {
   margin-left: 0px !important;
-}
-
-.ml-4 {
-  margin-left: 1rem;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-
-.mb-4 {
-  margin-bottom: 1rem;
-}
-
-.mr-3 {
-  margin-right: 0.75rem;
 }
 
 .block {

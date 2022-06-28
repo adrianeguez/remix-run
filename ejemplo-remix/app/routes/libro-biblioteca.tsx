@@ -120,6 +120,7 @@ export default function LibroBiblioteca() {
     const deshabilitarRecurso = async () => {
         await DeshabilitarRegistroHttp(LibroBibliotecaInstanceHttp, registroSeleccionado);
         setAbrioOpciones(false);
+        toast.success('Registro actualizado');
         navigate(`${path}?${LoaderSetQueryparams(window.location.href)}`);
     };
     const visualizarRegistro = () => {

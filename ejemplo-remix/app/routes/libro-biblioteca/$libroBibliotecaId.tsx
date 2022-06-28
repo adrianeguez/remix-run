@@ -82,7 +82,6 @@ export default function New() {
     if(data.registro){
         estaEditando = data.registro[0][0];
     }
-    console.log(data, estaEditando);
 
     // Inicializar variables
     const [popupOpened, setPopupOpened] = useState(false);
@@ -209,7 +208,6 @@ export default function New() {
     }
     // Metodos Formulario
     const onSubmit: SubmitHandler<any> = async (dataForm) => {
-        console.log('dataForm', dataForm);
         const formData = new FormData(document.getElementById('form'))
         setLoading(true);
         try {

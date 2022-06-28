@@ -123,7 +123,6 @@ export default function LibroBiblioteca() {
         navigate(`${path}?${LoaderSetQueryparams(window.location.href)}`);
     };
     const visualizarRegistro = () => {
-        console.log('Visualizando');
         setAbrioOpciones(false);
         setVisualizacionAbierto(true);
     };

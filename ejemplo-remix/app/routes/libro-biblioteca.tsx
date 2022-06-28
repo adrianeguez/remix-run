@@ -24,7 +24,9 @@ import {Actions, ActionsButton, ActionsGroup, ActionsLabel, Block, Button, Sheet
 import {LibroBibliotecaMostrarEnum} from "~/components/libro-biblioteca/enums/libro-biblioteca-mostrar.enum";
 import {DeshabilitarRegistroHttp} from "~/functions/http/deshabilitar-registro.http";
 import SheetContenedor from "~/components/util/sheet-contenedor";
-
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
     error?: string,
@@ -164,12 +166,15 @@ export default function LibroBiblioteca() {
                 <ActionsGroup>
                     <ActionsLabel>Seleccione una accion</ActionsLabel>
                     <ActionsButton onClick={() => visualizarRegistro()} bold>
-                        Visualizar
+                        Visualizar <VisibilityIcon className={'ml-2'}/>
                     </ActionsButton>
                     <ActionsButton onClick={() => deshabilitarRecurso()} bold>
                         <div
                             className={registroSeleccionado.sisHabilitado ? 'text-red-500' : ''}>
                             {registroSeleccionado.sisHabilitado ? 'Deshabiliar' : 'Habilitar'}{` ${registroSeleccionado.id}`}
+                            <span className={'ml-2'}>
+                                {registroSeleccionado.sisHabilitado ? <CancelIcon/> : <CheckCircleIcon/>}
+                            </span>
                         </div>
                     </ActionsButton>
                     <ActionsButton

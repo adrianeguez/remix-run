@@ -5,7 +5,7 @@ import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliot
 import PanelActionPopover from "~/components/ruta/PanelActionPopover";
 import BackdropToaster from "~/components/util/backdrop-toaster";
 import {RutaComunInterface} from "~/components/ruta/interfaces/ruta-comun.interface";
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {CommonSortFieldsConstant} from "~/constantes/common-sort-fields.constant";
 import {SortFieldInterface} from "~/interfaces/sort-field.interface";
 import {SkipTakeConstant} from "~/constantes/skip-take.constant";
@@ -13,10 +13,10 @@ import {SortOrderEnum} from "~/enum/sort-order.enum";
 import {convertirQueryParams} from "~/functions/http/convertir-query-params";
 import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-parametros";
 import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
+import {KonstaContainerContext} from "~/components/KonstaContainer";
 
 export default function RutaComun<T>(props: RutaComunInterface<T>) {
     const {
-        loading,
         navigateFabNewFunction,
         registrosEncontrados,
         findDto,
@@ -27,6 +27,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
         eventoSeleccionoSort,
         mostrarFab = false
     } = props;
+
     const {titulo, colorTituloClase, colorClaseBanner, textoDescripcion, imagen} = props.navbar;
     // Variables locales
     const totalRegistros = registrosEncontrados[1];
@@ -170,7 +171,6 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                                 setRightPanelOpened={setRightPanelOpened}
                                 sortFields={sortFields}
             ></PanelActionPopover>
-            <BackdropToaster loading={loading}></BackdropToaster>
         </>
     )
 }

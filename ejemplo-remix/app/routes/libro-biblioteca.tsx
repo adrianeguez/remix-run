@@ -19,6 +19,7 @@ import {motion} from "framer-motion";
 import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-parametros";
 import {SkipTakeConstant} from "~/constantes/skip-take.constant";
 import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
+import ComponenteError from "~/components/error/ComponenteError";
 
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
@@ -37,7 +38,8 @@ export const loader: LoaderFunction = async ({request}) => {
     try {
         returnData.registros = await LibroBibliotecaInstanceHttp.find(eliminarUndNullVacio(findDto))
     } catch (error: any) {
-        returnData.error = error;
+        console.error({error, mensaje: 'Error consultando registros'});
+        returnData.error = 'Error consultando registros';
     }
     return json(returnData);
 };
@@ -66,20 +68,23 @@ export default function LibroBiblioteca() {
     // Use Effect - Componente inicializado
     useEffect(
         () => {
+            console.log('data', data);
             if (data.error) {
+                console.log('EL AMOR');
                 toast.error('Error del servidor');
-            }
-            if (data.mensaje) {
-                toast.success(data.mensaje);
-            } else {
-                toast.success('Cargo datos exitosamente');
+            }else{
+                if (data.mensaje) {
+                    toast.success(data.mensaje);
+                } else {
+                    toast.success('Cargo datos exitosamente');
+                }
             }
         }, []
     )
 
     // Funciones UI
     const navegarParametrosNuevo = (queryParams: string) => {
-        navigate(`${path}/new?` + queryParams);
+        navigate(`${path}/nuevo?` + queryParams);
     };
     const navegarParametrosEditar = (queryParams: string, registro: LibroBibliotecaInterface) => {
         return `${path}/${registro.id}?` + queryParams;
@@ -102,14 +107,14 @@ export default function LibroBiblioteca() {
                                                      sortFieldsArray={sortFields}
                                                      eventoSeleccionoSort={eventoSeleccionoSort}
                                                      mostrarFab={true}
-                                                     mostrarItemEnLista={(registro, skipTake, indice) => (<>
+                                                     mostrarItemEnLista={(registro, queryParams, indice) => (<>
                                                          <motion.div
                                                              initial={{opacity: 0, y: 10}}
                                                              animate={{opacity: 1, y: 0}}
                                                              exit={{opacity: 0, y: 0}}
                                                              transition={{delay: indice * 0.1}}
                                                              key={registro.id}>
-                                                             <Link to={navegarParametrosEditar(skipTake, registro)}>
+                                                             <Link to={navegarParametrosEditar(queryParams, registro)}>
                                                                  <LibroBibliotecaMostrar
                                                                      registro={registro}></LibroBibliotecaMostrar>
                                                              </Link>
@@ -118,6 +123,7 @@ export default function LibroBiblioteca() {
                                                      </>)
                                                      }
                 />}
+            {data.error && <ComponenteError linkTo={path}/>}
         </KonstaContainer>
     )
 }

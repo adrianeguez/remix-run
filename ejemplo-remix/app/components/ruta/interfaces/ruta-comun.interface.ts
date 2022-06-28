@@ -5,7 +5,6 @@ import {NavbarSoloTituloInterface} from "~/components/ruta/interfaces/navbar-sol
 import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 
 export interface RutaComunInterface<T = any> {
-    loading: boolean;
     navigateFabNewFunction: (queryParams: string) => void;
     registrosEncontrados: [T[], number];
     findDto: any;

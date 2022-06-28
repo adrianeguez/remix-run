@@ -1,16 +1,30 @@
 import {App} from "konsta/react";
 import LeftNavbarContainer from "~/components/LeftNavbarContainer";
-// @ts-ignore
+import {createContext, useState} from "react";
+import BackdropToaster from "~/components/util/backdrop-toaster";
+
+export interface KonstaContainerInterface {
+    loading: boolean,
+    setLoading: any
+}
+
+export const KonstaContainerContext = createContext({} as KonstaContainerInterface);
+
 const KonstaContainer = ({children, titulo}) => {
     if (!titulo) {
         titulo = 'El amor';
     }
+    const [loading, setLoading] = useState(false);
+
     return (
         <>
             <App theme="ios">
-                <LeftNavbarContainer titulo={titulo}>
-                    {children}
-                </LeftNavbarContainer>
+                <KonstaContainerContext.Provider value={{loading, setLoading}}>
+                    <LeftNavbarContainer titulo={titulo}>
+                        {children}
+                    </LeftNavbarContainer>
+                    <BackdropToaster></BackdropToaster>
+                </KonstaContainerContext.Provider>
             </App>
         </>
     )

@@ -26,7 +26,13 @@ import {DeshabilitarRegistroHttp} from "~/functions/http/deshabilitar-registro.h
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned';
 import SheetContenedor from "~/components/util/SheetContenedor";
+import {ExportarDescargarCsvExport} from "~/functions/export-data/exportar-descargar-csv.export";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import jsPDF from 'jspdf'
+import autotable from 'jspdf-autotable'
+
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
     error?: string,
@@ -56,9 +62,9 @@ export default function LibroBiblioteca() {
     const navigate: NavigateFunction = useNavigate();
     const path = '/libro-biblioteca';
     const navbar: NavbarSoloTituloInterface = {
-        titulo: 'El diablo es gay',
-        imagen: 'https://www.adslzone.net/app/uploads-adslzone.net/2019/04/borrar-fondo-imagen.jpg',
-        textoDescripcion: 'Me gusta el diablo',
+        titulo: 'Libro biblioteca',
+        imagen: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Book.svg/1200px-Book.svg.png',
+        textoDescripcion: 'Gestione sus libros',
         colorClaseBanner: 'libro-biblioteca-banner',
         colorTituloClase: 'texto-oscuro',
     };
@@ -127,10 +133,39 @@ export default function LibroBiblioteca() {
         setAbrioOpciones(false);
         setVisualizacionAbierto(true);
     };
+    const descargarCSV = () => {
+        const registros = data.registros;
+        if (registros) {
+            const campos = ['id', 'sisHabilitado', 'sisCreado', 'sisModificado'];
+            ExportarDescargarCsvExport(campos, registros[0]);
+        }
+    }
+    const descargarPDF = () => {
+        const registros = data.registros;
+        if (registros) {
+            const cabeceras = [
+                {header: 'ID', dataKey: 'id'},
+                {header: 'Habilitado', dataKey: 'sisHabilitado'},
+                {header: 'Creado', dataKey: 'sisCreado'},
+                {header: 'Modificado', dataKey: 'sisModificado'},
+            ];
+            const doc = new jsPDF({
+                orientation: "landscape"
+            }) as any;
+            autotable(doc, ({
+                columnStyles: {europe: {halign: 'center'}}, // European countries centered
+                body: registros[0],
+                columns: cabeceras,
+            } as any));
+            doc.save('table.pdf');
+        }
+
+    }
     return (
         <KonstaContainer titulo="Libro biblioteca">
             {data.registros &&
                 <>
+                    {/* Ruta */}
                     <RutaComun<LibroBibliotecaInterface> navigate={navigate}
                                                          loading={loading}
                                                          findDto={data.findDto}
@@ -159,6 +194,7 @@ export default function LibroBiblioteca() {
 
                 </>
             }
+            {/* Opciones */}
             <Actions
                 opened={abrioOpciones}
                 onBackdropClick={() => setAbrioOpciones(false)}
@@ -177,6 +213,12 @@ export default function LibroBiblioteca() {
                             </span>
                         </div>
                     </ActionsButton>
+                    <ActionsButton onClick={() => descargarCSV()} bold>
+                        Descargar CSV <AssignmentReturnedIcon className={'ml-2'}/>
+                    </ActionsButton>
+                    <ActionsButton onClick={() => descargarPDF()} bold>
+                        Descargar PDF <PictureAsPdfIcon className={'ml-2'}/>
+                    </ActionsButton>
                     <ActionsButton
                         onClick={() => setAbrioOpciones(false)}
                         colors={{text: 'text-red-500'}}
@@ -185,12 +227,14 @@ export default function LibroBiblioteca() {
                     </ActionsButton>
                 </ActionsGroup>
             </Actions>
+            {/* Visualizacion */}
             <SheetContenedor setVisualizacionAbierto={setVisualizacionAbierto}
                              visualizacionAbierto={visualizacionAbierto}>
                 <p>
                     Lorem ipsum
                 </p>
             </SheetContenedor>
+            {/* Error */}
             {data.error && <ComponenteError linkTo={path}/>}
         </KonstaContainer>
     )

@@ -1,19 +1,15 @@
-import {Button, Fab, List, ListItem, Page} from "konsta/react";
+import {Actions, ActionsButton, ActionsGroup, ActionsLabel, Button, Fab, List, ListItem, Page} from "konsta/react";
 import NavbarTitulo from "~/components/ruta/NavbarTitulo";
-import {Link, Outlet} from "@remix-run/react";
-import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
+import {Outlet} from "@remix-run/react";
 import PanelActionPopover from "~/components/ruta/PanelActionPopover";
-import BackdropToaster from "~/components/util/backdrop-toaster";
 import {RutaComunInterface} from "~/components/ruta/interfaces/ruta-comun.interface";
-import {useContext, useEffect, useRef, useState} from "react";
-import {CommonSortFieldsConstant} from "~/constantes/common-sort-fields.constant";
+import {useEffect, useRef, useState} from "react";
 import {SortFieldInterface} from "~/interfaces/sort-field.interface";
 import {SkipTakeConstant} from "~/constantes/skip-take.constant";
 import {SortOrderEnum} from "~/enum/sort-order.enum";
-import {convertirQueryParams} from "~/functions/http/convertir-query-params";
 import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-parametros";
 import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
-import {KonstaContainerContext} from "~/components/KonstaContainer";
+import AutoAwesomeMotionIcon from '@mui/icons-material/AutoAwesomeMotion';
 
 export default function RutaComun<T>(props: RutaComunInterface<T>) {
     const {
@@ -49,9 +45,9 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
             take: findDto.take ? findDto.take : SkipTakeConstant.take,
         } as SkipTakeInterface
     );
+    const [opcionNumeroRegistrosAbierto, setOpcionNumeroRegistrosAbierto] = useState(false);
 
     // UseEffect
-
     useEffect(
         () => {
             if (Object.keys(sortFieldSeleccionado).length > 0) {
@@ -81,7 +77,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
     const seleccionarSortFieldOrder = (sortOrder: SortOrderEnum) => {
         setPopoverOpened(false);
         setActionSortFieldOpened(false);
-        setSkipTake({skip: 0, take: 0});
+        setSkipTake({skip: 0, take: skipTake.take});
         setSortFieldSeleccionado({
             sortField: sortFieldSeleccionado.sortField,
             sortFieldLabel: sortFieldSeleccionado.sortFieldLabel,
@@ -91,24 +87,29 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
     const cargarMas = (siguiente: boolean) => {
         if (siguiente) {
             setSkipTake({
-                skip: +skipTake.skip + +SkipTakeConstant.take,
-                take: +SkipTakeConstant.take,
+                skip: +skipTake.skip + +skipTake.take,
+                take: +skipTake.take,
             });
         } else {
             setSkipTake({
-                skip: +skipTake.skip - +SkipTakeConstant.take,
-                take: +SkipTakeConstant.take,
+                skip: +skipTake.skip - +skipTake.take,
+                take: +skipTake.take,
             });
 
         }
     };
     const calcularPagina = () => {
         const paginaActual = (+skipTake.skip + +registrosEncontrados[0].length);
-        return `Registros actuales ${paginaActual}/${totalRegistros}`
+        return `Registros ${paginaActual}/${totalRegistros}`
     }
-    const navegarParametros = () => {
-        navigate(`${path}?` + generarNavegarParametros(skipTake, sortFieldSeleccionado));
-    };
+    const seleccionoNuevoTake = (take: number) => {
+        setOpcionNumeroRegistrosAbierto(false);
+        setSkipTake({
+            skip: 0,
+            take,
+        })
+    }
+
     return (
         <>
 
@@ -134,7 +135,19 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                 <List>
                     <ListItem
                         className={'skip-take-page'}
-                        title={calcularPagina()}
+                        title={(<>
+                            <div className={'grid grid-cols-2 gap-4'}>
+                                <div>
+                                    <span> {calcularPagina()}</span>
+                                </div>
+                                <div>
+                                    <Button onClick={() => setOpcionNumeroRegistrosAbierto(true)}>
+                                        {skipTake.take}
+                                        <AutoAwesomeMotionIcon
+                                            className={'ml-1'}/></Button>
+                                </div>
+                            </div>
+                        </>) as any}
                     />
                 </List>
                 <div className="grid grid-cols-2 gap-x-6">
@@ -160,6 +173,26 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                     text="+"/>}
                 <Outlet/>
             </>
+            <Actions
+                opened={opcionNumeroRegistrosAbierto}
+                onBackdropClick={() => setOpcionNumeroRegistrosAbierto(false)}
+            >
+                <ActionsGroup>
+                    <ActionsLabel>Seleccione numero de registros</ActionsLabel>
+                    {SkipTakeConstant.registros.map((valor) => (
+                        <ActionsButton key={valor} onClick={() => seleccionoNuevoTake(valor)} bold>
+                            {valor}
+                        </ActionsButton>))}
+                </ActionsGroup>
+                <ActionsGroup>
+                    <ActionsButton
+                        onClick={() => setOpcionNumeroRegistrosAbierto(false)}
+                        colors={{text: 'text-red-500'}}
+                    >
+                        Cancelar
+                    </ActionsButton>
+                </ActionsGroup>
+            </Actions>
             <PanelActionPopover actionSortFieldOpened={actionSortFieldOpened}
                                 popoverOpened={popoverOpened}
                                 popoverTargetRef={popoverTargetRef}

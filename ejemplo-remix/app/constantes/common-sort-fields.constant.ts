@@ -22,4 +22,4 @@ export const CommonSortFieldsConstant: SortFieldInterface[] = [
         sortField: 'sisHabilitado',
         sortFieldLabel: 'Habilitado'
     }
-]
+];

@@ -1,6 +1,8 @@
 import {SortFieldInterface} from "~/interfaces/sort-field.interface";
 import {SortOrderEnum} from "~/enum/sort-order.enum";
 import React from "react";
+import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
+import {CampoFormularioAccordeonInterface} from "~/components/form/lib/interfaces/campo-formulario-accordeon.interface";
 
 export interface PanelActionPopoverInterface {
     rightPanelOpened: boolean;
@@ -13,4 +15,6 @@ export interface PanelActionPopoverInterface {
     sortFields: SortFieldInterface[];
     seleccionarSortField: (sortField: SortFieldInterface) => void;
     seleccionarSortFieldOrder: (sortOrder: SortOrderEnum) => void;
+    camposFiltro:CampoFormularioInterface[];
+    accordeonCampos?:CampoFormularioAccordeonInterface[];
 }

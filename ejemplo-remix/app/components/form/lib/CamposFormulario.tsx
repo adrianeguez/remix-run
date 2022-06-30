@@ -1,4 +1,5 @@
 import {
+    List,
     ListInput,
     ListItem, Toggle,
 } from "konsta/react";
@@ -10,8 +11,15 @@ import {motion} from "framer-motion";
 import {useState} from "react";
 import {GenerarReglas} from "~/components/form/lib/funcion/generar-reglas";
 import {MostrarErrores} from "~/components/form/lib/funcion/mostrar-errores";
+import {CampoFormularioComponentInterface} from "~/components/form/lib/interfaces/campo-formulario-component.interface";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {Typography} from "@mui/material";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import {CampoFormularioAccordeonInterface} from "~/components/form/lib/interfaces/campo-formulario-accordeon.interface";
 
-export default function CamposFormulario(props: { useFormReturn: UseFormReturn<any, any>, campos: CampoFormularioInterface[] }) {
+export default function CamposFormulario(props: CampoFormularioComponentInterface) {
 
     const [autocompleteAbierto, setAutocompleteAbierto] = useState(false);
     const [eventoAutocomplete, setEventoAutocomplete] = useState({} as CampoFormularioInterface);
@@ -27,7 +35,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
     } = props.useFormReturn;
     const generarCampo = (campoFormulario: CampoFormularioInterface) => {
         const reglas: any = GenerarReglas(campoFormulario);
-        const generarLabel = ()=>{
+        const generarLabel = () => {
             return campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'
         }
         const esCampoComun = campoFormulario.type === CampoFormularioType.Url ||
@@ -67,7 +75,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                                     step={(campoFormulario.type === CampoFormularioType.Number && campoFormulario.number) ? campoFormulario.number.step : ''}
                                     value={campoFormulario.type === CampoFormularioType.Number ? +field.value : field.value}
                                     error={MostrarErrores(errors, field, campoFormulario)}
-                                    media={<><img className={'icon-small'}
+                                    media={campoFormulario.icon ? campoFormulario.icon : <><img className={'icon-small'}
                                                   src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
                                                   alt=""/></>}
                                     onChange={field.onChange}
@@ -78,6 +86,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                                             shouldTouch: true
                                         })
                                     }}
+                                    onBlur={field.onBlur}
                                 >
                                     {
                                         campoFormulario.type === CampoFormularioType.Select &&
@@ -131,7 +140,7 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                                 ({field}) => (
                                     <div>
                                         <ListItem
-                                            media={<><img className={'icon-small'}
+                                            media={campoFormulario.icon ? campoFormulario.icon : <><img className={'icon-small'}
                                                           src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
                                                           alt=""/></>}
                                             header={errors[campoFormulario.formControlName] ?
@@ -143,7 +152,8 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
                                                           src="https://cdn2.iconfinder.com/data/icons/business-management-color/64/select-choose-right-person-hr-job-human-resource-512.png"
                                                           alt=""/></>}
                                             footer={errors[campoFormulario.formControlName] ?
-                                                <span className={'text-red-500'}>{MostrarErrores(errors, field, campoFormulario)}</span> :
+                                                <span
+                                                    className={'text-red-500'}>{MostrarErrores(errors, field, campoFormulario)}</span> :
                                                 campoFormulario.help
                                             }
                                         />
@@ -191,12 +201,49 @@ export default function CamposFormulario(props: { useFormReturn: UseFormReturn<a
             )
         }
     }
+    let arregloGruposLocal: CampoFormularioAccordeonInterface[] = [];
+    if (props.accordeonCampos) {
+        arregloGruposLocal = props.accordeonCampos.map(
+            (step) => {
+                step.camposFormulario = props.campos.filter(a => step.campos.some(sc => sc === a.formControlName))
+                return step;
+            }
+        )
+    }
     return [
         eventoAutocomplete,
         setEventoAutocomplete,
         (
             <>
-                {props.campos.map((f) => generarCampo(f))}
+                {
+                    arregloGruposLocal.length === 0 ?
+                        props.campos.map((f) => generarCampo(f)) :
+                        arregloGruposLocal
+                            .map(
+                                (aGL) => {
+                                    return (
+                                        <Accordion key={aGL.id} className={'accordion-form'} >
+                                            <AccordionSummary
+                                                expandIcon={<ExpandMoreIcon/>}
+                                                className={'accordion-form-summary'}
+                                                aria-controls={aGL.id}
+                                                id={aGL.id}
+                                            >
+                                                {aGL.labelJSXElement}
+                                            </AccordionSummary>
+                                            <AccordionDetails>
+                                                <p className={'text-left'}> El amor</p>
+                                                <List>
+                                                    {aGL
+                                                        .camposFormulario.map((f) => generarCampo(f))
+                                                    }
+                                                </List>
+                                            </AccordionDetails>
+                                        </Accordion>
+                                    )
+                                }
+                            )
+                }
             </>
         ),
     ];

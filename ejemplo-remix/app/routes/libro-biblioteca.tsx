@@ -32,6 +32,11 @@ import {ExportarDescargarCsvExport} from "~/functions/export-data/exportar-desca
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import jsPDF from 'jspdf'
 import autotable from 'jspdf-autotable'
+import {Step, StepContent, StepLabel, Stepper, Typography} from "@mui/material";
+import {useForm, Controller} from "react-hook-form";
+import {LibroBibliotecaFiltroForm} from "~/http/libro-biblioteca/form/libro-biblioteca-filtro.form";
+import {AccordeonFiltroComunForm} from "~/http/comun/accordeon-filtro-comun.form";
+import {LibroBibliotecaMostrarCompleto} from "~/components/libro-biblioteca/LibroBibliotecaMostrarCompleto";
 
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
@@ -75,6 +80,9 @@ export default function LibroBiblioteca() {
     const [abrioOpciones, setAbrioOpciones] = useState(false);
     const [registroSeleccionado, setRegistroSeleccionado] = useState({} as LibroBibliotecaInterface);
     const [visualizacionAbierto, setVisualizacionAbierto] = useState(false);
+    const [camposFiltros, setCamposFiltros] = useState([...LibroBibliotecaFiltroForm()]);
+
+    const [accordeonCamposFiltro, setAccordeonCamposFiltro] = useState([...AccordeonFiltroComunForm()]);
     // const [registros, setRegistros] = useState([...data.registros] as [LibroBibliotecaInterface[], number]);
 
     // Funciones Util
@@ -161,6 +169,60 @@ export default function LibroBiblioteca() {
         }
 
     }
+    const steps = ['Select campaign settings', 'Create an ad group', 'Create an ad'];
+    const [activeStep, setActiveStep] = React.useState(0);
+    const [skipped, setSkipped] = React.useState(new Set<number>());
+
+    const isStepOptional = (step: number) => {
+        return step === 1;
+    };
+
+    const isStepSkipped = (step: number) => {
+        return skipped.has(step);
+    };
+
+    const handleNext = () => {
+        let newSkipped = skipped;
+        if (isStepSkipped(activeStep)) {
+            newSkipped = new Set(newSkipped.values());
+            newSkipped.delete(activeStep);
+        }
+
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSkipped(newSkipped);
+    };
+
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleSkip = () => {
+        if (!isStepOptional(activeStep)) {
+            // You probably want to guard against something like this,
+            // it should never occur unless someone's actively trying to break something.
+            throw new Error("You can't skip a step that isn't optional.");
+        }
+
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setSkipped((prevSkipped) => {
+            const newSkipped = new Set(prevSkipped.values());
+            newSkipped.add(activeStep);
+            return newSkipped;
+        });
+    };
+
+    const handleReset = () => {
+        setActiveStep(0);
+    };
+
+    const handleStep = (step: number) => () => {
+        setActiveStep(step);
+    };
+
+    const {handleSubmit, control, formState: {errors, dirtyFields, touchedFields}} = useForm({
+        defaultValues: {nombre: ''},
+        mode: 'onBlur',
+    });
     return (
         <KonstaContainer titulo="Libro biblioteca">
             {data.registros &&
@@ -176,6 +238,8 @@ export default function LibroBiblioteca() {
                                                          sortFieldsArray={sortFields}
                                                          eventoSeleccionoSort={eventoSeleccionoSort}
                                                          mostrarFab={true}
+                                                         camposFiltro={camposFiltros}
+                                                         accordeonCamposFiltro={accordeonCamposFiltro}
                                                          mostrarItemEnLista={(registro, queryParams, indice) => (<>
                                                              <motion.div
                                                                  initial={{opacity: 0, y: 10}}
@@ -230,9 +294,7 @@ export default function LibroBiblioteca() {
             {/* Visualizacion */}
             <SheetContenedor setVisualizacionAbierto={setVisualizacionAbierto}
                              visualizacionAbierto={visualizacionAbierto}>
-                <p>
-                    Lorem ipsum
-                </p>
+                <LibroBibliotecaMostrarCompleto registro={registroSeleccionado}></LibroBibliotecaMostrarCompleto>
             </SheetContenedor>
             {/* Error */}
             {data.error && <ComponenteError linkTo={path}/>}

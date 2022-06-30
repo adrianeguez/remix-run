@@ -3,7 +3,6 @@ import {
     ActionsButton,
     ActionsGroup,
     ActionsLabel,
-    Block,
     Button, List, ListItem,
     Navbar,
     Page,
@@ -12,14 +11,39 @@ import {
 } from "konsta/react";
 import {SortOrderEnum} from "~/enum/sort-order.enum";
 import {PanelActionPopoverInterface} from "~/components/ruta/interfaces/panel-action-popover.interface";
+import {LibroBibliotecaEnum} from "~/http/libro-biblioteca/form/libro-biblioteca.enum";
+import CamposFormulario from "~/components/form/lib/CamposFormulario";
+import {useForm} from "react-hook-form";
+import {Form} from "@remix-run/react";
+import {GenerateDefaultValues} from "~/functions/form/generate-default-values";
 
 export default function PanelActionPopover(props: PanelActionPopoverInterface) {
     const {
         setRightPanelOpened, rightPanelOpened, actionSortFieldOpened,
         setActionSortFieldOpened, popoverOpened, popoverTargetRef,
         setPopoverOpened, sortFields, seleccionarSortField,
-        seleccionarSortFieldOrder
+        seleccionarSortFieldOrder, accordeonCampos, camposFiltro
     } = props
+    const useFormReturn = useForm<any>({
+        defaultValues: {
+            ...GenerateDefaultValues(camposFiltro),
+        },
+        mode: 'all',
+    });
+    const {control, register, getFieldState, getValues, formState, watch} = useFormReturn;
+    const onSubmit = (data?) => {
+        console.log('data',data);
+        
+    };
+    const [
+        eventoAutocomplete,
+        setEventoAutocomplete,
+        CampoFormularioComponente
+    ] = CamposFormulario({
+        useFormReturn,
+        campos: camposFiltro,
+        accordeonCampos
+    })
     return (
         <>
             <Panel
@@ -28,19 +52,16 @@ export default function PanelActionPopover(props: PanelActionPopoverInterface) {
                 onBackdropClick={() => setRightPanelOpened(false)}
             >
                 <Page>
+
+
+                    <Form id="form" onSubmit={useFormReturn.handleSubmit(onSubmit)} noValidate>
                     <br/>
                     <br/>
                     <br/>
                     <Navbar
                         title="Filtros"
-                        right={
-                            <Button onClick={() => setRightPanelOpened(false)}>
-                                Buscar
-                            </Button>
-                        }
-
                         left={
-                            <Button colors={{
+                            <Button type={'button'} colors={{
                                 text: 'text-red-500',
                                 border: 'border-red-500',
                                 bg: 'bg-red-500',
@@ -50,11 +71,18 @@ export default function PanelActionPopover(props: PanelActionPopoverInterface) {
                                 Cerrar
                             </Button>
                         }
+                        right={
+                            <Button onClick={() => setRightPanelOpened(false)}>
+                                Buscar
+                            </Button>
+                        }
                     />
-                    <Block className="space-y-4">
-                        <p>Here comes right panel.</p>
-
-                    </Block>
+                    <div className="space-y-4 p-3">
+                            <List className={'accordion-form-list'}>
+                                {CampoFormularioComponente}
+                            </List>
+                    </div>
+                    </Form>
                 </Page>
             </Panel>
             <Actions

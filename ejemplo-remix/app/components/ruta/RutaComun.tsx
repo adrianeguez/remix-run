@@ -10,6 +10,7 @@ import {SortOrderEnum} from "~/enum/sort-order.enum";
 import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-parametros";
 import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 import AutoAwesomeMotionIcon from '@mui/icons-material/AutoAwesomeMotion';
+import CamposFormulario from "~/components/form/lib/CamposFormulario";
 
 export default function RutaComun<T>(props: RutaComunInterface<T>) {
     const {
@@ -21,7 +22,9 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
         navigate,
         path,
         eventoSeleccionoSort,
-        mostrarFab = false
+        mostrarFab = false,
+        camposFiltro,
+        accordeonCamposFiltro
     } = props;
 
     const {titulo, colorTituloClase, colorClaseBanner, textoDescripcion, imagen} = props.navbar;
@@ -122,6 +125,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                               imagen={imagen as string}
                               colorTituloClase={colorTituloClase as string}
                               textoDescripcion={textoDescripcion as string}
+
                 />
                 <List>
                     {registrosEncontrados[0].map(
@@ -203,6 +207,8 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                                 seleccionarSortFieldOrder={seleccionarSortFieldOrder}
                                 setRightPanelOpened={setRightPanelOpened}
                                 sortFields={sortFields}
+                                camposFiltro={camposFiltro}
+                                accordeonCampos={accordeonCamposFiltro as any}
             ></PanelActionPopover>
         </>
     )

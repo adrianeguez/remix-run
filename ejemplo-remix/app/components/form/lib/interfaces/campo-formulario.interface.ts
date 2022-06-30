@@ -26,6 +26,7 @@ export interface CampoFormularioInterface {
     number?: CampoFormularioNumberInterface;
     autocomplete?: CampoFormularioAutocompleteInterface;
     toggle?: CampoFormularioToggleInterface;
+    icon?: JSX.Element;
     // select?: SelectField;
     // mask?: Mask;
     // autoComplete?: AutoComplete;

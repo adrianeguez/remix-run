@@ -15,6 +15,7 @@ import {
 export function LibroBibliotecaMostrarCompleto(props: LibroBibliotecaMostrarCompletoInterface) {
     return (
         <>
+            <h1>Hola desde mostrar libro biblioteca</h1>
         </>
     )
 }

@@ -1,7 +1,9 @@
+import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
+
 export function GenerarReglas(campoFormulario) {
     const reglas: any = {};
     if (campoFormulario.validators) {
-        if (campoFormulario.validators.required) {
+        if (campoFormulario.validators.required && campoFormulario.type !== CampoFormularioType.Number) {
             reglas['required'] = typeof campoFormulario.validators.required === 'string' ? campoFormulario.validators.required : 'Error'
         }
         if (campoFormulario.validators.minLength) {
@@ -46,6 +48,17 @@ export function GenerarReglas(campoFormulario) {
         if (campoFormulario.validators.email) {
             reglas['email'] = {
                 message: campoFormulario.validators.email.mensaje
+            }
+        }
+        if (campoFormulario.type === CampoFormularioType.Number) {
+            reglas['valueAsNumber'] = true;
+            if (campoFormulario.validators.required) {
+                reglas['validate'] = {
+                    ...reglas['validate'],
+                    required: (valor) => {
+                        return !Number.isNaN(+valor) && (+valor > 0 || +valor <= 0)
+                    }
+                };
             }
         }
     }

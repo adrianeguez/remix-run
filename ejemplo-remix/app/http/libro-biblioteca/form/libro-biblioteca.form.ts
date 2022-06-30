@@ -2,7 +2,7 @@ import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.t
 import {LibroBibliotecaEnum} from "~/http/libro-biblioteca/form/libro-biblioteca.enum";
 import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 
-export function LibroBibliotecaForm() {
+export function LibroBibliotecaForm(): CampoFormularioInterface[] {
     return [
         {
             formControlName: LibroBibliotecaEnum.Nombre,
@@ -183,12 +183,12 @@ export function LibroBibliotecaForm() {
             validators: {
                 required: true,
                 max: {
-                    value: 15,
-                    validationFn: (v) => v < 15 ? true : 'No mayor a 15'
+                    value: 100,
+                    validationFn: (v) => v < 100 ? true : 'No mayor a 100'
                 },
                 min: {
-                    value: -5,
-                    validationFn: (v) => v > -5 ? true : 'No menor a -5'
+                    value: 1,
+                    validationFn: (v) => v >= 1 ? true : 'No menor a 0'
                 }
             },
             number: {

@@ -141,10 +141,20 @@ body {
     border-bottom: 2px solid #919191 !important;
 }
 
-.accordion-detalle-texto{
+.accordion-detalle-texto {
     color: #707070;
     font-size: 0.8rem;
 }
+
+.boton-limpiar {
+    max-width: 32px;
+    float: right;
+}
+
+.texto-limpiar {
+    font-size: 0.8rem;
+}
+
 @media screen and (max-width: 600px) {
     .navbar-ruta-titulo {
         font-size: 10px;

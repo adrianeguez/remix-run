@@ -11,11 +11,12 @@ import {
 } from "konsta/react";
 import {SortOrderEnum} from "~/enum/sort-order.enum";
 import {PanelActionPopoverInterface} from "~/components/ruta/interfaces/panel-action-popover.interface";
-import {LibroBibliotecaEnum} from "~/http/libro-biblioteca/form/libro-biblioteca.enum";
 import CamposFormulario from "~/components/form/lib/CamposFormulario";
 import {useForm} from "react-hook-form";
 import {Form} from "@remix-run/react";
 import {GenerateDefaultValues} from "~/functions/form/generate-default-values";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import toast from "react-hot-toast";
 
 export default function PanelActionPopover(props: PanelActionPopoverInterface) {
     const {
@@ -54,33 +55,47 @@ export default function PanelActionPopover(props: PanelActionPopoverInterface) {
 
 
                     <Form id="form" onSubmit={useFormReturn.handleSubmit(onSubmit)} noValidate>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <Navbar
-                        title="Filtros"
-                        left={
-                            <Button type={'button'} colors={{
-                                text: 'text-red-500',
-                                border: 'border-red-500',
-                                bg: 'bg-red-500',
-                                activeBg: 'active:bg-red-500',
-                                activeBgDark: 'active:bg-red-600',
-                            }} onClick={() => setRightPanelOpened(false)}>
-                                Cerrar
-                            </Button>
-                        }
-                        right={
-                            <Button onClick={() => setRightPanelOpened(false)}>
-                                Buscar
-                            </Button>
-                        }
-                    />
-                    <div className="space-y-4 p-3">
+                        <br/>
+                        <br/>
+                        <br/>
+                        <Navbar
+                            title="Filtros"
+                            left={
+                                <Button type={'button'} colors={{
+                                    text: 'text-red-500',
+                                    border: 'border-red-500',
+                                    bg: 'bg-red-500',
+                                    activeBg: 'active:bg-red-500',
+                                    activeBgDark: 'active:bg-red-600',
+                                }} onClick={() => setRightPanelOpened(false)}>
+                                    Cerrar
+                                </Button>
+                            }
+                            right={
+                                <Button onClick={() => {
+                                    setRightPanelOpened(false);
+                                    toast('Buscando registros', {icon: '🗃'});
+                                }}>
+                                    Buscar
+                                </Button>
+                            }
+                        />
+                        <div className="space-y-4 p-3">
+                            <div className="grid grid-cols-4 gap-1">
+                                <div className={'col-span-3'}>
+                                    <p className={'texto-limpiar'}>Busque y filtre registros</p>
+                                </div>
+                                <div className="col-start-4">
+                                    <Button type={'button'} onClick={() => {
+                                        useFormReturn.reset();
+                                        toast('Formulario reseteado', {icon: '⚙'});
+                                    }} className={'boton-limpiar'}><HighlightOffIcon/></Button>
+                                </div>
+                            </div>
                             <List className={'accordion-form-list'}>
                                 {CampoFormularioComponente}
                             </List>
-                    </div>
+                        </div>
                     </Form>
                 </Page>
             </Panel>
@@ -119,12 +134,14 @@ export default function PanelActionPopover(props: PanelActionPopoverInterface) {
                     <ListItem
                         title="Ascendentemente"
                         onClick={() => {
+                            toast('Filtrando registros', {icon: '🧮'});
                             seleccionarSortFieldOrder(SortOrderEnum.Asc)
                         }}
                     />
                     <ListItem
                         title="Descendenente"
                         onClick={() => {
+                            toast('Filtrando registros', {icon: '🧮'});
                             seleccionarSortFieldOrder(SortOrderEnum.Desc)
                         }}
                     />

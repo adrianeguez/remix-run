@@ -27,7 +27,6 @@ export async function loader({request}) {
 
     const data = {error: session.get("error")};
 
-    console.log('Antes de cargar');
     const url = new URL(request.url);
     const params = {
         mensajeError: url.searchParams.get('mensajeError')
@@ -73,7 +72,6 @@ export default function Login() {
     // to use our actionData error in our form, we need to pull in our action data
     const actionData = useActionData();
     const loaderData:{data:any, params:{mensajeError?:string;}} = useLoaderData();
-    console.log(loaderData)
     return (
         <KonstaContainer titulo="Login">
             <div className="loginContainer">

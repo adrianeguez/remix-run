@@ -6,17 +6,17 @@ import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 import {CampoFormularioAccordeonInterface} from "~/components/form/lib/interfaces/campo-formulario-accordeon.interface";
 
-export interface RutaComunInterface<T = any> {
-    navigateFabNewFunction: (queryParams: string) => void;
-    registrosEncontrados: [T[], number];
+export interface RutaComunInterface<Registro = any, RegistroFindDto = any> {
+    navigateFabNewFunction: () => void;
+    registrosEncontrados: [Registro[], number];
     findDto: any;
     sortFieldsArray: SortFieldInterface[];
-    mostrarItemEnLista: (registro: T, queryParams: string, indice: number) => JSX.Element;
+    mostrarItemEnLista: (registro: Registro, indice: number) => JSX.Element;
     navbar: NavbarSoloTituloInterface;
     navigate: NavigateFunction;
     path: string;
     eventoSeleccionoSort: (sortField: SortFieldInterface, skipTake?: SkipTakeInterface) => void;
-    eventoBuscar: (data: any) => void;
+    eventoBuscar: (data: RegistroFindDto) => void;
     mostrarFab: boolean;
     camposFiltro: CampoFormularioInterface[];
     accordeonCamposFiltro?: CampoFormularioAccordeonInterface[];

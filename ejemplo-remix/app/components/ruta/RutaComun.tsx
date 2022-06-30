@@ -55,7 +55,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
     useEffect(
         () => {
             if (Object.keys(sortFieldSeleccionado).length > 0) {
-                eventoSeleccionoSort(sortFieldSeleccionado)
+                eventoSeleccionoSort(sortFieldSeleccionado, skipTake)
             }
         },
         [sortFieldSeleccionado]
@@ -75,13 +75,16 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
         setPopoverOpened(true);
     };
     const seleccionarSortField = (sortField: SortFieldInterface) => {
-        setSortFieldSeleccionado(sortField);
+        setSortFieldSeleccionado({
+            sortField: sortField.sortField,
+            sortFieldLabel: sortField.sortFieldLabel,
+            sortOrder: sortFieldSeleccionado.sortOrder
+        });
         openPopover('.sort_action' + sortFieldSeleccionado.sortField)
     };
     const seleccionarSortFieldOrder = (sortOrder: SortOrderEnum) => {
         setPopoverOpened(false);
         setActionSortFieldOpened(false);
-        setSkipTake({skip: 0, take: skipTake.take});
         setSortFieldSeleccionado({
             sortField: sortFieldSeleccionado.sortField,
             sortFieldLabel: sortFieldSeleccionado.sortFieldLabel,
@@ -132,7 +135,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                     {registrosEncontrados[0].map(
                         (registro, indice) => (
                             <div key={indice + Date.now()}>
-                                {mostrarItemEnLista(registro, generarNavegarParametros(skipTake, sortFieldSeleccionado), indice)}
+                                {mostrarItemEnLista(registro, indice)}
                             </div>
                         )
                     )}
@@ -173,7 +176,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                 {mostrarFab && <Fab
                     className="fixed right-4-safe bottom-4-safe z-20 fab-opened"
                     onClick={() => {
-                        navigateFabNewFunction(generarNavegarParametros(skipTake, sortFieldSeleccionado))
+                        navigateFabNewFunction()
                     }}
                     text="+"/>}
                 <Outlet/>

@@ -10,7 +10,7 @@ import {
 import {LibroBibliotecaMostrarEnum} from "~/components/libro-biblioteca/enums/libro-biblioteca-mostrar.enum";
 
 export function LibroBibliotecaMostrar(props: LibroBibliotecaMostrarInterface) {
-    const {registro, dioClicBoton, queryParams} = props;
+    const {registro, dioClicBoton} = props;
     return (
         <>
             <ListItem
@@ -24,7 +24,7 @@ export function LibroBibliotecaMostrar(props: LibroBibliotecaMostrarInterface) {
                             <div className={'ml-2'} style={{float: 'right'}}>
                                 {dioClicBoton &&
                                     <Button
-                                        onClick={() => dioClicBoton && dioClicBoton(registro, LibroBibliotecaMostrarEnum.IconoOpciones, queryParams)}><MoreVertIcon/></Button>}
+                                        onClick={() => dioClicBoton && dioClicBoton(registro, LibroBibliotecaMostrarEnum.IconoOpciones)}><MoreVertIcon/></Button>}
                             </div>
                         </div>
                     </>
@@ -32,7 +32,7 @@ export function LibroBibliotecaMostrar(props: LibroBibliotecaMostrarInterface) {
                 subtitle={registro.id?.toString()}
                 after={(<NavigateNextIcon
                     className={'ml-4'}
-                    onClick={() => dioClicBoton && dioClicBoton(registro, LibroBibliotecaMostrarEnum.IconoNavegar, queryParams)}/>)}
+                    onClick={() => dioClicBoton && dioClicBoton(registro, LibroBibliotecaMostrarEnum.IconoNavegar)}/>)}
                 text={
                     <div className={'grid grid-cols-2 gap-4'}>
                         <div>Fecha: {registro.sisCreado}</div>

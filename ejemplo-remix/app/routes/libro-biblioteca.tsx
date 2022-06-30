@@ -32,14 +32,13 @@ import {ExportarDescargarCsvExport} from "~/functions/export-data/exportar-desca
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import jsPDF from 'jspdf'
 import autotable from 'jspdf-autotable'
-import {Step, StepContent, StepLabel, Stepper, Typography} from "@mui/material";
-import {useForm, Controller} from "react-hook-form";
 import {LibroBibliotecaFiltroForm} from "~/http/libro-biblioteca/form/libro-biblioteca-filtro.form";
-import {AccordeonFiltroComunForm} from "~/http/comun/accordeon-filtro-comun.form";
 import {LibroBibliotecaMostrarCompleto} from "~/components/libro-biblioteca/LibroBibliotecaMostrarCompleto";
 import {convertirQueryParams} from "~/functions/http/convertir-query-params";
 import {SisHabilitadoEnum} from "~/enum/sis-habilitado.enum";
 import {LibroBibliotecaFiltroAccordionForm} from "~/http/libro-biblioteca/form/libro-biblioteca-filtro-accordion.form";
+import {SortOrderEnum} from "~/enum/sort-order.enum";
+import {LoaderSettearFindtoComun} from "~/functions/http/loader-settear-findto-comun";
 
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
@@ -51,7 +50,8 @@ type LoaderData = {
 export const loader: LoaderFunction = async ({request}) => {
     const returnData: LoaderData = {} as any;
     const requestUrl = request.url;
-    const findDto: LibroBibliotecaFindDto = LoaderSetQueryparams(requestUrl);
+    const findDto: LibroBibliotecaFindDto = LoaderSetQueryparams(requestUrl) as LibroBibliotecaFindDto;
+    LoaderSettearFindtoComun(findDto);
     const url = new URL(requestUrl);
 
     const id = url.searchParams.get('id');
@@ -123,17 +123,11 @@ export default function LibroBiblioteca() {
     )
 
     // Funciones UI
-    const navegarParametrosNuevo = (queryParams: string) => {
-        navigate(`${path}/nuevo?` + queryParams);
-    };
-    const navegarParametrosEditar = (queryParams: string, registro: LibroBibliotecaInterface) => {
-        return `${path}/${registro.id}?` + queryParams;
-    };
     const deshabilitarRecurso = async () => {
         await DeshabilitarRegistroHttp(LibroBibliotecaInstanceHttp, registroSeleccionado);
         setAbrioOpciones(false);
         toast.success('Registro actualizado');
-        navigate(`${path}?${LoaderSetQueryparams(window.location.href)}`);
+        recargarPaginaConNuevosQueryParams();
     };
     const visualizarRegistro = () => {
         setAbrioOpciones(false);
@@ -169,8 +163,20 @@ export default function LibroBiblioteca() {
     };
     // Funciones UI - Eventos
     const eventoSeleccionoSort = (sortField: SortFieldInterface, skipTake: SkipTakeInterface) => {
+
         if (sortField && skipTake) {
-            navigate(`${path}?${generarNavegarParametros(skipTake, sortField)}`)
+            const findDto = obtenerQueryParams() as LibroBibliotecaFindDto;
+            findDto.sortOrder = sortField.sortOrder;
+            findDto.sortField = sortField.sortField;
+            if (skipTake) {
+                if (skipTake.skip || skipTake.skip === 0) {
+                    findDto.skip = skipTake.skip as string;
+                }
+                if (skipTake.take) {
+                    findDto.take = skipTake.take as string;
+                }
+            }
+            recargarPaginaConNuevosQueryParams({findDto: {...obtenerQueryParams(), ...findDto}});
         }
     };
     const eventoClicBotonOpciones = (registro: LibroBibliotecaInterface, nombreEvento: LibroBibliotecaMostrarEnum, queryParams?: string) => {
@@ -178,7 +184,7 @@ export default function LibroBiblioteca() {
         switch (nombreEvento) {
             case LibroBibliotecaMostrarEnum.IconoNavegar:
                 if (queryParams) {
-                    navigate(navegarParametrosEditar(queryParams, registro));
+                    navegarParametrosEditar(registro);
                 }
                 break;
             case LibroBibliotecaMostrarEnum.IconoOpciones:
@@ -189,16 +195,38 @@ export default function LibroBiblioteca() {
         }
     };
     const eventoBuscar = (data: LibroBibliotecaFindDto) => {
-        console.log('data', data);
         const findDto = obtenerQueryParams() as LibroBibliotecaFindDto;
-        findDto.id = +data.busqueda;
         findDto.sisHabilitado = data.sisHabilitado;
         findDto.sisCreado = data.sisCreado;
         findDto.sisModificado = data.sisModificado;
-        navigate(`${path}?${convertirQueryParams(findDto)}`);
+        recargarPaginaConNuevosQueryParams({
+            findDto
+        });
     };
-    const obtenerQueryParams = ()=>{
+    // Funciones UI - Navegacion
+    const navegarParametrosNuevo = () => {
+        navigate(`${path}/nuevo?` + obtenerQueryParamsYConvertir());
+    };
+    const navegarParametrosEditar = (registro: LibroBibliotecaInterface) => {
+        navigate(`${path}/${registro.id}?${obtenerQueryParamsYConvertir()}`);
+    };
+    const obtenerQueryParams = () => {
         return LoaderSetQueryparams(window.location.href);
+    }
+    const obtenerQueryParamsYConvertir = () => {
+        return convertirQueryParams(obtenerQueryParams());
+    }
+    const recargarPaginaConNuevosQueryParams = (parametros?: { queryParams?: string, findDto?: LibroBibliotecaFindDto }) => {
+        if (parametros) {
+            if (parametros.queryParams) {
+                navigate(`${path}?${parametros.queryParams}`);
+            }
+            if (parametros.findDto) {
+                navigate(`${path}?${convertirQueryParams(parametros.findDto)}`);
+            }
+        } else {
+            navigate(`${path}?${obtenerQueryParamsYConvertir()}`);
+        }
     }
 
     return (
@@ -206,32 +234,32 @@ export default function LibroBiblioteca() {
             {data.registros &&
                 <>
                     {/* Ruta */}
-                    <RutaComun<LibroBibliotecaInterface> navigate={navigate}
-                                                         loading={loading}
-                                                         findDto={data.findDto}
-                                                         path={path}
-                                                         navbar={navbar}
-                                                         navigateFabNewFunction={navegarParametrosNuevo}
-                                                         registrosEncontrados={data.registros}
-                                                         sortFieldsArray={sortFields}
-                                                         eventoSeleccionoSort={eventoSeleccionoSort}
-                                                         eventoBuscar={eventoBuscar}
-                                                         mostrarFab={true}
-                                                         camposFiltro={camposFiltros}
-                                                         accordeonCamposFiltro={accordeonCamposFiltro}
-                                                         mostrarItemEnLista={(registro, queryParams, indice) => (<>
-                                                             <motion.div
-                                                                 initial={{opacity: 0, y: 10}}
-                                                                 animate={{opacity: 1, y: 0}}
-                                                                 exit={{opacity: 0, y: 0}}
-                                                                 transition={{delay: indice * 0.1}}
-                                                                 key={registro.id}>
-                                                                 <LibroBibliotecaMostrar queryParams={queryParams}
-                                                                                         registro={registro}
-                                                                                         dioClicBoton={eventoClicBotonOpciones}/>
-                                                             </motion.div>
-                                                         </>)
-                                                         }
+                    <RutaComun<LibroBibliotecaInterface, LibroBibliotecaFindDto> navigate={navigate}
+                                                                                 loading={loading}
+                                                                                 findDto={data.findDto}
+                                                                                 path={path}
+                                                                                 navbar={navbar}
+                                                                                 navigateFabNewFunction={navegarParametrosNuevo}
+                                                                                 registrosEncontrados={data.registros}
+                                                                                 sortFieldsArray={sortFields}
+                                                                                 eventoSeleccionoSort={eventoSeleccionoSort}
+                                                                                 eventoBuscar={eventoBuscar}
+                                                                                 mostrarFab={true}
+                                                                                 camposFiltro={camposFiltros}
+                                                                                 accordeonCamposFiltro={accordeonCamposFiltro}
+                                                                                 mostrarItemEnLista={(registro, indice) => (<>
+                                                                                     <motion.div
+                                                                                         initial={{opacity: 0, y: 10}}
+                                                                                         animate={{opacity: 1, y: 0}}
+                                                                                         exit={{opacity: 0, y: 0}}
+                                                                                         transition={{delay: indice * 0.001}}
+                                                                                         key={registro.id}>
+                                                                                         <LibroBibliotecaMostrar
+                                                                                             registro={registro}
+                                                                                             dioClicBoton={eventoClicBotonOpciones}/>
+                                                                                     </motion.div>
+                                                                                 </>)
+                                                                                 }
                     />
 
 

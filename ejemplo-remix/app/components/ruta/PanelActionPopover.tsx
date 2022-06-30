@@ -22,7 +22,8 @@ export default function PanelActionPopover(props: PanelActionPopoverInterface) {
         setRightPanelOpened, rightPanelOpened, actionSortFieldOpened,
         setActionSortFieldOpened, popoverOpened, popoverTargetRef,
         setPopoverOpened, sortFields, seleccionarSortField,
-        seleccionarSortFieldOrder, accordeonCampos, camposFiltro
+        seleccionarSortFieldOrder, accordeonCampos, camposFiltro,
+        eventoBuscar
     } = props
     const useFormReturn = useForm<any>({
         defaultValues: {
@@ -30,10 +31,8 @@ export default function PanelActionPopover(props: PanelActionPopoverInterface) {
         },
         mode: 'all',
     });
-    const {control, register, getFieldState, getValues, formState, watch} = useFormReturn;
     const onSubmit = (data?) => {
-        console.log('data',data);
-        
+        eventoBuscar(data);
     };
     const [
         eventoAutocomplete,

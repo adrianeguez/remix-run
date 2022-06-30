@@ -232,7 +232,7 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                                                 {aGL.labelJSXElement}
                                             </AccordionSummary>
                                             <AccordionDetails>
-                                                <p className={'text-left'}> El amor</p>
+                                                <div className="accordion-detalle-texto">{aGL.descripcion}</div>
                                                 <List>
                                                     {aGL
                                                         .camposFormulario.map((f) => generarCampo(f))

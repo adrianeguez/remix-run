@@ -16,6 +16,7 @@ export interface RutaComunInterface<T = any> {
     navigate: NavigateFunction;
     path: string;
     eventoSeleccionoSort: (sortField: SortFieldInterface, skipTake?: SkipTakeInterface) => void;
+    eventoBuscar: (data: any) => void;
     mostrarFab: boolean;
     camposFiltro: CampoFormularioInterface[];
     accordeonCamposFiltro?: CampoFormularioAccordeonInterface[];

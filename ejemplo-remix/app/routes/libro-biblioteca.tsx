@@ -37,6 +37,9 @@ import {useForm, Controller} from "react-hook-form";
 import {LibroBibliotecaFiltroForm} from "~/http/libro-biblioteca/form/libro-biblioteca-filtro.form";
 import {AccordeonFiltroComunForm} from "~/http/comun/accordeon-filtro-comun.form";
 import {LibroBibliotecaMostrarCompleto} from "~/components/libro-biblioteca/LibroBibliotecaMostrarCompleto";
+import {convertirQueryParams} from "~/functions/http/convertir-query-params";
+import {SisHabilitadoEnum} from "~/enum/sis-habilitado.enum";
+import {LibroBibliotecaFiltroAccordionForm} from "~/http/libro-biblioteca/form/libro-biblioteca-filtro-accordion.form";
 
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
@@ -50,6 +53,21 @@ export const loader: LoaderFunction = async ({request}) => {
     const requestUrl = request.url;
     const findDto: LibroBibliotecaFindDto = LoaderSetQueryparams(requestUrl);
     const url = new URL(requestUrl);
+
+    const id = url.searchParams.get('id');
+    // Busqueda por ID
+    if (!Number.isNaN(+id) && +id > 0) {
+        findDto.id = +id;
+    } else {
+        // Busqueda por otros parametros
+        const busqueda = url.searchParams.get('busqueda');
+        if (busqueda) {
+            // findDto.busqueda = busqueda;
+        }
+        findDto.sisHabilitado = url.searchParams.get("sisHabilitado") as SisHabilitadoEnum;
+        findDto.sisCreado = url.searchParams.get("sisCreado") as string;
+        findDto.sisModificado = url.searchParams.get("sisModificado") as string;
+    }
     returnData.mensaje = url.searchParams.get("mensaje") as string;
     returnData.findDto = {...findDto};
     try {
@@ -82,7 +100,7 @@ export default function LibroBiblioteca() {
     const [visualizacionAbierto, setVisualizacionAbierto] = useState(false);
     const [camposFiltros, setCamposFiltros] = useState([...LibroBibliotecaFiltroForm()]);
 
-    const [accordeonCamposFiltro, setAccordeonCamposFiltro] = useState([...AccordeonFiltroComunForm()]);
+    const [accordeonCamposFiltro, setAccordeonCamposFiltro] = useState(LibroBibliotecaFiltroAccordionForm());
     // const [registros, setRegistros] = useState([...data.registros] as [LibroBibliotecaInterface[], number]);
 
     // Funciones Util
@@ -111,26 +129,6 @@ export default function LibroBiblioteca() {
     const navegarParametrosEditar = (queryParams: string, registro: LibroBibliotecaInterface) => {
         return `${path}/${registro.id}?` + queryParams;
     };
-    const eventoSeleccionoSort = (sortField: SortFieldInterface, skipTake: SkipTakeInterface) => {
-        if (sortField && skipTake) {
-            navigate(`${path}?${generarNavegarParametros(skipTake, sortField)}`)
-        }
-    };
-    const dioClicBoton = (registro: LibroBibliotecaInterface, nombreEvento: LibroBibliotecaMostrarEnum, queryParams?: string) => {
-        setRegistroSeleccionado(registro);
-        switch (nombreEvento) {
-            case LibroBibliotecaMostrarEnum.IconoNavegar:
-                if (queryParams) {
-                    navigate(navegarParametrosEditar(queryParams, registro));
-                }
-                break;
-            case LibroBibliotecaMostrarEnum.IconoOpciones:
-                setAbrioOpciones(true);
-                break;
-            default:
-                break;
-        }
-    };
     const deshabilitarRecurso = async () => {
         await DeshabilitarRegistroHttp(LibroBibliotecaInstanceHttp, registroSeleccionado);
         setAbrioOpciones(false);
@@ -147,7 +145,7 @@ export default function LibroBiblioteca() {
             const campos = ['id', 'sisHabilitado', 'sisCreado', 'sisModificado'];
             ExportarDescargarCsvExport(campos, registros[0]);
         }
-    }
+    };
     const descargarPDF = () => {
         const registros = data.registros;
         if (registros) {
@@ -168,61 +166,41 @@ export default function LibroBiblioteca() {
             doc.save('table.pdf');
         }
 
+    };
+    // Funciones UI - Eventos
+    const eventoSeleccionoSort = (sortField: SortFieldInterface, skipTake: SkipTakeInterface) => {
+        if (sortField && skipTake) {
+            navigate(`${path}?${generarNavegarParametros(skipTake, sortField)}`)
+        }
+    };
+    const eventoClicBotonOpciones = (registro: LibroBibliotecaInterface, nombreEvento: LibroBibliotecaMostrarEnum, queryParams?: string) => {
+        setRegistroSeleccionado(registro);
+        switch (nombreEvento) {
+            case LibroBibliotecaMostrarEnum.IconoNavegar:
+                if (queryParams) {
+                    navigate(navegarParametrosEditar(queryParams, registro));
+                }
+                break;
+            case LibroBibliotecaMostrarEnum.IconoOpciones:
+                setAbrioOpciones(true);
+                break;
+            default:
+                break;
+        }
+    };
+    const eventoBuscar = (data: LibroBibliotecaFindDto) => {
+        console.log('data', data);
+        const findDto = obtenerQueryParams() as LibroBibliotecaFindDto;
+        findDto.id = +data.busqueda;
+        findDto.sisHabilitado = data.sisHabilitado;
+        findDto.sisCreado = data.sisCreado;
+        findDto.sisModificado = data.sisModificado;
+        navigate(`${path}?${convertirQueryParams(findDto)}`);
+    };
+    const obtenerQueryParams = ()=>{
+        return LoaderSetQueryparams(window.location.href);
     }
-    const steps = ['Select campaign settings', 'Create an ad group', 'Create an ad'];
-    const [activeStep, setActiveStep] = React.useState(0);
-    const [skipped, setSkipped] = React.useState(new Set<number>());
 
-    const isStepOptional = (step: number) => {
-        return step === 1;
-    };
-
-    const isStepSkipped = (step: number) => {
-        return skipped.has(step);
-    };
-
-    const handleNext = () => {
-        let newSkipped = skipped;
-        if (isStepSkipped(activeStep)) {
-            newSkipped = new Set(newSkipped.values());
-            newSkipped.delete(activeStep);
-        }
-
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setSkipped(newSkipped);
-    };
-
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
-    const handleSkip = () => {
-        if (!isStepOptional(activeStep)) {
-            // You probably want to guard against something like this,
-            // it should never occur unless someone's actively trying to break something.
-            throw new Error("You can't skip a step that isn't optional.");
-        }
-
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        setSkipped((prevSkipped) => {
-            const newSkipped = new Set(prevSkipped.values());
-            newSkipped.add(activeStep);
-            return newSkipped;
-        });
-    };
-
-    const handleReset = () => {
-        setActiveStep(0);
-    };
-
-    const handleStep = (step: number) => () => {
-        setActiveStep(step);
-    };
-
-    const {handleSubmit, control, formState: {errors, dirtyFields, touchedFields}} = useForm({
-        defaultValues: {nombre: ''},
-        mode: 'onBlur',
-    });
     return (
         <KonstaContainer titulo="Libro biblioteca">
             {data.registros &&
@@ -237,6 +215,7 @@ export default function LibroBiblioteca() {
                                                          registrosEncontrados={data.registros}
                                                          sortFieldsArray={sortFields}
                                                          eventoSeleccionoSort={eventoSeleccionoSort}
+                                                         eventoBuscar={eventoBuscar}
                                                          mostrarFab={true}
                                                          camposFiltro={camposFiltros}
                                                          accordeonCamposFiltro={accordeonCamposFiltro}
@@ -249,7 +228,7 @@ export default function LibroBiblioteca() {
                                                                  key={registro.id}>
                                                                  <LibroBibliotecaMostrar queryParams={queryParams}
                                                                                          registro={registro}
-                                                                                         dioClicBoton={dioClicBoton}/>
+                                                                                         dioClicBoton={eventoClicBotonOpciones}/>
                                                              </motion.div>
                                                          </>)
                                                          }

@@ -17,4 +17,5 @@ export interface PanelActionPopoverInterface {
     seleccionarSortFieldOrder: (sortOrder: SortOrderEnum) => void;
     camposFiltro:CampoFormularioInterface[];
     accordeonCampos?:CampoFormularioAccordeonInterface[];
+    eventoBuscar: (data: any) => void;
 }

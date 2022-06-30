@@ -9,4 +9,6 @@ export interface FindDto {
     sisHabilitado?: SisHabilitadoEnum;
     sisCreado?: string;
     sisModificado?: string;
+    id?: number;
+    busqueda?: string;
 }

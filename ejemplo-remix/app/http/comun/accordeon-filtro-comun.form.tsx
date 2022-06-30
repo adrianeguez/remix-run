@@ -6,13 +6,14 @@ export function AccordeonFiltroComunForm(): CampoFormularioAccordeonInterface[] 
     return [
         {
             id: 'comunes',
+            descripcion: 'Busque los registros',
             labelJSXElement: <p><SearchIcon className={'mr-2'}/>Comunes</p>,
             campos: [FiltrosComunesEnum.Busqueda, FiltrosComunesEnum.SisHabilitado],
             camposFormulario: [],
         },
-
         {
             id: 'fechas',
+            descripcion: 'Seleccione una fecha en especifico',
             labelJSXElement: (<p><CalendarMonthIcon className={'mr-2'}/>Fechas</p>),
             campos: [FiltrosComunesEnum.SisCreado, FiltrosComunesEnum.SisModificado],
             camposFormulario: [],

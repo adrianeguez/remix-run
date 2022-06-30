@@ -24,7 +24,8 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
         eventoSeleccionoSort,
         mostrarFab = false,
         camposFiltro,
-        accordeonCamposFiltro
+        accordeonCamposFiltro,
+        eventoBuscar
     } = props;
 
     const {titulo, colorTituloClase, colorClaseBanner, textoDescripcion, imagen} = props.navbar;
@@ -209,6 +210,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
                                 sortFields={sortFields}
                                 camposFiltro={camposFiltro}
                                 accordeonCampos={accordeonCamposFiltro as any}
+                                eventoBuscar={eventoBuscar}
             ></PanelActionPopover>
         </>
     )

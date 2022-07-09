@@ -143,7 +143,8 @@ export default function App() {
             </KonstaContainerContext.Provider>
 
             {useFormAutocomplete &&
-                <CamposFormularioActionAutocomplete
+
+                <App theme={'ios'}><CamposFormularioActionAutocomplete
                     actionsOneOpened={actionAutocompleteAbierto}
                     useFormAutocomplete={useFormAutocomplete}
                     listaAutocomplete={listaAutocomplete}
@@ -153,7 +154,7 @@ export default function App() {
                     setListaAutocomplete={setListaAutocomplete}
                     setActionsOneOpened={setActionAutocompleteAbierto}
                     setEventoAutocomplete={setCampoFormularioAutocompleteGlobal}
-                />}
+                /></App>}
         </div>
         </body>
         </html>

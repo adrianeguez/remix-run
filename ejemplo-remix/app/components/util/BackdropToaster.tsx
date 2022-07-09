@@ -10,25 +10,27 @@ export default function BackdropToaster() {
         if (loading === undefined) {
             return <div></div>
         } else {
-            return <Backdrop
-                sx={
-                    BackdropConstant
-                }
-                open={loading}
-            >
-                <CircularProgress color="inherit"/>
-            </Backdrop>
+            if (loading) {
+                return <Backdrop
+                    sx={
+                        BackdropConstant
+                    }
+                    open={loading}
+                >
+                    <CircularProgress color="inherit"/>
+                </Backdrop>
+            } else {
+                return <div></div>
+            }
         }
     }
     return (
         <>
-            {'CHEPA'}
-
             <Toaster
                 position="top-center"
                 reverseOrder={false}
             />
-            {/*{mostrarBackdrop()}*/}
+            {mostrarBackdrop()}
             {/*{loading !== undefined ? <Backdrop*/}
             {/*    sx={*/}
             {/*        BackdropConstant*/}

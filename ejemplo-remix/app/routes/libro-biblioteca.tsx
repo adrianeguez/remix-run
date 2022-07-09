@@ -1,8 +1,7 @@
 import KonstaContainer from "~/components/KonstaContainer";
 import type {LibroBibliotecaInterface} from "~/http/libro-biblioteca/libro-biblioteca.interface";
 import type {LoaderFunction} from "@remix-run/node";
-import {json} from "@remix-run/node";
-import {Link, useLoaderData, useNavigate, useOutletContext} from "@remix-run/react";
+import {useLoaderData, useNavigate} from "@remix-run/react";
 import {useContext, useEffect, useState} from "react";
 import {LibroBibliotecaMostrar} from "~/components/libro-biblioteca/LibroBibliotecaMostrar";
 import {LibroBibliotecaInstanceHttp} from "~/http/libro-biblioteca/libro-biblioteca-instance.http";
@@ -10,15 +9,13 @@ import toast from "react-hot-toast";
 import {CommonSortFieldsConstant} from "~/constantes/common-sort-fields.constant";
 import {SortFieldInterface} from "~/interfaces/sort-field.interface";
 import {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-find.dto";
-import {eliminarUndNullVacio} from "~/functions/util/eliminar-und-null-vacio";
-import {LoaderSetQueryparams} from "~/functions/http/loader-set-queryparams";
 import {NavigateFunction} from "react-router";
 import RutaComun from "~/components/ruta/RutaComun";
 import {NavbarSoloTituloInterface} from "~/components/ruta/interfaces/navbar-solo-titulo.interface";
 import {motion} from "framer-motion";
 import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 import ComponenteError from "~/components/error/ComponenteError";
-import {Actions, ActionsButton, ActionsGroup, ActionsLabel, Block, Button, Sheet, Toolbar} from "konsta/react";
+import {Actions, ActionsButton, ActionsGroup, ActionsLabel} from "konsta/react";
 import {LibroBibliotecaMostrarEnum} from "~/components/libro-biblioteca/enums/libro-biblioteca-mostrar.enum";
 import {DeshabilitarRegistroHttp} from "~/functions/http/deshabilitar-registro.http";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -32,60 +29,20 @@ import jsPDF from 'jspdf'
 import autotable from 'jspdf-autotable'
 import {LibroBibliotecaFiltroForm} from "~/http/libro-biblioteca/form/libro-biblioteca-filtro.form";
 import {LibroBibliotecaMostrarCompleto} from "~/components/libro-biblioteca/LibroBibliotecaMostrarCompleto";
-import {convertirQueryParams} from "~/functions/http/convertir-query-params";
 import {SisHabilitadoEnum} from "~/enum/sis-habilitado.enum";
 import {LibroBibliotecaFiltroAccordionForm} from "~/http/libro-biblioteca/form/libro-biblioteca-filtro-accordion.form";
-import {LoaderSettearFindtoComun} from "~/functions/http/loader-settear-findto-comun";
 import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
-import {useForm} from "react-hook-form";
 import {KonstaContainerContext} from "~/root";
-import {LibroBibliotecaEnum} from "~/http/libro-biblioteca/form/libro-biblioteca.enum";
 import {UtilNavegacion} from "~/functions/ruta/util-navegacion";
-// import {UtilNavegacion} from "~/functions/ruta/util-navegacion";
+import {UtilAutocomplete} from "~/functions/ruta/util-autocomplete";
+import {LibroBibliotecaLoader, LibroBibliotecaLoaderData} from "~/http/libro-biblioteca/libro-biblioteca.loader";
 
-type LoaderData = {
-    registros?: [LibroBibliotecaInterface[], number],
-    error?: string,
-    mensaje?: string;
-    findDto: LibroBibliotecaFindDto;
-};
 // Carga de datos en backend
-export const loader: LoaderFunction = async ({request, params, context}) => {
-    const returnData: LoaderData = {} as any;
-    const requestUrl = request.url;
-    const findDto: LibroBibliotecaFindDto = LoaderSetQueryparams(requestUrl) as LibroBibliotecaFindDto;
-    LoaderSettearFindtoComun(findDto);
-    const url = new URL(requestUrl);
+export const loader: LoaderFunction = LibroBibliotecaLoader;
 
-    const id = url.searchParams.get('id');
-    // Busqueda por ID
-    if (!Number.isNaN(+id) && +id > 0) {
-        findDto.id = +id;
-    } else {
-        // Busqueda por otros parametros
-        const busqueda = url.searchParams.get('busqueda');
-        if (busqueda) {
-            // findDto.busqueda = busqueda;
-        }
-        findDto.sisHabilitado = url.searchParams.get("sisHabilitado") as SisHabilitadoEnum;
-        findDto.sisCreado = url.searchParams.get("sisCreado") as string;
-        findDto.sisModificado = url.searchParams.get("sisModificado") as string;
-    }
-    returnData.mensaje = url.searchParams.get("mensaje") as string;
-    returnData.findDto = {...findDto};
-    try {
-        returnData.registros = await LibroBibliotecaInstanceHttp.find(eliminarUndNullVacio(findDto))
-    } catch (error: any) {
-        console.error({error, mensaje: 'Error consultando registros'});
-        returnData.error = 'Error consultando registros';
-    }
-    return json(returnData);
-};
-// Ruta
-let eventoAutocompleteLocal: CampoFormularioInterface;
 export default function LibroBiblioteca() {
     // Hooks Librearias y variables globales
-    const data = useLoaderData<LoaderData>();
+    const data = useLoaderData<LibroBibliotecaLoaderData>();
     const navigate: NavigateFunction = useNavigate();
     const path = '/libro-biblioteca';
     const navbar: NavbarSoloTituloInterface = {
@@ -114,7 +71,12 @@ export default function LibroBiblioteca() {
     const [camposFiltrosBusqueda, setCamposFiltrosBusqueda] = useState([...LibroBibliotecaFiltroForm()]);
     const [accordeonCamposFiltro] = useState(LibroBibliotecaFiltroAccordionForm());
     const tieneCampoFormulario = Object.keys(campoFormularioAutocompleteGlobal ? campoFormularioAutocompleteGlobal : {}).length > 0;
-    const navegar = UtilNavegacion(navigate, path);
+    const navegarUtil = UtilNavegacion(navigate, path);
+    const autocompleteUtil = UtilAutocomplete(
+        setActionAutocompleteAbierto,
+        setCamposFiltrosBusqueda,
+        camposFiltrosBusqueda,
+        seleccionoListaAutocomplete);
     // Funciones Util
 
     // Use Effects
@@ -233,53 +195,12 @@ export default function LibroBiblioteca() {
         console.log('eventoBuscar', data);
     };
     // Funciones UI - Navegacion
-    const navegarParametrosNuevo = navegar.navegarParametrosNuevo;
-    const navegarParametrosEditar = navegar.navegarParametrosEditar;
-    const obtenerQueryParams = () => navegar.obtenerQueryParams;
-    const recargarPaginaConNuevosQueryParams = navegar.recargarPaginaConNuevosQueryParams;
-
-    // const navegarParametrosNuevo = () => {
-    //     navigate(`${path}/nuevo?` + obtenerQueryParamsYConvertir());
-    // };
-    // const navegarParametrosEditar = (registro: LibroBibliotecaInterface) => {
-    //     navigate(`${path}/${registro.id}?${obtenerQueryParamsYConvertir()}`);
-    // };
-    // const obtenerQueryParams = () => {
-    //     return LoaderSetQueryparams(window.location.href);
-    // };
-    // const obtenerQueryParamsYConvertir = () => {
-    //     return convertirQueryParams(obtenerQueryParams());
-    // };
-    // const recargarPaginaConNuevosQueryParams = (parametros?: { queryParams?: string, findDto?: LibroBibliotecaFindDto }) => {
-    //     if (parametros) {
-    //         if (parametros.queryParams) {
-    //             navigate(`${path}?${parametros.queryParams}`);
-    //         }
-    //         if (parametros.findDto) {
-    //             navigate(`${path}?${convertirQueryParams(parametros.findDto)}`);
-    //         }
-    //     } else {
-    //         navigate(`${path}?${obtenerQueryParamsYConvertir()}`);
-    //     }
-    // };
+    const navegarParametrosNuevo = navegarUtil.navegarParametrosNuevo;
+    const navegarParametrosEditar = navegarUtil.navegarParametrosEditar;
+    const obtenerQueryParams = () => navegarUtil.obtenerQueryParams;
+    const recargarPaginaConNuevosQueryParams = navegarUtil.recargarPaginaConNuevosQueryParams;
     // Autocomplete
-    const actualizarValorCampoAutocompleteGlobal = () => {
-        setActionAutocompleteAbierto(false);
-        setCamposFiltrosBusqueda([
-            ...camposFiltrosBusqueda.map(
-                (f) => {
-                    if (f.formControlName === LibroBibliotecaEnum.Autocomplete) {
-                        f.initialValue = seleccionoListaAutocomplete.registro;
-                        f.actualValue = seleccionoListaAutocomplete.registro;
-                        if (f.autocomplete) {
-                            f.autocomplete.valorActual = seleccionoListaAutocomplete.registro;
-                        }
-                    }
-                    return f;
-                }
-            )
-        ]);
-    };
+    const actualizarValorCampoAutocompleteGlobal = autocompleteUtil.actualizarValorCampoAutocompleteGlobal;
     const actualizarVisualizarComponenteAutocomplete = () => {
         setGenerarComponente({
             ...generarComponenteAutocompletePorFormControlName
@@ -358,8 +279,6 @@ export default function LibroBiblioteca() {
                                                                                  </>)
                                                                                  }
                     />
-
-
                 </>
             }
             {/* Opciones */}
@@ -402,19 +321,6 @@ export default function LibroBiblioteca() {
             </SheetContenedor>
             {/* Error */}
             {data.error && <ComponenteError linkTo={path}/>}
-            {/*    Autocomplete*/}
-
-            {/*<CamposFormularioActionAutocomplete actionsOneOpened={actionAutocompleteAbierto}*/}
-            {/*                                    useFormAutocomplete={useFormAutocomplete}*/}
-            {/*                                    listaAutocomplete={listaAutocomplete}*/}
-            {/*                                    setSeleccionoListaAutocomplete={setSeleccionoListaAutocomplete}*/}
-            {/*                                    generarComponente={generarComponenteAutocompletePorFormControlName}*/}
-            {/*                                    campoFormulario={eventoAutocompleteLocal}*/}
-            {/*                                    setListaAutocomplete={setListaAutocomplete}*/}
-            {/*                                    setActionsOneOpened={setActionAutocompleteAbierto}*/}
-            {/*                                    setEventoAutocomplete={setEventoAutocomplete}*/}
-            {/*>*/}
-            {/*</CamposFormularioActionAutocomplete>*/}
         </KonstaContainer>
     )
 }

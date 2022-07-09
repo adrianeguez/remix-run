@@ -193,6 +193,7 @@ export default function LibroBiblioteca() {
     };
     const eventoBuscar = (data: LibroBibliotecaFindDto) => {
         console.log('eventoBuscar', data);
+        recargarPaginaConNuevosQueryParams({findDto:data});
     };
     // Funciones UI - Navegacion
     const navegarParametrosNuevo = navegarUtil.navegarParametrosNuevo;
@@ -211,10 +212,10 @@ export default function LibroBiblioteca() {
             return (<><LibroBibliotecaMostrar registro={registro}/></>)
         },
     };
-    const buscarAutocomplete = async () => {
+    const buscarAutocomplete = () => {
         switch (campoFormularioAutocompleteGlobal.formControlName) {
             case 'autocomplete':
-                await buscarLibroBiblioteca(textoAutocompleteBusqueda, campoFormularioAutocompleteGlobal);
+                buscarLibroBiblioteca(textoAutocompleteBusqueda, campoFormularioAutocompleteGlobal);
                 break;
             default:
                 break;
@@ -248,6 +249,8 @@ export default function LibroBiblioteca() {
             setLoading(false);
         }
     }
+
+    // Componente
     return (
         <KonstaContainer titulo="Libro biblioteca">
             {data.registros &&

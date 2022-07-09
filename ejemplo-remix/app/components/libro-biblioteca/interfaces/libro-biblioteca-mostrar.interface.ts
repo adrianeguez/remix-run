@@ -4,6 +4,5 @@ import {LibroBibliotecaMostrarEnum} from "~/components/libro-biblioteca/enums/li
 export interface LibroBibliotecaMostrarInterface {
     registro: LibroBibliotecaInterface;
     dioClicBoton?: (registro: LibroBibliotecaInterface,
-                    nombreEvento: LibroBibliotecaMostrarEnum,
-                    queryParams?: string) => void;
+                    nombreEvento: LibroBibliotecaMostrarEnum) => void;
 }

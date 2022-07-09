@@ -1,5 +1,6 @@
 import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 import {UseFormReturn} from "react-hook-form/dist/types";
+import {FuncionGenerarComponente} from "~/components/KonstaContainer";
 
 export interface CampoFormularioActionAutocompleteInterface {
     actionsOneOpened: boolean;
@@ -9,8 +10,6 @@ export interface CampoFormularioActionAutocompleteInterface {
     setListaAutocomplete: any;
     setEventoAutocomplete: any;
     setActionsOneOpened: any;
-    generarComponente: {
-        [key: string]: (registro: any, campoFormulario: CampoFormularioInterface) => JSX.Element;
-    },
+    generarComponente: FuncionGenerarComponente;
     campoFormulario: CampoFormularioInterface
 }

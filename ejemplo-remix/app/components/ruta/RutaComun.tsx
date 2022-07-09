@@ -11,6 +11,9 @@ import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-paramet
 import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 import AutoAwesomeMotionIcon from '@mui/icons-material/AutoAwesomeMotion';
 import CamposFormulario from "~/components/form/lib/CamposFormulario";
+import CamposFormularioActionAutocomplete from "~/components/form/lib/CamposFormularioActionAutocomplete";
+import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
+import {useForm} from "react-hook-form";
 
 export default function RutaComun<T>(props: RutaComunInterface<T>) {
     const {
@@ -25,7 +28,9 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
         mostrarFab = false,
         camposFiltro,
         accordeonCamposFiltro,
-        eventoBuscar
+        eventoBuscar,
+        setRightPanelOpened,
+        rightPanelOpened
     } = props;
 
     const {titulo, colorTituloClase, colorClaseBanner, textoDescripcion, imagen} = props.navbar;
@@ -36,7 +41,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
     const [error, setError] = useState('');
     const [popoverOpened, setPopoverOpened] = useState(false);
     const popoverTargetRef = useRef(null);
-    const [rightPanelOpened, setRightPanelOpened] = useState(false);
+    // const [rightPanelOpened, setRightPanelOpened] = useState(false);
     const [sortFields, setSortFields] = useState([...sortFieldsArray] as SortFieldInterface[]);
     const [sortFieldSeleccionado, setSortFieldSeleccionado] = useState({
         sortField: findDto.sortField ? findDto.sortField : '',

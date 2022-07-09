@@ -20,4 +20,6 @@ export interface RutaComunInterface<Registro = any, RegistroFindDto = any> {
     mostrarFab: boolean;
     camposFiltro: CampoFormularioInterface[];
     accordeonCamposFiltro?: CampoFormularioAccordeonInterface[];
+    rightPanelOpened:boolean;
+    setRightPanelOpened:any;
 }

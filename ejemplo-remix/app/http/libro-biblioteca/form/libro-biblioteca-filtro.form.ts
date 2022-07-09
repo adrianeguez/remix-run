@@ -5,6 +5,22 @@ import {FiltroComunForm} from "~/http/comun/filtro-comun.form";
 
 export function LibroBibliotecaFiltroForm(): CampoFormularioInterface[] {
     return [
-        ...FiltroComunForm()
+        ...FiltroComunForm(),
+
+        {
+            formControlName: LibroBibliotecaEnum.Autocomplete,
+            help: 'Seleccione un libro',
+            label: 'Libro',
+            initialValue: '',
+            actualValue: '',
+            type: CampoFormularioType.Autocomplete,
+            valid: false,
+            placeholder: 'EJ: Libro 1',
+            validators: {
+            },
+            autocomplete: {
+                nombrePropiedadObjeto: 'id'
+            }
+        },
     ]
 }

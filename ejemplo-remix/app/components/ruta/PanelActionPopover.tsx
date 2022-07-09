@@ -17,8 +17,13 @@ import {Form} from "@remix-run/react";
 import {GenerateDefaultValues} from "~/functions/form/generate-default-values";
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import toast from "react-hot-toast";
+import {useContext, useEffect} from "react";
+import {KonstaContainerContext} from "~/root";
 
 export default function PanelActionPopover(props: PanelActionPopoverInterface) {
+    const {
+        setCampoFormularioAutocompleteGlobal,
+    } = useContext(KonstaContainerContext);
     const {
         setRightPanelOpened, rightPanelOpened, actionSortFieldOpened,
         setActionSortFieldOpened, popoverOpened, popoverTargetRef,
@@ -44,6 +49,15 @@ export default function PanelActionPopover(props: PanelActionPopoverInterface) {
         campos: camposFiltro,
         accordeonCampos
     })
+
+    useEffect(
+        () => {
+            setCampoFormularioAutocompleteGlobal(eventoAutocomplete);
+        },
+        [eventoAutocomplete]
+    )
+
+
     return (
         <>
             <Panel

@@ -2,10 +2,10 @@ import {Toaster} from "react-hot-toast";
 import {Backdrop, CircularProgress} from "@mui/material";
 import {BackdropConstant} from "~/constantes/backdrop.constant";
 import {useContext} from "react";
-import {KonstaContainerContext} from "~/components/KonstaContainer";
+import {KonstaContainerContext} from "~/root";
 
 export default function BackdropToaster() {
-    const {loading, setLoading} = useContext(KonstaContainerContext);
+    const {loading} = useContext(KonstaContainerContext);
     return (
         <>
             <Toaster

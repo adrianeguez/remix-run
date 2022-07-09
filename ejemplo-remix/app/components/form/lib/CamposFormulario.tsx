@@ -33,6 +33,19 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
         reset,
         resetField
     } = props.useFormReturn;
+    setTimeout(
+        ()=>{
+
+            props.campos.forEach(
+                (c) => {
+                    if (c.initialValue) {
+                        setValue(c.formControlName as any, c.initialValue);
+                    }
+                }
+            )
+        },
+        1
+    )
     const generarCampo = (campoFormulario: CampoFormularioInterface) => {
         const reglas: any = GenerarReglas(campoFormulario);
         const generarLabel = () => {
@@ -76,8 +89,8 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                                     value={campoFormulario.type === CampoFormularioType.Number ? +field.value : field.value}
                                     error={MostrarErrores(errors, field, campoFormulario)}
                                     media={campoFormulario.icon ? campoFormulario.icon : <><img className={'icon-small'}
-                                                  src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
-                                                  alt=""/></>}
+                                                                                                src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
+                                                                                                alt=""/></>}
                                     onChange={field.onChange}
                                     onClear={() => {
                                         setValue(campoFormulario.formControlName as any, '', {
@@ -115,10 +128,15 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                             valorAMostrar = campoFormulario.initialValue;
                         }
                     } else {
-                        if (typeof field.value === 'object' && !Array.isArray(field.value)) {
-                            valorAMostrar = field.value[campoFormulario.autocomplete.nombrePropiedadObjeto];
+                        if (campoFormulario.autocomplete.valorActual) {
+                            return campoFormulario.autocomplete.valorActual[campoFormulario.autocomplete.nombrePropiedadObjeto];
                         } else {
-                            valorAMostrar = field.value;
+
+                            if (typeof field.value === 'object' && !Array.isArray(field.value)) {
+                                valorAMostrar = field.value[campoFormulario.autocomplete.nombrePropiedadObjeto];
+                            } else {
+                                valorAMostrar = field.value;
+                            }
                         }
                     }
                 }
@@ -140,14 +158,15 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                                 ({field}) => (
                                     <div>
                                         <ListItem
-                                            media={campoFormulario.icon ? campoFormulario.icon : <><img className={'icon-small'}
-                                                          src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
-                                                          alt=""/></>}
+                                            media={campoFormulario.icon ? campoFormulario.icon : <><img
+                                                className={'icon-small'}
+                                                src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
+                                                alt=""/></>}
                                             header={errors[campoFormulario.formControlName] ?
                                                 <span className={'text-red-500'}>{generarLabel()}</span> :
                                                 generarLabel()}
-                                            title={mostrarValor(field) === '' ? campoFormulario.placeholder : mostrarValor(field)}
-                                            titleWrapClassName={field.value ? '' : 'texto-placeholder'}
+                                            title={mostrarValor(field)}
+                                            titleWrapClassName={mostrarValor(field) ? '' : 'texto-placeholder'}
                                             after={<><img className={'icon-small'}
                                                           src="https://cdn2.iconfinder.com/data/icons/business-management-color/64/select-choose-right-person-hr-job-human-resource-512.png"
                                                           alt=""/></>}
@@ -222,7 +241,7 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                             .map(
                                 (aGL) => {
                                     return (
-                                        <Accordion key={aGL.id} className={'accordion-form'} >
+                                        <Accordion key={aGL.id} className={'accordion-form'}>
                                             <AccordionSummary
                                                 expandIcon={<ExpandMoreIcon/>}
                                                 className={'accordion-form-summary'}

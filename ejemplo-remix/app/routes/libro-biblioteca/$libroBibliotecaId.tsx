@@ -1,6 +1,6 @@
 import {motion} from "framer-motion"
 import {Block, BlockTitle, Button, List, Navbar, Popup} from "konsta/react";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Form, useLoaderData, useNavigate} from "@remix-run/react";
 import type {ActionFunction, Request} from "@remix-run/node";
 import {json, LoaderFunction, redirect} from "@remix-run/node";
@@ -26,6 +26,7 @@ import CamposFormularioActionAutocomplete from "~/components/form/lib/CamposForm
 import {LibroBibliotecaCreateDto} from "~/http/libro-biblioteca/dto/libro-biblioteca-create.dto";
 import PopUpContenedor from "~/components/util/PopUpContenedor";
 import BackdropToaster from "~/components/util/BackdropToaster";
+import {KonstaContainerContext} from "~/root";
 
 interface RequestData {
     request: Request
@@ -41,7 +42,7 @@ let eventoAutocompleteLocal: CampoFormularioInterface;
 export const loader: LoaderFunction = async ({request, params}) => {
     const {libroBibliotecaId} = params
     const requestUrl = request.url;
-    const findDto: LibroBibliotecaFindDto = LoaderSetQueryparams(requestUrl);
+    const findDto: LibroBibliotecaFindDto = LoaderSetQueryparams(requestUrl) as LibroBibliotecaFindDto;
     const url = new URL(requestUrl);
     if (!Number.isNaN(+libroBibliotecaId) && +libroBibliotecaId > 0) {
         const registro = await LibroBibliotecaInstanceHttp.find({id: +libroBibliotecaId});
@@ -109,7 +110,8 @@ export default function New() {
         return defaultValuesObject
     }
     const useFormReturn = useForm<any>({defaultValues: {...defaultValues()}});
-    const useFormAutocomplete = useForm<any>({defaultValues: {busqueda: ''}});
+    const {useFormAutocomplete} = useContext(KonstaContainerContext);
+    // const useFormAutocomplete = useForm<any>({defaultValues: {busqueda: ''}});
 
     // Custom Hooks
     // Custom Hooks - Campo Formulario
@@ -301,8 +303,7 @@ export default function New() {
                                                 setListaAutocomplete={setListaAutocomplete}
                                                 setActionsOneOpened={setActionAutocompleteAbierto}
                                                 setEventoAutocomplete={setEventoAutocomplete}
-            >
-            </CamposFormularioActionAutocomplete>
+            />
             <BackdropToaster loading={loading}></BackdropToaster>
         </>
     )

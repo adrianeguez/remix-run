@@ -21,7 +21,7 @@ export default function CamposFormularioActionAutocomplete(props: CampoFormulari
 
     const cerrarAction = () => {
         setListaAutocomplete([]);
-        setEventoAutocomplete({} as any);
+        // setEventoAutocomplete({} as any);
         setActionsOneOpened(false);
         useFormAutocomplete.setValue('busqueda' as any, '' as any, {
             shouldValidate: true,
@@ -43,12 +43,12 @@ export default function CamposFormularioActionAutocomplete(props: CampoFormulari
                     </ActionsLabel>
                     <List className={'action-list-helper-konstaio'}>
                         <InputBusquedaAutocomplete useFormAutocomplete={useFormAutocomplete}/>
-                        {listaAutocomplete.length === 0 &&
+                        {listaAutocomplete && listaAutocomplete.length === 0 &&
                             <ListItem title={'0 Registros encontrados'}/>
                         }
                     </List>
                     <List className={'action-list-konstaio'}>
-                        {listaAutocomplete.map(
+                        {listaAutocomplete && listaAutocomplete.map(
                             (v: any, index) => (
                                 <motion.div
                                     initial={{opacity: 0, y: 10}}
@@ -57,8 +57,8 @@ export default function CamposFormularioActionAutocomplete(props: CampoFormulari
                                     transition={{delay: index * 0.1}}
                                     key={v.id}
                                     onClick={() => {
-                                        cerrarAction();
                                         setSeleccionoListaAutocomplete({registro: v, campoFormulario});
+                                        // cerrarAction();
                                     }}
                                 >
                                     {generarComponente[campoFormulario.formControlName](v, campoFormulario)}

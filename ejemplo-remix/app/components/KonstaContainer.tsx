@@ -1,9 +1,7 @@
 import {App} from "konsta/react";
 import LeftNavbarContainer from "~/components/LeftNavbarContainer";
-import {useContext} from "react";
 import BackdropToaster from "~/components/util/BackdropToaster";
 import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
-import {KonstaContainerContext} from "~/root";
 import {Observable} from "rxjs";
 import {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
 import {UseFormReturn} from "react-hook-form/dist/types";
@@ -41,12 +39,12 @@ const KonstaContainer = ({children, titulo}) => {
     }
     return (
         <>
-            <App theme={'ios'}>
+            {/*<App theme={'ios'}>*/}
                 <LeftNavbarContainer titulo={titulo}>
                     {children}
                 </LeftNavbarContainer>
                 <BackdropToaster/>
-            </App>
+            {/*</App>*/}
         </>
     )
 }

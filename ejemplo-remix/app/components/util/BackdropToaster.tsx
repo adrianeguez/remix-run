@@ -6,13 +6,11 @@ import {KonstaContainerContext} from "~/root";
 
 export default function BackdropToaster() {
     const {loading} = useContext(KonstaContainerContext);
-    return (
-        <>
-            <Toaster
-                position="top-center"
-                reverseOrder={false}
-            />
-            <Backdrop
+    const mostrarBackdrop = () => {
+        if (loading === undefined) {
+            return <div></div>
+        } else {
+            return <Backdrop
                 sx={
                     BackdropConstant
                 }
@@ -20,6 +18,25 @@ export default function BackdropToaster() {
             >
                 <CircularProgress color="inherit"/>
             </Backdrop>
+        }
+    }
+    return (
+        <>
+            {'CHEPA'}
+
+            <Toaster
+                position="top-center"
+                reverseOrder={false}
+            />
+            {/*{mostrarBackdrop()}*/}
+            {/*{loading !== undefined ? <Backdrop*/}
+            {/*    sx={*/}
+            {/*        BackdropConstant*/}
+            {/*    }*/}
+            {/*    open={loading}*/}
+            {/*>*/}
+            {/*    <CircularProgress color="inherit"/>*/}
+            {/*</Backdrop> : <></>}*/}
         </>
     )
 }

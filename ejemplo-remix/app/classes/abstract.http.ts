@@ -21,7 +21,7 @@ export abstract class AbstractHttp<FindDTO = any, CreateDTO = any, Registro = an
         }
     }
 
-    async find(registroFindDto?: FindDTO) {
+    async find(registroFindDto?: FindDTO):Promise<[Registro[], number]> {
         const queryParams = new URLSearchParams(registroFindDto as any);
         try {
             const respuesta = await fetch(`${this.urlBackend}${this.url}?` + queryParams)

@@ -1,4 +1,4 @@
-import {Block, Button, Sheet, Toolbar} from "konsta/react";
+import {Block, Sheet, Toolbar} from "konsta/react";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 
 export default function SheetContenedor({visualizacionAbierto, setVisualizacionAbierto, children}) {

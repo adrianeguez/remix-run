@@ -1,4 +1,4 @@
-import {BlockTitle, Button, List, Navbar, Popup} from "konsta/react";
+import {Navbar, Popup} from "konsta/react";
 import RestorePageIcon from "@mui/icons-material/RestorePage";
 import EditIcon from "@mui/icons-material/Edit";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";

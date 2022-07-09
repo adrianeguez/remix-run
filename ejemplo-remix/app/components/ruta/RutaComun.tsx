@@ -1,21 +1,17 @@
-import {Actions, ActionsButton, ActionsGroup, ActionsLabel, Button, Fab, List, ListItem, Page} from "konsta/react";
+import {Actions, ActionsButton, ActionsGroup, ActionsLabel, Button, Fab, List, ListItem} from "konsta/react";
 import NavbarTitulo from "~/components/ruta/NavbarTitulo";
 import {Outlet} from "@remix-run/react";
 import PanelActionPopover from "~/components/ruta/PanelActionPopover";
 import {RutaComunInterface} from "~/components/ruta/interfaces/ruta-comun.interface";
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {SortFieldInterface} from "~/interfaces/sort-field.interface";
 import {SkipTakeConstant} from "~/constantes/skip-take.constant";
 import {SortOrderEnum} from "~/enum/sort-order.enum";
-import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-parametros";
 import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 import AutoAwesomeMotionIcon from '@mui/icons-material/AutoAwesomeMotion';
-import CamposFormulario from "~/components/form/lib/CamposFormulario";
-import CamposFormularioActionAutocomplete from "~/components/form/lib/CamposFormularioActionAutocomplete";
-import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
-import {useForm} from "react-hook-form";
+import {KonstaContainerContext} from "~/root";
 
-export default function RutaComun<T>(props: RutaComunInterface<T>) {
+export default function RutaComun<T, F>(props: RutaComunInterface<T, F>) {
     const {
         navigateFabNewFunction,
         registrosEncontrados,
@@ -29,8 +25,8 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
         camposFiltro,
         accordeonCamposFiltro,
         eventoBuscar,
-        setRightPanelOpened,
-        rightPanelOpened
+        // setRightPanelOpened,
+        // rightPanelOpened
     } = props;
 
     const {titulo, colorTituloClase, colorClaseBanner, textoDescripcion, imagen} = props.navbar;
@@ -38,6 +34,7 @@ export default function RutaComun<T>(props: RutaComunInterface<T>) {
     const totalRegistros = registrosEncontrados[1];
 
     // Inicializar variables
+    const [rightPanelOpened, setRightPanelOpened] = useState(false);
     const [error, setError] = useState('');
     const [popoverOpened, setPopoverOpened] = useState(false);
     const popoverTargetRef = useRef(null);

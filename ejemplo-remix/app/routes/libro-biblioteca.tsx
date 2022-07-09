@@ -16,8 +16,6 @@ import {NavigateFunction} from "react-router";
 import RutaComun from "~/components/ruta/RutaComun";
 import {NavbarSoloTituloInterface} from "~/components/ruta/interfaces/navbar-solo-titulo.interface";
 import {motion} from "framer-motion";
-import {generarNavegarParametros} from "~/functions/ruta/generar-navegar-parametros";
-import {SkipTakeConstant} from "~/constantes/skip-take.constant";
 import {SkipTakeInterface} from "~/interfaces/skip-take.interface";
 import ComponenteError from "~/components/error/ComponenteError";
 import {Actions, ActionsButton, ActionsGroup, ActionsLabel, Block, Button, Sheet, Toolbar} from "konsta/react";
@@ -37,16 +35,13 @@ import {LibroBibliotecaMostrarCompleto} from "~/components/libro-biblioteca/Libr
 import {convertirQueryParams} from "~/functions/http/convertir-query-params";
 import {SisHabilitadoEnum} from "~/enum/sis-habilitado.enum";
 import {LibroBibliotecaFiltroAccordionForm} from "~/http/libro-biblioteca/form/libro-biblioteca-filtro-accordion.form";
-import {SortOrderEnum} from "~/enum/sort-order.enum";
 import {LoaderSettearFindtoComun} from "~/functions/http/loader-settear-findto-comun";
-import CamposFormularioActionAutocomplete from "~/components/form/lib/CamposFormularioActionAutocomplete";
-import {LibroBibliotecaForm} from "~/http/libro-biblioteca/form/libro-biblioteca.form";
 import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
-import {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
 import {useForm} from "react-hook-form";
 import {KonstaContainerContext} from "~/root";
-import {GenerarObservableWatchCampo} from "~/components/form/lib/funcion/generar-observable-watch-campo";
 import {LibroBibliotecaEnum} from "~/http/libro-biblioteca/form/libro-biblioteca.enum";
+import {UtilNavegacion} from "~/functions/ruta/util-navegacion";
+// import {UtilNavegacion} from "~/functions/ruta/util-navegacion";
 
 type LoaderData = {
     registros?: [LibroBibliotecaInterface[], number],
@@ -92,8 +87,6 @@ export default function LibroBiblioteca() {
     // Hooks Librearias y variables globales
     const data = useLoaderData<LoaderData>();
     const navigate: NavigateFunction = useNavigate();
-    const contexto = useContext(KonstaContainerContext);
-    // const contexto = useOutletContext<KonstaContainerContext>();
     const path = '/libro-biblioteca';
     const navbar: NavbarSoloTituloInterface = {
         titulo: 'Libro biblioteca',
@@ -102,24 +95,6 @@ export default function LibroBiblioteca() {
         colorClaseBanner: 'libro-biblioteca-banner',
         colorTituloClase: 'texto-oscuro',
     };
-
-    // Inicializar variables useState
-    const [loading, setLoading] = useState(false);
-    const [sortFields, setSortFields] = useState([...CommonSortFieldsConstant] as SortFieldInterface[]);
-    const [abrioOpciones, setAbrioOpciones] = useState(false);
-    const [registroSeleccionado, setRegistroSeleccionado] = useState({} as LibroBibliotecaInterface);
-    const [visualizacionAbierto, setVisualizacionAbierto] = useState(false);
-    const [camposFiltros, setCamposFiltros] = useState([...LibroBibliotecaFiltroForm()]);
-    const [accordeonCamposFiltro, setAccordeonCamposFiltro] = useState(LibroBibliotecaFiltroAccordionForm());
-    // const [listaAutocomplete, setListaAutocomplete] = useState([] as any[]);
-    const [actionAutocompleteAbierto] = useState(false);
-    // const [seleccionoListaAutocomplete, setSeleccionoListaAutocomplete] = useState({} as { registro: any, campoFormulario: CampoFormularioInterface });
-    const [eventoAutocomplete, setEventoAutocomplete] = useState({} as CampoFormularioInterface);
-    const [popupOpened, setPopupOpened] = useState(false);
-    const useFormAutocomplete = useForm<any>({defaultValues: {busqueda: ''}});
-    const [rightPanelOpened, setRightPanelOpened] = useState(false);
-    // const [registros, setRegistros] = useState([...data.registros] as [LibroBibliotecaInterface[], number]);
-
     const {
         campoFormularioAutocompleteGlobal,
         setActionAutocompleteAbierto,
@@ -127,8 +102,19 @@ export default function LibroBiblioteca() {
         seleccionoListaAutocomplete,
         textoAutocompleteBusqueda,
         setListaAutocomplete,
-        listaAutocomplete
+        setLoading,
+        setGenerarComponente
     } = useContext(KonstaContainerContext);
+
+    // Inicializar variables useState
+    const [sortFields] = useState([...CommonSortFieldsConstant] as SortFieldInterface[]);
+    const [abrioOpciones, setAbrioOpciones] = useState(false);
+    const [registroSeleccionadoRuta, setRegistroSeleccionadoRuta] = useState({} as LibroBibliotecaInterface);
+    const [visualizacionRegistroAbierto, setVisualizacionRegistroAbierto] = useState(false);
+    const [camposFiltrosBusqueda, setCamposFiltrosBusqueda] = useState([...LibroBibliotecaFiltroForm()]);
+    const [accordeonCamposFiltro] = useState(LibroBibliotecaFiltroAccordionForm());
+    const tieneCampoFormulario = Object.keys(campoFormularioAutocompleteGlobal ? campoFormularioAutocompleteGlobal : {}).length > 0;
+    const navegar = UtilNavegacion(navigate, path);
     // Funciones Util
 
     // Use Effects
@@ -144,8 +130,7 @@ export default function LibroBiblioteca() {
                     toast.success('Cargo datos exitosamente');
                 }
             }
-            contexto.setGenerarComponente({...contexto.generarComponente, ...generarComponenteAutocompletePorFormControlName})
-            // escucharEventoAutocompleteBusqueda();
+            actualizarVisualizarComponenteAutocomplete();
         }, []
     )
 
@@ -157,7 +142,6 @@ export default function LibroBiblioteca() {
     )
     useEffect(
         () => {
-            // setRightPanelOpened(false);
             if (tieneCampoFormulario) {
                 setActionAutocompleteAbierto(true);
             } else {
@@ -166,59 +150,26 @@ export default function LibroBiblioteca() {
         },
         [campoFormularioAutocompleteGlobal]
     )
-
-    // Use Effect - eventoAutocomplete
-    // useEffect(
-    //     () => {
-    //         eventoAutocompleteLocal = eventoAutocomplete;
-    //         if (tieneCampoFormulario) {
-    //             setActionAutocompleteAbierto(true);
-    //         } else {
-    //             setActionAutocompleteAbierto(false);
-    //         }
-    //         console.log('PEENE');
-    //     },
-    //     [eventoAutocomplete]
-    // )
-    // Use Effect - eventoAutocomplete
-    // useEffect(
-    //     () => {
-    //         eventoAutocompleteLocal = eventoAutocomplete;
-    //         if (tieneCampoFormulario) {
-    //             setActionAutocompleteAbierto(true);
-    //         } else {
-    //             setActionAutocompleteAbierto(false);
-    //         }
-    //     },
-    //     [eventoAutocomplete]
-    // )
-    useEffect(
-        () => {
-            if (actionAutocompleteAbierto) {
-                // buscarAutocomplete({value: '', data: {}, info: {type: '', name: ''}}).then();
-            }
-        },
-        [actionAutocompleteAbierto]
-    )
     useEffect(
         () => {
             if (seleccionoListaAutocomplete.registro) {
-                actualizarCampoAutocomplete();
+                actualizarValorCampoAutocompleteGlobal();
             }
         },
         [seleccionoListaAutocomplete]
     )
 
     // Funciones UI
+    // Funciones UI - Comunes tabla
     const deshabilitarRecurso = async () => {
-        await DeshabilitarRegistroHttp(LibroBibliotecaInstanceHttp, registroSeleccionado);
+        await DeshabilitarRegistroHttp(LibroBibliotecaInstanceHttp, registroSeleccionadoRuta);
         setAbrioOpciones(false);
         toast.success('Registro actualizado');
         recargarPaginaConNuevosQueryParams();
     };
     const visualizarRegistro = () => {
         setAbrioOpciones(false);
-        setVisualizacionAbierto(true);
+        setVisualizacionRegistroAbierto(true);
     };
     const descargarCSV = () => {
         const registros = data.registros;
@@ -250,7 +201,6 @@ export default function LibroBiblioteca() {
     };
     // Funciones UI - Eventos
     const eventoSeleccionoSort = (sortField: SortFieldInterface, skipTake: SkipTakeInterface) => {
-
         if (sortField && skipTake) {
             const findDto = obtenerQueryParams() as LibroBibliotecaFindDto;
             findDto.sortOrder = sortField.sortOrder;
@@ -267,7 +217,7 @@ export default function LibroBiblioteca() {
         }
     };
     const eventoClicBotonOpciones = (registro: LibroBibliotecaInterface, nombreEvento: LibroBibliotecaMostrarEnum) => {
-        setRegistroSeleccionado(registro);
+        setRegistroSeleccionadoRuta(registro);
         switch (nombreEvento) {
             case LibroBibliotecaMostrarEnum.IconoNavegar:
                 navegarParametrosEditar(registro);
@@ -280,70 +230,67 @@ export default function LibroBiblioteca() {
         }
     };
     const eventoBuscar = (data: LibroBibliotecaFindDto) => {
-        // const findDto = obtenerQueryParams() as LibroBibliotecaFindDto;
-        // findDto.sisHabilitado = data.sisHabilitado;
-        // findDto.sisCreado = data.sisCreado;
-        // findDto.sisModificado = data.sisModificado;
-        // recargarPaginaConNuevosQueryParams({
-        //     findDto
-        // });
+        console.log('eventoBuscar', data);
     };
-    const actualizarCampoAutocomplete = ()=>{
-        setActionAutocompleteAbierto(false)
-        // useFormAutocomplete.setValue(
-        //     LibroBibliotecaEnum.Autocomplete as any,
-        //     seleccionoListaAutocomplete.registro.id
-        // )
-        setCamposFiltros([
-            ...camposFiltros.map(
+    // Funciones UI - Navegacion
+    const navegarParametrosNuevo = navegar.navegarParametrosNuevo;
+    const navegarParametrosEditar = navegar.navegarParametrosEditar;
+    const obtenerQueryParams = () => navegar.obtenerQueryParams;
+    const recargarPaginaConNuevosQueryParams = navegar.recargarPaginaConNuevosQueryParams;
+
+    // const navegarParametrosNuevo = () => {
+    //     navigate(`${path}/nuevo?` + obtenerQueryParamsYConvertir());
+    // };
+    // const navegarParametrosEditar = (registro: LibroBibliotecaInterface) => {
+    //     navigate(`${path}/${registro.id}?${obtenerQueryParamsYConvertir()}`);
+    // };
+    // const obtenerQueryParams = () => {
+    //     return LoaderSetQueryparams(window.location.href);
+    // };
+    // const obtenerQueryParamsYConvertir = () => {
+    //     return convertirQueryParams(obtenerQueryParams());
+    // };
+    // const recargarPaginaConNuevosQueryParams = (parametros?: { queryParams?: string, findDto?: LibroBibliotecaFindDto }) => {
+    //     if (parametros) {
+    //         if (parametros.queryParams) {
+    //             navigate(`${path}?${parametros.queryParams}`);
+    //         }
+    //         if (parametros.findDto) {
+    //             navigate(`${path}?${convertirQueryParams(parametros.findDto)}`);
+    //         }
+    //     } else {
+    //         navigate(`${path}?${obtenerQueryParamsYConvertir()}`);
+    //     }
+    // };
+    // Autocomplete
+    const actualizarValorCampoAutocompleteGlobal = () => {
+        setActionAutocompleteAbierto(false);
+        setCamposFiltrosBusqueda([
+            ...camposFiltrosBusqueda.map(
                 (f) => {
                     if (f.formControlName === LibroBibliotecaEnum.Autocomplete) {
                         f.initialValue = seleccionoListaAutocomplete.registro;
                         f.actualValue = seleccionoListaAutocomplete.registro;
-                        if(f.autocomplete){
+                        if (f.autocomplete) {
                             f.autocomplete.valorActual = seleccionoListaAutocomplete.registro;
                         }
                     }
                     return f;
                 }
             )
-        ])
-    }
-    // Funciones UI - Navegacion
-    const navegarParametrosNuevo = () => {
-        navigate(`${path}/nuevo?` + obtenerQueryParamsYConvertir());
+        ]);
     };
-    const navegarParametrosEditar = (registro: LibroBibliotecaInterface) => {
-        navigate(`${path}/${registro.id}?${obtenerQueryParamsYConvertir()}`);
+    const actualizarVisualizarComponenteAutocomplete = () => {
+        setGenerarComponente({
+            ...generarComponenteAutocompletePorFormControlName
+        });
     };
-    const obtenerQueryParams = () => {
-        return LoaderSetQueryparams(window.location.href);
-    }
-    const obtenerQueryParamsYConvertir = () => {
-        return convertirQueryParams(obtenerQueryParams());
-    }
-    const recargarPaginaConNuevosQueryParams = (parametros?: { queryParams?: string, findDto?: LibroBibliotecaFindDto }) => {
-        if (parametros) {
-            if (parametros.queryParams) {
-                navigate(`${path}?${parametros.queryParams}`);
-            }
-            if (parametros.findDto) {
-                navigate(`${path}?${convertirQueryParams(parametros.findDto)}`);
-            }
-        } else {
-            navigate(`${path}?${obtenerQueryParamsYConvertir()}`);
-        }
-    }
-
-    // Autocomplete
-    const tieneCampoFormulario = Object.keys(campoFormularioAutocompleteGlobal ? campoFormularioAutocompleteGlobal : {}).length > 0;
     const generarComponenteAutocompletePorFormControlName = {
         autocomplete: (registro: LibroBibliotecaInterface, campoFormulario: CampoFormularioInterface) => {
             return (<><LibroBibliotecaMostrar registro={registro}/></>)
         },
     };
     const buscarAutocomplete = async () => {
-        // if ((Object.keys(eventoAutocompleteLocal).length > 0 && popupOpened) || (!tieneCampoFormulario)) {
         switch (campoFormularioAutocompleteGlobal.formControlName) {
             case 'autocomplete':
                 await buscarLibroBiblioteca(textoAutocompleteBusqueda, campoFormularioAutocompleteGlobal);
@@ -351,30 +298,18 @@ export default function LibroBiblioteca() {
             default:
                 break;
         }
-        // }
     };
-    const escucharEventoAutocompleteBusqueda = () => {
-        observableAutocomplete
-            .subscribe(
-                {
-                    next: async (data) => {
-                        setListaAutocomplete([]);
-                        await buscarAutocomplete();
-                    }
-                }
-            );
-    }
 
     // Metodos REST
-    const buscarLibroBiblioteca = async (data: string, campo: CampoFormularioInterface) => {
+    const buscarLibroBiblioteca = async (texto: string, campo: CampoFormularioInterface) => {
         try {
-            let librosBiblioteca;
+            let librosBiblioteca: [LibroBibliotecaInterface[], number] = [[], 0];
             setLoading(true);
-            if (Number.isNaN(Number(data)) || data === '') {
+            if (Number.isNaN(Number(texto)) || texto === '') {
                 librosBiblioteca = await LibroBibliotecaInstanceHttp.find({sisHabilitado: SisHabilitadoEnum.Activo});
             } else {
                 librosBiblioteca = await LibroBibliotecaInstanceHttp.find({
-                    id: +data,
+                    id: +texto,
                     sisHabilitado: SisHabilitadoEnum.Activo
                 });
             }
@@ -392,23 +327,12 @@ export default function LibroBiblioteca() {
             setLoading(false);
         }
     }
-
-    const busquedaRestAutocompleteGlobal = async () => {
-        switch (campoFormularioAutocompleteGlobal.formControlName) {
-            case 'autocomplete':
-                await buscarLibroBiblioteca(textoAutocompleteBusqueda, eventoAutocompleteLocal);
-                break;
-            default:
-                break;
-        }
-    }
     return (
         <KonstaContainer titulo="Libro biblioteca">
             {data.registros &&
                 <>
                     {/* Ruta */}
                     <RutaComun<LibroBibliotecaInterface, LibroBibliotecaFindDto> navigate={navigate}
-                                                                                 loading={loading}
                                                                                  findDto={data.findDto}
                                                                                  path={path}
                                                                                  navbar={navbar}
@@ -418,9 +342,7 @@ export default function LibroBiblioteca() {
                                                                                  eventoSeleccionoSort={eventoSeleccionoSort}
                                                                                  eventoBuscar={eventoBuscar}
                                                                                  mostrarFab={true}
-                                                                                 setRightPanelOpened={setRightPanelOpened}
-                                                                                 rightPanelOpened={rightPanelOpened}
-                                                                                 camposFiltro={camposFiltros}
+                                                                                 camposFiltro={camposFiltrosBusqueda}
                                                                                  accordeonCamposFiltro={accordeonCamposFiltro}
                                                                                  mostrarItemEnLista={(registro, indice) => (<>
                                                                                      <motion.div
@@ -452,10 +374,10 @@ export default function LibroBiblioteca() {
                     </ActionsButton>
                     <ActionsButton onClick={() => deshabilitarRecurso()} bold>
                         <div
-                            className={registroSeleccionado.sisHabilitado ? 'text-red-500' : ''}>
-                            {registroSeleccionado.sisHabilitado ? 'Deshabiliar' : 'Habilitar'}{` ${registroSeleccionado.id}`}
+                            className={registroSeleccionadoRuta.sisHabilitado ? 'text-red-500' : ''}>
+                            {registroSeleccionadoRuta.sisHabilitado ? 'Deshabiliar' : 'Habilitar'}{` ${registroSeleccionadoRuta.id}`}
                             <span className={'ml-2'}>
-                                {registroSeleccionado.sisHabilitado ? <CancelIcon/> : <CheckCircleIcon/>}
+                                {registroSeleccionadoRuta.sisHabilitado ? <CancelIcon/> : <CheckCircleIcon/>}
                             </span>
                         </div>
                     </ActionsButton>
@@ -474,9 +396,9 @@ export default function LibroBiblioteca() {
                 </ActionsGroup>
             </Actions>
             {/* Visualizacion */}
-            <SheetContenedor setVisualizacionAbierto={setVisualizacionAbierto}
-                             visualizacionAbierto={visualizacionAbierto}>
-                <LibroBibliotecaMostrarCompleto registro={registroSeleccionado}></LibroBibliotecaMostrarCompleto>
+            <SheetContenedor setVisualizacionAbierto={setVisualizacionRegistroAbierto}
+                             visualizacionAbierto={visualizacionRegistroAbierto}>
+                <LibroBibliotecaMostrarCompleto registro={registroSeleccionadoRuta}></LibroBibliotecaMostrarCompleto>
             </SheetContenedor>
             {/* Error */}
             {data.error && <ComponenteError linkTo={path}/>}

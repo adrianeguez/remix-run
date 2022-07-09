@@ -94,7 +94,6 @@ export default function App() {
 
     useEffect(
         ()=>{
-
             escucharEventoAutocompleteBusqueda();
         },
         []
@@ -144,7 +143,7 @@ export default function App() {
 
             {useFormAutocomplete &&
 
-                <App theme={'ios'}><CamposFormularioActionAutocomplete
+                <CamposFormularioActionAutocomplete
                     actionsOneOpened={actionAutocompleteAbierto}
                     useFormAutocomplete={useFormAutocomplete}
                     listaAutocomplete={listaAutocomplete}
@@ -154,7 +153,7 @@ export default function App() {
                     setListaAutocomplete={setListaAutocomplete}
                     setActionsOneOpened={setActionAutocompleteAbierto}
                     setEventoAutocomplete={setCampoFormularioAutocompleteGlobal}
-                /></App>}
+                />}
         </div>
         </body>
         </html>

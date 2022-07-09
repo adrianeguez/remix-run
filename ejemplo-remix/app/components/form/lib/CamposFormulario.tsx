@@ -4,7 +4,6 @@ import {
     ListItem, Toggle,
 } from "konsta/react";
 import {Controller} from "react-hook-form";
-import type {UseFormReturn} from "react-hook-form/dist/types";
 import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {motion} from "framer-motion";
@@ -15,27 +14,19 @@ import {CampoFormularioComponentInterface} from "~/components/form/lib/interface
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {Typography} from "@mui/material";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import {CampoFormularioAccordeonInterface} from "~/components/form/lib/interfaces/campo-formulario-accordeon.interface";
 
 export default function CamposFormulario(props: CampoFormularioComponentInterface) {
 
-    const [autocompleteAbierto, setAutocompleteAbierto] = useState(false);
     const [eventoAutocomplete, setEventoAutocomplete] = useState({} as CampoFormularioInterface);
     const {
-        register,
-        handleSubmit,
-        watch,
         formState: {errors},
         control,
         setValue,
-        reset,
-        resetField
     } = props.useFormReturn;
     setTimeout(
-        ()=>{
-
+        () => {
             props.campos.forEach(
                 (c) => {
                     if (c.initialValue) {

@@ -60,7 +60,8 @@ export default function LibroBiblioteca() {
         textoAutocompleteBusqueda,
         setListaAutocomplete,
         setLoading,
-        setGenerarComponente
+        setGenerarComponente,
+        useFormReturnAutocompleteActual
     } = useContext(KonstaContainerContext);
 
     // Inicializar variables useState
@@ -76,7 +77,9 @@ export default function LibroBiblioteca() {
         setActionAutocompleteAbierto,
         setCamposFiltrosBusqueda,
         camposFiltrosBusqueda,
-        seleccionoListaAutocomplete);
+        seleccionoListaAutocomplete,
+        useFormReturnAutocompleteActual
+        );
     // Funciones Util
 
     // Use Effects
@@ -106,6 +109,7 @@ export default function LibroBiblioteca() {
         () => {
             if (tieneCampoFormulario) {
                 setActionAutocompleteAbierto(true);
+                buscarAutocomplete();
             } else {
                 setActionAutocompleteAbierto(false);
             }
@@ -159,7 +163,6 @@ export default function LibroBiblioteca() {
             } as any));
             doc.save('table.pdf');
         }
-
     };
     // Funciones UI - Eventos
     const eventoSeleccionoSort = (sortField: SortFieldInterface, skipTake: SkipTakeInterface) => {
@@ -192,14 +195,15 @@ export default function LibroBiblioteca() {
         }
     };
     const eventoBuscar = (data: LibroBibliotecaFindDto) => {
-        console.log('eventoBuscar', data);
-        recargarPaginaConNuevosQueryParams({findDto:data});
+        console.log('data', data);
+        recargarPaginaConNuevosQueryParams({findDto: data});
     };
     // Funciones UI - Navegacion
     const navegarParametrosNuevo = navegarUtil.navegarParametrosNuevo;
     const navegarParametrosEditar = navegarUtil.navegarParametrosEditar;
     const obtenerQueryParams = () => navegarUtil.obtenerQueryParams;
     const recargarPaginaConNuevosQueryParams = navegarUtil.recargarPaginaConNuevosQueryParams;
+
     // Autocomplete
     const actualizarValorCampoAutocompleteGlobal = autocompleteUtil.actualizarValorCampoAutocompleteGlobal;
     const actualizarVisualizarComponenteAutocomplete = () => {
@@ -212,18 +216,24 @@ export default function LibroBiblioteca() {
             return (<><LibroBibliotecaMostrar registro={registro}/></>)
         },
     };
-    const buscarAutocomplete = () => {
+    const buscarAutocomplete = async () => {
         switch (campoFormularioAutocompleteGlobal.formControlName) {
             case 'autocomplete':
-                buscarLibroBiblioteca(textoAutocompleteBusqueda, campoFormularioAutocompleteGlobal);
+                buscarAutocompleteCampoAutocomplete();
                 break;
             default:
                 break;
         }
     };
+    const buscarAutocompleteCampoAutocomplete = async () => {
+        const respuesta = await buscarLibroBiblioteca(
+            textoAutocompleteBusqueda
+        );
+        setListaAutocomplete(respuesta[0]);
+    }
 
     // Metodos REST
-    const buscarLibroBiblioteca = async (texto: string, campo: CampoFormularioInterface) => {
+    const buscarLibroBiblioteca = async (texto: string) => {
         try {
             let librosBiblioteca: [LibroBibliotecaInterface[], number] = [[], 0];
             setLoading(true);
@@ -238,8 +248,8 @@ export default function LibroBiblioteca() {
             toast(`${librosBiblioteca[0].length} registros consultados`, {
                 icon: '📑'
             });
-            setListaAutocomplete(librosBiblioteca[0]);
             setLoading(false);
+            return librosBiblioteca;
         } catch (error) {
             console.error({
                 error,

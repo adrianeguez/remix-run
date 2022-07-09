@@ -23,6 +23,7 @@ import {KonstaContainerContext} from "~/root";
 export default function PanelActionPopover(props: PanelActionPopoverInterface) {
     const {
         setCampoFormularioAutocompleteGlobal,
+        setUseFormReturnAutocompleteActual
     } = useContext(KonstaContainerContext);
     const {
         setRightPanelOpened, rightPanelOpened, actionSortFieldOpened,

@@ -30,6 +30,8 @@ export interface KonstaContainerInterface {
     observableAutocomplete: Observable<ObservableWatchCampoInterface>;
     textoAutocompleteBusqueda: string;
     setCampoFormularioAutocompleteGlobal: (value: (((prevState: CampoFormularioInterface) => CampoFormularioInterface) | CampoFormularioInterface)) => void;
+    useFormReturnAutocompleteActual: UseFormReturn,
+    setUseFormReturnAutocompleteActual: any
 }
 
 
@@ -40,10 +42,10 @@ const KonstaContainer = ({children, titulo}) => {
     return (
         <>
             {/*<App theme={'ios'}>*/}
-                <LeftNavbarContainer titulo={titulo}>
-                    {children}
-                </LeftNavbarContainer>
-                <BackdropToaster/>
+            <LeftNavbarContainer titulo={titulo}>
+                {children}
+            </LeftNavbarContainer>
+            <BackdropToaster/>
             {/*</App>*/}
         </>
     )

@@ -17,6 +17,7 @@ import CamposFormularioActionAutocomplete from "~/components/form/lib/CamposForm
 import {Observable} from "rxjs";
 import {ObservableWatchCampoInterface} from "~/components/form/lib/interfaces/observable-watch-campo.interface";
 import {GenerarObservableWatchCampo} from "~/components/form/lib/funcion/generar-observable-watch-campo";
+import {UseFormReturn} from "react-hook-form/dist/types";
 
 export const KonstaContainerContext = createContext({} as KonstaContainerInterface);
 
@@ -91,6 +92,7 @@ export default function App() {
         useFormAutocomplete
     );
     const [textoAutocompleteBusqueda, setTextoAutocompleteBusqueda] = useState('');
+    const [useFormReturnAutocompleteActual, setUseFormReturnAutocompleteActual] = useState({} as any);
 
     useEffect(
         ()=>{
@@ -136,7 +138,9 @@ export default function App() {
                 setActionAutocompleteAbierto,
                 actionAutocompleteAbierto,
                 observableAutocomplete,
-                textoAutocompleteBusqueda
+                textoAutocompleteBusqueda,
+                useFormReturnAutocompleteActual,
+                setUseFormReturnAutocompleteActual
             }}>
                 <Outlet/> <ScrollRestoration/> <Scripts/> <LiveReload/>
             </KonstaContainerContext.Provider>

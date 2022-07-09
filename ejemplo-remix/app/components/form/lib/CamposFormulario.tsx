@@ -7,7 +7,7 @@ import {Controller} from "react-hook-form";
 import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
 import {motion} from "framer-motion";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {GenerarReglas} from "~/components/form/lib/funcion/generar-reglas";
 import {MostrarErrores} from "~/components/form/lib/funcion/mostrar-errores";
 import {CampoFormularioComponentInterface} from "~/components/form/lib/interfaces/campo-formulario-component.interface";
@@ -16,14 +16,19 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import {CampoFormularioAccordeonInterface} from "~/components/form/lib/interfaces/campo-formulario-accordeon.interface";
+import {KonstaContainerContext} from "~/root";
 
 export default function CamposFormulario(props: CampoFormularioComponentInterface) {
 
+    const {
+        setUseFormReturnAutocompleteActual
+    } = useContext(KonstaContainerContext);
     const [eventoAutocomplete, setEventoAutocomplete] = useState({} as CampoFormularioInterface);
     const {
         formState: {errors},
         control,
         setValue,
+        watch
     } = props.useFormReturn;
     setTimeout(
         () => {
@@ -113,6 +118,7 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                 let valorAMostrar = '';
                 if (campoFormulario.autocomplete) {
                     if (!field) {
+                        console.log('No hay')
                         if (typeof campoFormulario.initialValue === 'object' && !Array.isArray(campoFormulario.initialValue)) {
                             valorAMostrar = campoFormulario.initialValue[campoFormulario.autocomplete.nombrePropiedadObjeto];
                         } else {
@@ -122,7 +128,6 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                         if (campoFormulario.autocomplete.valorActual) {
                             return campoFormulario.autocomplete.valorActual[campoFormulario.autocomplete.nombrePropiedadObjeto];
                         } else {
-
                             if (typeof field.value === 'object' && !Array.isArray(field.value)) {
                                 valorAMostrar = field.value[campoFormulario.autocomplete.nombrePropiedadObjeto];
                             } else {
@@ -136,7 +141,12 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
             return (
                 <div
                     key={campoFormulario.formControlName}
-                    onClick={() => setEventoAutocomplete({...campoFormulario, __key: new Date().getTime()})}>
+                    onClick={
+                        () => {
+                            setEventoAutocomplete({...campoFormulario, __key: new Date().getTime()})
+                            setUseFormReturnAutocompleteActual(props.useFormReturn);
+                        }
+                    }>
                     <motion.div
                         whileTap={{scale: 1.01}}
                     >
@@ -156,7 +166,7 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                                             header={errors[campoFormulario.formControlName] ?
                                                 <span className={'text-red-500'}>{generarLabel()}</span> :
                                                 generarLabel()}
-                                            title={mostrarValor(field)}
+                                            title={field.value === '' ? '' : mostrarValor(field)}
                                             titleWrapClassName={mostrarValor(field) ? '' : 'texto-placeholder'}
                                             after={<><img className={'icon-small'}
                                                           src="https://cdn2.iconfinder.com/data/icons/business-management-color/64/select-choose-right-person-hr-job-human-resource-512.png"

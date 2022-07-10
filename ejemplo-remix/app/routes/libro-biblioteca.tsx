@@ -187,7 +187,10 @@ export default function LibroBiblioteca() {
             });
         }
     };
-    const eventoClicBotonOpciones = (registro: LibroBibliotecaInterface, nombreEvento: LibroBibliotecaMostrarEnum) => {
+    const eventoClicBotonOpciones = (
+        registro: LibroBibliotecaInterface,
+        nombreEvento: LibroBibliotecaMostrarEnum
+    ) => {
         setRegistroSeleccionadoRuta(registro);
         switch (nombreEvento) {
             case LibroBibliotecaMostrarEnum.IconoNavegar:
@@ -201,8 +204,6 @@ export default function LibroBiblioteca() {
         }
     };
     const eventoBuscar = (data: LibroBibliotecaFindDto) => {
-        console.log('data', data);
-        console.log('findDto', {...data, ...loaderData.findDto});
         recargarPaginaConNuevosQueryParams({
             findDto: {
                 ...loaderData.findDto,
@@ -250,11 +251,12 @@ export default function LibroBiblioteca() {
             let librosBiblioteca: [LibroBibliotecaInterface[], number] = [[], 0];
             setLoading(true);
             if (Number.isNaN(Number(texto)) || texto === '') {
-                librosBiblioteca = await LibroBibliotecaInstanceHttp.find({sisHabilitado: SisHabilitadoEnum.Activo});
+                librosBiblioteca = await LibroBibliotecaInstanceHttp.find({
+                    busqueda: texto
+                });
             } else {
                 librosBiblioteca = await LibroBibliotecaInstanceHttp.find({
-                    id: +texto,
-                    sisHabilitado: SisHabilitadoEnum.Activo
+                    id: +texto
                 });
             }
             toast(`${librosBiblioteca[0].length} registros consultados`, {

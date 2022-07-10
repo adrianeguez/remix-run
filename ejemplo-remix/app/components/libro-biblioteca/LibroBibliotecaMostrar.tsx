@@ -19,7 +19,7 @@ export function LibroBibliotecaMostrar(props: LibroBibliotecaMostrarInterface) {
                 title={(<>
                         <div className={'justify-items-stretch'}>
                             <div style={{float: 'left'}}>
-                                {registro.id?.toString()}
+                                {registro.id?.toString()} - {registro.nombre?.toString()}
                             </div>
                             <div className={'ml-2'} style={{float: 'right'}}>
                                 {dioClicBoton &&

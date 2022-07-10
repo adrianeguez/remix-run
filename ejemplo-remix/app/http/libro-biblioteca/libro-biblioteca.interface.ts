@@ -1,7 +1,5 @@
-export interface LibroBibliotecaInterface{
-    sisCreado?: string;
-    sisModificado?: string;
-    sisHabilitado?: number;
-    id?: number;
-    key?: number;
+import {ComunHttpInterface} from "~/interfaces/comun-http.interface";
+
+export interface LibroBibliotecaInterface extends ComunHttpInterface {
+    nombre: string;
 }

@@ -6,13 +6,6 @@ import {LibroBibliotecaEnum} from "~/http/libro-biblioteca/form/libro-biblioteca
 
 export function LibroBibliotecaFiltroAccordionForm(): CampoFormularioAccordeonInterface[] {
     return [
-        ...AccordeonFiltroComunForm(),
-        {
-            id: 'huevov',
-            descripcion: 'Autocomplete',
-            labelJSXElement: (<p><CalendarMonthIcon className={'mr-2'}/>Autocomplete</p>),
-            campos: [LibroBibliotecaEnum.Autocomplete],
-            camposFormulario: [],
-        }
+        ...AccordeonFiltroComunForm()
     ]
 }

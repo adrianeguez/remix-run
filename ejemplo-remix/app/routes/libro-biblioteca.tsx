@@ -36,6 +36,7 @@ import {KonstaContainerContext} from "~/root";
 import {UtilNavegacion} from "~/functions/ruta/util-navegacion";
 import {UtilAutocomplete} from "~/functions/ruta/util-autocomplete";
 import {LibroBibliotecaLoader, LibroBibliotecaLoaderData} from "~/http/libro-biblioteca/libro-biblioteca.loader";
+import {LibroBibliotecaSortFields} from "~/http/libro-biblioteca/sort/libro-biblioteca.sort-fields";
 
 // Carga de datos en backend
 export const loader: LoaderFunction = LibroBibliotecaLoader;
@@ -65,7 +66,10 @@ export default function LibroBiblioteca() {
     } = useContext(KonstaContainerContext);
 
     // Inicializar variables useState
-    const [sortFields] = useState([...CommonSortFieldsConstant] as SortFieldInterface[]);
+    const [sortFields] = useState([
+        ...CommonSortFieldsConstant,
+        ...LibroBibliotecaSortFields
+    ] as SortFieldInterface[]);
     const [abrioOpciones, setAbrioOpciones] = useState(false);
     const [registroSeleccionadoRuta, setRegistroSeleccionadoRuta] = useState({} as LibroBibliotecaInterface);
     const [visualizacionRegistroAbierto, setVisualizacionRegistroAbierto] = useState(false);

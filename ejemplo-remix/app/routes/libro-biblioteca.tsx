@@ -182,7 +182,7 @@ export default function LibroBiblioteca() {
                 findDto: {
                     ...obtenerQueryParams(),
                     ...loaderData.findDto,
-                    ...findDto,
+                    ...findDto, // tiene que ir al final
                 }
             });
         }
@@ -203,7 +203,12 @@ export default function LibroBiblioteca() {
     const eventoBuscar = (data: LibroBibliotecaFindDto) => {
         console.log('data', data);
         console.log('findDto', {...data, ...loaderData.findDto});
-        recargarPaginaConNuevosQueryParams({findDto: {...loaderData.findDto, ...data}});
+        recargarPaginaConNuevosQueryParams({
+            findDto: {
+                ...loaderData.findDto,
+                ...data  // tiene que ir al final
+            }
+        });
     };
     // Funciones UI - Navegacion
     const navegarParametrosNuevo = navegarUtil.navegarParametrosNuevo;

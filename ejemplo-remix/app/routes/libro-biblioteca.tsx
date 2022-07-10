@@ -42,7 +42,7 @@ export const loader: LoaderFunction = LibroBibliotecaLoader;
 
 export default function LibroBiblioteca() {
     // Hooks Librearias y variables globales
-    const data = useLoaderData<LibroBibliotecaLoaderData>();
+    const loaderData = useLoaderData<LibroBibliotecaLoaderData>();
     const navigate: NavigateFunction = useNavigate();
     const path = '/libro-biblioteca';
     const navbar: NavbarSoloTituloInterface = {
@@ -79,18 +79,18 @@ export default function LibroBiblioteca() {
         camposFiltrosBusqueda,
         seleccionoListaAutocomplete,
         useFormReturnAutocompleteActual
-        );
+    );
     // Funciones Util
 
     // Use Effects
     // Use Effect - Componente inicializado
     useEffect(
         () => {
-            if (data.error) {
+            if (loaderData.error) {
                 toast.error('Error del servidor');
             } else {
-                if (data.mensaje) {
-                    toast.success(data.mensaje);
+                if (loaderData.mensaje) {
+                    toast.success(loaderData.mensaje);
                 } else {
                     toast.success('Cargo datos exitosamente');
                 }
@@ -138,14 +138,14 @@ export default function LibroBiblioteca() {
         setVisualizacionRegistroAbierto(true);
     };
     const descargarCSV = () => {
-        const registros = data.registros;
+        const registros = loaderData.registros;
         if (registros) {
             const campos = ['id', 'sisHabilitado', 'sisCreado', 'sisModificado'];
             ExportarDescargarCsvExport(campos, registros[0]);
         }
     };
     const descargarPDF = () => {
-        const registros = data.registros;
+        const registros = loaderData.registros;
         if (registros) {
             const cabeceras = [
                 {header: 'ID', dataKey: 'id'},
@@ -178,7 +178,13 @@ export default function LibroBiblioteca() {
                     findDto.take = skipTake.take as string;
                 }
             }
-            recargarPaginaConNuevosQueryParams({findDto: {...obtenerQueryParams(), ...findDto}});
+            recargarPaginaConNuevosQueryParams({
+                findDto: {
+                    ...obtenerQueryParams(),
+                    ...loaderData.findDto,
+                    ...findDto,
+                }
+            });
         }
     };
     const eventoClicBotonOpciones = (registro: LibroBibliotecaInterface, nombreEvento: LibroBibliotecaMostrarEnum) => {
@@ -196,7 +202,8 @@ export default function LibroBiblioteca() {
     };
     const eventoBuscar = (data: LibroBibliotecaFindDto) => {
         console.log('data', data);
-        recargarPaginaConNuevosQueryParams({findDto: data});
+        console.log('findDto', {...data, ...loaderData.findDto});
+        recargarPaginaConNuevosQueryParams({findDto: {...loaderData.findDto, ...data}});
     };
     // Funciones UI - Navegacion
     const navegarParametrosNuevo = navegarUtil.navegarParametrosNuevo;
@@ -263,15 +270,15 @@ export default function LibroBiblioteca() {
     // Componente
     return (
         <KonstaContainer titulo="Libro biblioteca">
-            {data.registros &&
+            {loaderData.registros &&
                 <>
                     {/* Ruta */}
                     <RutaComun<LibroBibliotecaInterface, LibroBibliotecaFindDto> navigate={navigate}
-                                                                                 findDto={data.findDto}
+                                                                                 findDto={loaderData.findDto}
                                                                                  path={path}
                                                                                  navbar={navbar}
                                                                                  navigateFabNewFunction={navegarParametrosNuevo}
-                                                                                 registrosEncontrados={data.registros}
+                                                                                 registrosEncontrados={loaderData.registros}
                                                                                  sortFieldsArray={sortFields}
                                                                                  eventoSeleccionoSort={eventoSeleccionoSort}
                                                                                  eventoBuscar={eventoBuscar}
@@ -333,7 +340,7 @@ export default function LibroBiblioteca() {
                 <LibroBibliotecaMostrarCompleto registro={registroSeleccionadoRuta}></LibroBibliotecaMostrarCompleto>
             </SheetContenedor>
             {/* Error */}
-            {data.error && <ComponenteError linkTo={path}/>}
+            {loaderData.error && <ComponenteError linkTo={path}/>}
         </KonstaContainer>
     )
 }

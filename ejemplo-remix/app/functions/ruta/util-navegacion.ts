@@ -6,16 +6,16 @@ import {LibroBibliotecaFindDto} from "~/http/libro-biblioteca/dto/libro-bibliote
 export const UtilNavegacion = (navigate, path:string)=>{
     return {
         navegarParametrosNuevo : () => {
-            navigate(`${path}/nuevo?` + this.obtenerQueryParamsYConvertir());
+            navigate(`${path}/nuevo?` + UtilNavegacion(navigate,path).obtenerQueryParamsYConvertir());
         },
         navegarParametrosEditar : (registro: LibroBibliotecaInterface) => {
-            navigate(`${path}/${registro.id}?${this.obtenerQueryParamsYConvertir()}`);
+            navigate(`${path}/${registro.id}?${UtilNavegacion(navigate,path).obtenerQueryParamsYConvertir()}`);
         },
         obtenerQueryParams : () => {
             return LoaderSetQueryparams(window.location.href);
         },
         obtenerQueryParamsYConvertir : () => {
-            return convertirQueryParams(this.obtenerQueryParams());
+            return convertirQueryParams(UtilNavegacion(navigate,path).obtenerQueryParams());
         },
         recargarPaginaConNuevosQueryParams : (parametros?: { queryParams?: string, findDto?: LibroBibliotecaFindDto }) => {
             if (parametros) {
@@ -26,7 +26,7 @@ export const UtilNavegacion = (navigate, path:string)=>{
                     navigate(`${path}?${convertirQueryParams(parametros.findDto)}`);
                 }
             } else {
-                navigate(`${path}?${this.obtenerQueryParamsYConvertir()}`);
+                navigate(`${path}?${UtilNavegacion(navigate,path).obtenerQueryParamsYConvertir()}`);
             }
         },
     };

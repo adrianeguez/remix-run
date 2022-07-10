@@ -19,7 +19,7 @@ export const LibroBibliotecaLoader: LoaderFunction = async (
         request,
         params, context
     }) => {
-    const returnData: LoaderData = {} as any;
+    const returnData: LibroBibliotecaLoaderData = {} as any;
     const requestUrl = request.url;
     const findDto: LibroBibliotecaFindDto = LoaderSetQueryparams(requestUrl) as LibroBibliotecaFindDto;
     LoaderSettearFindtoComun(findDto);

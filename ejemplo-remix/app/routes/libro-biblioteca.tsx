@@ -56,7 +56,6 @@ export default function LibroBiblioteca() {
     const {
         campoFormularioAutocompleteGlobal,
         setActionAutocompleteAbierto,
-        observableAutocomplete,
         seleccionoListaAutocomplete,
         textoAutocompleteBusqueda,
         setListaAutocomplete,
@@ -169,6 +168,14 @@ export default function LibroBiblioteca() {
         }
     };
     // Funciones UI - Eventos
+    const eventoBuscar = (data: LibroBibliotecaFindDto) => {
+        recargarPaginaConNuevosQueryParams({
+            findDto: {
+                ...loaderData.findDto,
+                ...data  // tiene que ir al final
+            }
+        });
+    };
     const eventoSeleccionoSort = (sortField: SortFieldInterface, skipTake: SkipTakeInterface) => {
         if (sortField && skipTake) {
             const findDto = obtenerQueryParams() as LibroBibliotecaFindDto;
@@ -206,14 +213,6 @@ export default function LibroBiblioteca() {
             default:
                 break;
         }
-    };
-    const eventoBuscar = (data: LibroBibliotecaFindDto) => {
-        recargarPaginaConNuevosQueryParams({
-            findDto: {
-                ...loaderData.findDto,
-                ...data  // tiene que ir al final
-            }
-        });
     };
     // Funciones UI - Navegacion
     const navegarParametrosNuevo = navegarUtil.navegarParametrosNuevo;

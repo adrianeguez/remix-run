@@ -1,3 +1,5 @@
 import {CreateDto} from "~/interfaces/create.dto";
 
-export type LibroBibliotecaCreateDto = CreateDto
+export interface LibroBibliotecaUpdateDto extends CreateDto {
+    nombre?: any;
+}

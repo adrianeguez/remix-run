@@ -46,6 +46,12 @@ export function LibroBibliotecaForm(): CampoFormularioInterface[] {
             },
             select: {
                 opciones: [
+
+                    {
+                        id: '',
+                        label: 'Seleccione Hab/Deshab',
+                        value: '',
+                    },
                     {
                         id: SisHabilitadoEnum.Activo,
                         label: 'Habilitado',
@@ -53,7 +59,7 @@ export function LibroBibliotecaForm(): CampoFormularioInterface[] {
                     },
                     {
                         id: SisHabilitadoEnum.Inactivo,
-                        label: 'Habilitado',
+                        label: 'Inactivo',
                         value: SisHabilitadoEnum.Inactivo,
                     },
                 ]

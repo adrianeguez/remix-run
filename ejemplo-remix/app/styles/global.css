@@ -99,6 +99,7 @@ body {
 .popup-modal {
     overflow-y: auto;
     max-height: 66%;
+    min-height: 350px;
 }
 
 .list-item-mlabs > div > div > div > div.shrink {
@@ -159,4 +160,8 @@ body {
     .navbar-ruta-titulo {
         font-size: 10px;
     }
+}
+
+select {
+    width: 100%;
 }

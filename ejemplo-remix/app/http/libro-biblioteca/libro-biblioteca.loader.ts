@@ -17,7 +17,7 @@ export type LibroBibliotecaLoaderData = {
 export const LibroBibliotecaLoader: LoaderFunction = async (
     {
         request,
-        params, context
+        params,
     }) => {
     const returnData: LibroBibliotecaLoaderData = {} as any;
     const requestUrl = request.url;

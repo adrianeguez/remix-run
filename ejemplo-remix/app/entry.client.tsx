@@ -67,11 +67,18 @@ navigator.serviceWorker.ready
     }
   })
   .then(async (subscription) => {
-    await fetch("./resources/subscribe", {
-      method: "POST",
-      body: JSON.stringify({
-        subscription: subscription,
-        type: "POST_SUBSCRIPTION",
-      }),
-    });
-  });
+    try{
+      await fetch("./resources/subscribe", {
+        method: "POST",
+        body: JSON.stringify({
+          subscription: subscription,
+          type: "POST_SUBSCRIPTION",
+        }),
+      });
+    } catch (e) {
+
+    }
+  })
+    .catch(
+        (e)=> console.log('Error', e)
+    );

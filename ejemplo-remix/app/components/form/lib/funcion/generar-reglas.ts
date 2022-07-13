@@ -1,4 +1,5 @@
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
+import {ValidarTamanoInputFile} from "~/functions/form/validar-tamano-input-file";
 
 export function GenerarReglas(campoFormulario) {
     const reglas: any = {};
@@ -57,6 +58,21 @@ export function GenerarReglas(campoFormulario) {
                     ...reglas['validate'],
                     required: (valor) => {
                         return !Number.isNaN(+valor) && (+valor > 0 || +valor <= 0)
+                    }
+                };
+            }
+        }
+        if (campoFormulario.type === CampoFormularioType.File) {
+            if (campoFormulario.file) {
+                reglas['validate'] = {
+                    ...reglas['validate'],
+                    tamanioMaximoEnBytes: (valor) => {
+                        if(campoFormulario.file.tamanioMaximoEnBytes){
+                            return ValidarTamanoInputFile(valor, campoFormulario.file.tamanioMaximoEnBytes);
+                        }else{
+                            return true;
+                        }
+                        // return !Number.isNaN(+valor) && (+valor > 0 || +valor <= 0)
                     }
                 };
             }

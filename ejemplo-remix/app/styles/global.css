@@ -165,3 +165,7 @@ body {
 select {
     width: 100%;
 }
+
+.campo-formulario-archivo {
+    display: none;
+}

@@ -1,8 +1,4 @@
-import {
-    List,
-    ListInput,
-    ListItem, Toggle,
-} from "konsta/react";
+import {List, ListInput, ListItem, Toggle,} from "konsta/react";
 import {Controller} from "react-hook-form";
 import type {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 import {CampoFormularioType} from "~/components/form/lib/enum/campo-formulario.type";
@@ -17,6 +13,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import {CampoFormularioAccordeonInterface} from "~/components/form/lib/interfaces/campo-formulario-accordeon.interface";
 import {KonstaContainerContext} from "~/root";
+import {TipoArchivoEnum} from "~/enum/tipo-archivo.enum";
 
 export default function CamposFormulario(props: CampoFormularioComponentInterface) {
 
@@ -25,11 +22,13 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
     } = useContext(KonstaContainerContext);
     const [eventoAutocomplete, setEventoAutocomplete] = useState({} as CampoFormularioInterface);
     const {
+        register,
         formState: {errors},
         control,
         setValue,
         watch
     } = props.useFormReturn;
+
     setTimeout(
         () => {
             props.campos.forEach(
@@ -112,13 +111,51 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                     }
                 />)
         }
+        const esFile = campoFormulario.type === CampoFormularioType.File;
+        if (esFile && campoFormulario.file) {
+            const visualizarArchivo = (a) => {
+                if (a) {
+                    if (a[0]) {
+                        return errors[campoFormulario.formControlName] ?
+                            <span className={'text-red-500'}>{errors[campoFormulario.formControlName].message}</span> :
+                            a[0].name
+                    }
+                }
+                return <div>Seleccione un{campoFormulario.file?.tipoArchivo === TipoArchivoEnum.Archivo ? 'Archivo' : 'a Imagen'}</div>;
+            }
+            return (
+                <label
+                    key={campoFormulario.formControlName}
+                    htmlFor={campoFormulario.formControlName}
+                >
+
+                    <ListItem
+                        header={errors[campoFormulario.formControlName] ?
+                            <span className={'text-red-500'}>{generarLabel()}</span> :
+                            generarLabel()}
+                        after={campoFormulario.file.tipoArchivo === TipoArchivoEnum.Archivo ? '📃' : '🏞'}
+                        title={visualizarArchivo(watch(campoFormulario.formControlName as any))}
+                        footer={errors[campoFormulario.formControlName] ?
+                            <span className={'text-red-500'}>{campoFormulario.help}</span> : campoFormulario.help}
+                        media={campoFormulario.icon ? campoFormulario.icon : <><img className={'icon-small'}
+                                                                                    src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
+                                                                                    alt=""/></>}
+                    />
+                    <input
+                        id={campoFormulario.formControlName}
+                        className={'campo-formulario-archivo '}
+                        type="file"
+                        {...register(campoFormulario.formControlName as any, reglas)}
+                        name={campoFormulario.formControlName}
+                    />
+                </label>)
+        }
         const esAutocomplete = campoFormulario.type === CampoFormularioType.Autocomplete;
         if (esAutocomplete && campoFormulario.autocomplete) {
             const mostrarValor = (field?: any) => {
                 let valorAMostrar = '';
                 if (campoFormulario.autocomplete) {
                     if (!field) {
-                        console.log('No hay')
                         if (typeof campoFormulario.initialValue === 'object' && !Array.isArray(campoFormulario.initialValue)) {
                             valorAMostrar = campoFormulario.initialValue[campoFormulario.autocomplete.nombrePropiedadObjeto];
                         } else {

@@ -2,6 +2,7 @@ import {FiltrosComunesEnum} from "~/enum/filtros-comunes.enum";
 import {CampoFormularioAccordeonInterface} from "~/components/form/lib/interfaces/campo-formulario-accordeon.interface";
 import SearchIcon from '@mui/icons-material/Search';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import {ArchivoImagenEnum} from "~/enum/archivo-imagen.enum";
 export function AccordeonFiltroComunForm(): CampoFormularioAccordeonInterface[] {
     return [
         {
@@ -15,7 +16,7 @@ export function AccordeonFiltroComunForm(): CampoFormularioAccordeonInterface[] 
             id: 'fechas',
             descripcion: 'Seleccione una fecha en especifico',
             labelJSXElement: (<p><CalendarMonthIcon className={'mr-2'}/>Fechas</p>),
-            campos: [FiltrosComunesEnum.SisCreado, FiltrosComunesEnum.SisModificado],
+            campos: [FiltrosComunesEnum.SisCreado, FiltrosComunesEnum.SisModificado, ArchivoImagenEnum.SisArchivo],
             camposFormulario: [],
         },
     ];

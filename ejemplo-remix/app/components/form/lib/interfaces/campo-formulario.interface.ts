@@ -8,6 +8,7 @@ import type {
     CampoFormularioAutocompleteInterface
 } from "~/components/form/lib/interfaces/campo-formulario-autocomplete.interface";
 import {CampoFormularioToggleInterface} from "~/components/form/lib/interfaces/campo-formulario-toggle.interface";
+import {CampoFormularioFileInterface} from "~/components/form/lib/interfaces/campo-formulario-file.interface";
 
 export interface CampoFormularioInterface {
     formControlName: string;
@@ -27,6 +28,7 @@ export interface CampoFormularioInterface {
     autocomplete?: CampoFormularioAutocompleteInterface;
     toggle?: CampoFormularioToggleInterface;
     icon?: JSX.Element;
+    file?: CampoFormularioFileInterface;
     // select?: SelectField;
     // mask?: Mask;
     // autoComplete?: AutoComplete;

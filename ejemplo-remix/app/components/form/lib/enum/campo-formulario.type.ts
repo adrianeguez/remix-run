@@ -11,10 +11,10 @@ export enum CampoFormularioType {
     Number = 'number',
     Autocomplete = 'autocomplete',
     Toggle = 'toggle',
+    File = 'file',
     // textarea = 'textarea',
     // mask = 'mask',
     // autoComplete = 'autoComplete',
-    // file = 'file',
     // inputNumber = 'inputNumber',
     // separator = 'separator',
 }

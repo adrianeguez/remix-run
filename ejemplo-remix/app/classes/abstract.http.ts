@@ -1,6 +1,7 @@
 import {CONFIG} from "~/config";
 import {GenerarFormData} from "~/functions/http/generar-form-data";
 import {SisHabilitadoEnum} from "~/enum/sis-habilitado.enum";
+import {NuevoArchivoInterface} from "~/classes/interfaces/nuevo-archivo.interface";
 
 export abstract class AbstractHttp<FindDTO = any, CreateDTO = any, Registro = any, UpdateDTO = any> {
     protected urlBackend = CONFIG.urlBackend;
@@ -73,6 +74,31 @@ export abstract class AbstractHttp<FindDTO = any, CreateDTO = any, Registro = an
             return respuesta.json();
         } catch (error) {
             console.error({error, mensaje: 'Error en modificar habilitado'});
+            throw new Error(JSON.stringify(error));
+        }
+    }
+
+    async subirArchivoPrincipal(nuevoArchivo: NuevoArchivoInterface) {
+        const formData = new FormData();
+        formData.append('id', nuevoArchivo.id.toString());
+        formData.append('nombreIdentificador', nuevoArchivo.nombreIdentificador);
+        formData.append('sisHabilitado', nuevoArchivo.sisHabilitado.toString());
+        formData.append('tipov', nuevoArchivo.tipo);
+        if (nuevoArchivo.nombre) {
+            formData.append('nombre', nuevoArchivo.nombre);
+        }
+        if (nuevoArchivo.descripcion) {
+            formData.append('descripcion', nuevoArchivo.descripcion);
+        }
+        formData.append('archivo', nuevoArchivo.file);
+        try {
+            const respuesta = await fetch(`${this.urlBackend}/archivo-secundario/subir-archivo-secundario`, {
+                body: formData,
+                method: 'POST'
+            });
+            return respuesta.json();
+        } catch (error) {
+            console.error({error, mensaje: 'Error en subir archivo'});
             throw new Error(JSON.stringify(error));
         }
     }

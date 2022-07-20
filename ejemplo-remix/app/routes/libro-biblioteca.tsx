@@ -29,7 +29,6 @@ import jsPDF from 'jspdf'
 import autotable from 'jspdf-autotable'
 import {LibroBibliotecaFiltroForm} from "~/http/libro-biblioteca/form/libro-biblioteca-filtro.form";
 import {LibroBibliotecaMostrarCompleto} from "~/components/libro-biblioteca/LibroBibliotecaMostrarCompleto";
-import {SisHabilitadoEnum} from "~/enum/sis-habilitado.enum";
 import {LibroBibliotecaFiltroAccordionForm} from "~/http/libro-biblioteca/form/libro-biblioteca-filtro-accordion.form";
 import {CampoFormularioInterface} from "~/components/form/lib/interfaces/campo-formulario.interface";
 import {KonstaContainerContext} from "~/root";
@@ -37,7 +36,10 @@ import {UtilNavegacion} from "~/functions/ruta/util-navegacion";
 import {UtilAutocomplete} from "~/functions/ruta/util-autocomplete";
 import {LibroBibliotecaLoader, LibroBibliotecaLoaderData} from "~/http/libro-biblioteca/libro-biblioteca.loader";
 import {LibroBibliotecaSortFields} from "~/http/libro-biblioteca/sort/libro-biblioteca.sort-fields";
-
+import SubirArchivoContenedor from "~/components/subir-archivos/SubirArchivoContenedor";
+import {TipoArchivoEnum} from "~/enum/tipo-archivo.enum";
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import BackupIcon from '@mui/icons-material/Backup';
 // Carga de datos en backend
 export const loader: LoaderFunction = LibroBibliotecaLoader;
 
@@ -70,6 +72,8 @@ export default function LibroBiblioteca() {
         ...LibroBibliotecaSortFields
     ] as SortFieldInterface[]);
     const [abrioOpciones, setAbrioOpciones] = useState(false);
+    const [subirImagenAbierto, setSubirImagenAbierto] = useState(false);
+    const [subirArchivoAbierto, setSubirArchivoAbierto] = useState(false);
     const [registroSeleccionadoRuta, setRegistroSeleccionadoRuta] = useState({} as LibroBibliotecaInterface);
     const [visualizacionRegistroAbierto, setVisualizacionRegistroAbierto] = useState(false);
     const [camposFiltrosBusqueda, setCamposFiltrosBusqueda] = useState([...LibroBibliotecaFiltroForm()]);
@@ -277,6 +281,19 @@ export default function LibroBiblioteca() {
         }
     }
 
+    const subirArchivo = () => {
+        setSubirArchivoAbierto(true)
+    };
+    const subirImagen = () => {
+        setSubirImagenAbierto(true)
+    };
+    const subirArchivoHTTP = (data: FileList) => {
+        console.log('Data', data, registroSeleccionadoRuta)
+    };
+    const subirImagenHTTP = (data: FileList) => {
+        console.log('Data', data, registroSeleccionadoRuta);
+    };
+
     // Componente
     return (
         <KonstaContainer titulo="Libro biblioteca">
@@ -336,6 +353,12 @@ export default function LibroBiblioteca() {
                     <ActionsButton onClick={() => descargarPDF()} bold>
                         Descargar PDF <PictureAsPdfIcon className={'ml-2'}/>
                     </ActionsButton>
+                    <ActionsButton onClick={() => subirArchivo()} bold>
+                        Subir Archivo <UploadFileIcon className={'ml-2'}/>
+                    </ActionsButton>
+                    <ActionsButton onClick={() => subirImagen()} bold>
+                        Subir Imagen <BackupIcon className={'ml-2'}/>
+                    </ActionsButton>
                     <ActionsButton
                         onClick={() => setAbrioOpciones(false)}
                         colors={{text: 'text-red-500'}}
@@ -344,6 +367,21 @@ export default function LibroBiblioteca() {
                     </ActionsButton>
                 </ActionsGroup>
             </Actions>
+            {/*Subir archivos*/}
+            <SubirArchivoContenedor sheetOpened={subirArchivoAbierto}
+                                    tipoArchivo={TipoArchivoEnum.Archivo}
+                                    setSheetOpened={setSubirArchivoAbierto}
+                                    accept={'application/pdf'}
+                                    tamanioMaximoEnBytes={1000 * 1024 * 0.5}
+                                    eventoDioClicSubirArchivoOImagen={subirArchivoHTTP}
+            />
+            <SubirArchivoContenedor sheetOpened={subirImagenAbierto}
+                                    tipoArchivo={TipoArchivoEnum.Imagen}
+                                    setSheetOpened={setSubirImagenAbierto}
+                                    accept={'.png'}
+                                    tamanioMaximoEnBytes={1000 * 1024 * 0.5}
+                                    eventoDioClicSubirArchivoOImagen={subirImagenHTTP}
+            />
             {/* Visualizacion */}
             <SheetContenedor setVisualizacionAbierto={setVisualizacionRegistroAbierto}
                              visualizacionAbierto={visualizacionRegistroAbierto}>

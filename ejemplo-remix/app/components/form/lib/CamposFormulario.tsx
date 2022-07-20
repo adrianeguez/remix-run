@@ -146,6 +146,7 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                         className={'campo-formulario-archivo '}
                         type="file"
                         {...register(campoFormulario.formControlName as any, reglas)}
+                        accept={campoFormulario.file.accept}
                         name={campoFormulario.formControlName}
                     />
                 </label>)

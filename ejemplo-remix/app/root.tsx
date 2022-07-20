@@ -140,7 +140,8 @@ export default function App() {
                 observableAutocomplete,
                 textoAutocompleteBusqueda,
                 useFormReturnAutocompleteActual,
-                setUseFormReturnAutocompleteActual
+                setUseFormReturnAutocompleteActual,
+
             }}>
                 <Outlet/> <ScrollRestoration/> <Scripts/> <LiveReload/>
             </KonstaContainerContext.Provider>

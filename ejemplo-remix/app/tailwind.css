@@ -1056,20 +1056,8 @@ body {
   grid-column-start: 4;
 }
 
-.row-span-2 {
-  grid-row: span 2 / span 2;
-}
-
-.row-span-4 {
-  grid-row: span 4 / span 4;
-}
-
 .row-span-1 {
   grid-row: span 1 / span 1;
-}
-
-.row-span-6 {
-  grid-row: span 6 / span 6;
 }
 
 .m-3 {
@@ -1129,16 +1117,16 @@ body {
   margin-top: 1rem;
 }
 
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
 .mr-2 {
   margin-right: 0.5rem;
 }
 
 .mr-3 {
   margin-right: 0.75rem;
-}
-
-.mb-4 {
-  margin-bottom: 1rem;
 }
 
 .mt-2 {
@@ -1377,10 +1365,6 @@ body {
   height: 3.125rem;
 }
 
-.h-24 {
-  height: 6rem;
-}
-
 .max-h-12 {
   max-height: 3rem;
 }
@@ -1509,10 +1493,6 @@ body {
   width: 2.25rem;
 }
 
-.w-24 {
-  width: 6rem;
-}
-
 .min-w-4 {
   min-width: 1rem;
 }
@@ -1543,18 +1523,6 @@ body {
 
 .shrink {
   flex-shrink: 1;
-}
-
-.basis-1\/4 {
-  flex-basis: 25%;
-}
-
-.basis-1\/2 {
-  flex-basis: 50%;
-}
-
-.basis-1 {
-  flex-basis: 0.25rem;
 }
 
 .origin-bottom-left {
@@ -1718,20 +1686,12 @@ body {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.grid-rows-2 {
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-}
-
-.grid-rows-6 {
-  grid-template-rows: repeat(6, minmax(0, 1fr));
-}
-
 .grid-rows-1 {
   grid-template-rows: repeat(1, minmax(0, 1fr));
 }
 
-.flex-row {
-  flex-direction: row;
+.grid-rows-2 {
+  grid-template-rows: repeat(2, minmax(0, 1fr));
 }
 
 .flex-col {
@@ -1776,10 +1736,6 @@ body {
 
 .gap-1 {
   gap: 0.25rem;
-}
-
-.gap-6 {
-  gap: 1.5rem;
 }
 
 .gap-x-6 {
@@ -2037,11 +1993,6 @@ body {
   background-color: currentColor;
 }
 
-.bg-yellow-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(253 224 71 / var(--tw-bg-opacity));
-}
-
 .bg-opacity-15 {
   --tw-bg-opacity: 0.15;
 }
@@ -2064,16 +2015,6 @@ body {
 
 .bg-opacity-5 {
   --tw-bg-opacity: 0.05;
-}
-
-.object-none {
-  -o-object-fit: none;
-     object-fit: none;
-}
-
-.object-center {
-  -o-object-position: center;
-     object-position: center;
 }
 
 .p-3 {
@@ -3192,32 +3133,12 @@ body {
     grid-row: span 2 / span 2;
   }
 
-  .md\:row-span-6 {
-    grid-row: span 6 / span 6;
-  }
-
   .md\:h-160 {
     height: 40rem;
   }
 
   .md\:w-160 {
     width: 40rem;
-  }
-
-  .md\:w-32 {
-    width: 8rem;
-  }
-
-  .md\:basis-1\/3 {
-    flex-basis: 33.333333%;
-  }
-
-  .md\:basis-1\/2 {
-    flex-basis: 50%;
-  }
-
-  .md\:basis-1 {
-    flex-basis: 0.25rem;
   }
 
   .md\:rounded {

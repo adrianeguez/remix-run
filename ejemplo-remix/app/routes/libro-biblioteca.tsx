@@ -180,6 +180,7 @@ export default function LibroBiblioteca() {
         recargarPaginaConNuevosQueryParams({
             findDto: {
                 ...loaderData.findDto,
+                skip:'0',
                 ...data  // tiene que ir al final
             }
         });

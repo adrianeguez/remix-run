@@ -49,7 +49,6 @@ export const loader: LoaderFunction = LibroBibliotecaLoader;
 export default function LibroBiblioteca() {
     // Hooks Librearias y variables globales
     const loaderData = useLoaderData<LibroBibliotecaLoaderData>();
-    console.log('loaderData', loaderData);
     const navigate: NavigateFunction = useNavigate();
     const path = '/libro-biblioteca';
     const navbar: NavbarSoloTituloInterface = {

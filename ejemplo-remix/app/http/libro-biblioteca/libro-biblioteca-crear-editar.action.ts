@@ -21,13 +21,19 @@ export const LibroBibliotecaCrearEditarAction: ActionFunction = async (dataFunct
         if (id) {
             const updateDto: LibroBibliotecaUpdateDto = {
                 sisHabilitado: SisHabilitadoEnum.Activo,
-                nombre: body.get(LibroBibliotecaEnum.Nombre),
+                nombre: body.get(LibroBibliotecaEnum.Nombre) as string,
+                descripcion: body.get(LibroBibliotecaEnum.Descripcion) as string,
+                isbn: body.get(LibroBibliotecaEnum.ISBN) as string,
+                generoLibro: body.get(LibroBibliotecaEnum.GeneroLibro) as string,
             };
             respuesta = await LibroBibliotecaInstanceHttp.updateById(updateDto, +id);
         } else {
             const createDto: LibroBibliotecaCreateDto = {
+                descripcion: body.get(LibroBibliotecaEnum.Descripcion) as string,
+                isbn: body.get(LibroBibliotecaEnum.ISBN) as string,
+                generoLibro: body.get(LibroBibliotecaEnum.GeneroLibro) as string,
                 sisHabilitado: SisHabilitadoEnum.Activo,
-                nombre: body.get(LibroBibliotecaEnum.Nombre),
+                nombre: body.get(LibroBibliotecaEnum.Nombre) as string,
             };
             respuesta = await LibroBibliotecaInstanceHttp.create(createDto);
         }

@@ -40,6 +40,10 @@ export function LibroBibliotecaMostrar(props: LibroBibliotecaMostrarInterface) {
                             <MostrarSisImagen registro={registro} claseCss={''}/>
                         </div>
                         <div>
+                            <p><strong>Nombre:</strong>{registro.nombre}</p>
+                            {registro.descripcion && <p><strong>Descripcion:</strong>{registro.descripcion}</p>}
+                            <p><strong>ISBN:</strong>{registro.isbn}</p>
+                            <p><strong>Genero Libro:</strong>{registro.generoLibro}</p>
                             <p><strong>Fecha:</strong>{registro.sisCreado}</p>
                             <p><strong>Otro:</strong> Aqui mas info</p>
                         </div>

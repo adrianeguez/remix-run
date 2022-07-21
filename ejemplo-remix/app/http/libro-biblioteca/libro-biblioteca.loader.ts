@@ -32,7 +32,7 @@ export const LibroBibliotecaLoader: LoaderFunction = async (
         // Busqueda por otros parametros
         const busqueda = url.searchParams.get('busqueda');
         if (busqueda) {
-            // findDto.busqueda = busqueda;
+            findDto.busqueda = busqueda;
         }
         findDto.sisHabilitado = url.searchParams.get("sisHabilitado") as SisHabilitadoEnum;
         findDto.sisCreado = url.searchParams.get("sisCreado") as string;

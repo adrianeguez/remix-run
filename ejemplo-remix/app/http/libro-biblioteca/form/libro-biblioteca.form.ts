@@ -32,6 +32,48 @@ export function LibroBibliotecaForm(): CampoFormularioInterface[] {
             }
         },
         {
+            formControlName: LibroBibliotecaEnum.Descripcion,
+            help: 'Ingrese una descripcion del libro',
+            label: 'Descripcion',
+            initialValue: '',
+            actualValue: '',
+            type: CampoFormularioType.Textarea,
+            valid: false,
+            placeholder: 'EJ: Se trata de un libro de ...',
+            validators: {
+                maxLength: {
+                    value: 255,
+                    mensaje: 'Menor a 255'
+                },
+            }
+        },
+        {
+            formControlName: LibroBibliotecaEnum.ISBN,
+            help: 'Ingrese isbn del libro',
+            label: 'ISBN',
+            initialValue: '',
+            actualValue: '',
+            type: CampoFormularioType.Text,
+            valid: false,
+            placeholder: 'EJ: ISBN-1234-ABCD',
+            validators: {
+                required: 'ISBN requerido'
+            }
+        },
+        {
+            formControlName: LibroBibliotecaEnum.GeneroLibro,
+            help: 'Ingrese genero del libro',
+            label: 'Genero libro',
+            initialValue: '',
+            actualValue: '',
+            type: CampoFormularioType.Text,
+            valid: false,
+            placeholder: 'EJ: Ciencia ficcion',
+            validators: {
+                required: 'Genero libro requerido'
+            }
+        },
+        {
             formControlName: FormularioComunEnum.SisHabilitado,
             help: 'Seleccione si esta habilitado o no',
             label: 'Habilitado',

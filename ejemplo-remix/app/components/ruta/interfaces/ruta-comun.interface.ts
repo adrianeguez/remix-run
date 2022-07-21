@@ -20,4 +20,5 @@ export interface RutaComunInterface<Registro = any, RegistroFindDto = any> {
     mostrarFab: boolean;
     camposFiltro: CampoFormularioInterface[];
     accordeonCamposFiltro?: CampoFormularioAccordeonInterface[];
+    navegarUtil: any;
 }

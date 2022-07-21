@@ -9,7 +9,7 @@ export default function PopUpContenedor(props: PropsWithChildren<PopUpContenedor
     const {children, popupOpened, eventoSalir, estaEditando} = props
     return (
         <>
-            <Popup className={"pop-up-konstaui p-4"} opened={popupOpened} onBackdropClick={() => eventoSalir()}>
+            <Popup className={"pop-up-konstaui p-4 overflow-y"} opened={popupOpened} onBackdropClick={() => eventoSalir()}>
                 <>
                     <Navbar
                         title={

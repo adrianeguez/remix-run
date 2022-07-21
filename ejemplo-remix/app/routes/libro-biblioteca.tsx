@@ -291,10 +291,10 @@ export default function LibroBiblioteca() {
         setSubirImagenAbierto(true)
     };
     const subirArchivoHTTP = async (data?: FileList) => {
-        if(data){
-            if(registroSeleccionadoRuta.id){
+        if (data) {
+            if (registroSeleccionadoRuta.id) {
                 const archivo: NuevoArchivoInterface = {
-                    id:registroSeleccionadoRuta.id,
+                    id: registroSeleccionadoRuta.id,
                     file: data[0],
                     sisHabilitado: SisHabilitadoEnum.Activo,
                     tipo: TipoArchivoEnum.Archivo,
@@ -309,10 +309,10 @@ export default function LibroBiblioteca() {
 
     };
     const subirImagenHTTP = async (data: FileList) => {
-        if(data){
-            if(registroSeleccionadoRuta.id){
+        if (data) {
+            if (registroSeleccionadoRuta.id) {
                 const archivo: NuevoArchivoInterface = {
-                    id:registroSeleccionadoRuta.id,
+                    id: registroSeleccionadoRuta.id,
                     file: data[0],
                     sisHabilitado: SisHabilitadoEnum.Activo,
                     tipo: TipoArchivoEnum.Imagen,
@@ -335,7 +335,9 @@ export default function LibroBiblioteca() {
                                                                                  findDto={loaderData.findDto}
                                                                                  path={path}
                                                                                  navbar={navbar}
-                                                                                 navigateFabNewFunction={navegarParametrosNuevo}
+                                                                                 navigateFabNewFunction={() => {
+                                                                                     navegarParametrosNuevo()
+                                                                                 }}
                                                                                  registrosEncontrados={loaderData.registros}
                                                                                  sortFieldsArray={sortFields}
                                                                                  eventoSeleccionoSort={eventoSeleccionoSort}
@@ -343,6 +345,7 @@ export default function LibroBiblioteca() {
                                                                                  mostrarFab={true}
                                                                                  camposFiltro={camposFiltrosBusqueda}
                                                                                  accordeonCamposFiltro={accordeonCamposFiltro}
+                                                                                 navegarUtil={navegarUtil}
                                                                                  mostrarItemEnLista={(registro, indice) => (<>
                                                                                      <motion.div
                                                                                          initial={{opacity: 0, y: 10}}

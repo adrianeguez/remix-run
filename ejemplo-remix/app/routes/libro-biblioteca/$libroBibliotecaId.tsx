@@ -46,6 +46,15 @@ export default function libroBibliotecaId() {
                     if (campo.formControlName === FormularioComunEnum.SisHabilitado) {
                         campo.initialValue = estaEditando.sisHabilitado
                     }
+                    if (campo.formControlName === LibroBibliotecaEnum.Descripcion) {
+                        campo.initialValue = estaEditando.descripcion
+                    }
+                    if (campo.formControlName === LibroBibliotecaEnum.ISBN) {
+                        campo.initialValue = estaEditando.isbn
+                    }
+                    if (campo.formControlName === LibroBibliotecaEnum.GeneroLibro) {
+                        campo.initialValue = estaEditando.generoLibro
+                    }
                 }
                 return campo;
             }

@@ -25,6 +25,7 @@ export default function RutaComun<T, F>(props: RutaComunInterface<T, F>) {
         camposFiltro,
         accordeonCamposFiltro,
         eventoBuscar,
+        navegarUtil
     } = props;
 
     const {titulo, colorTituloClase, colorClaseBanner, textoDescripcion, imagen} = props.navbar;

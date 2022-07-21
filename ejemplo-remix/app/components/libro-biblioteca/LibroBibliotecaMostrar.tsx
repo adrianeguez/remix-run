@@ -22,8 +22,6 @@ export function LibroBibliotecaMostrar(props: LibroBibliotecaMostrarInterface) {
                             <div style={{float: 'left'}}>
                                 {registro.id?.toString()} - {registro.nombre?.toString()}
                             </div>
-
-                            <MostrarSisImagen registro={registro} claseCss={''}/>
                             <div className={'ml-2'} style={{float: 'right'}}>
                                 {dioClicBoton &&
                                     <Button
@@ -38,8 +36,14 @@ export function LibroBibliotecaMostrar(props: LibroBibliotecaMostrarInterface) {
                     onClick={() => dioClicBoton && dioClicBoton(registro, LibroBibliotecaMostrarEnum.IconoNavegar)}/>)}
                 text={
                     <div className={'grid grid-cols-2 gap-4'}>
-                        <div>Fecha: {registro.sisCreado}</div>
-                        <div>Otro</div>
+                        <div>
+                            <MostrarSisImagen registro={registro} claseCss={''}/>
+                        </div>
+                        <div>
+                            <p><strong>Fecha:</strong>{registro.sisCreado}</p>
+                            <p><strong>Otro:</strong> Aqui mas info</p>
+                        </div>
+                        <div></div>
                     </div>
                 }
             />

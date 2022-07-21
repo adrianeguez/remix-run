@@ -1,4 +1,3 @@
 import type {FindDto} from "~/interfaces/find.dto";
 
-export interface LibroBibliotecaFindDto extends FindDto {
-}
+export type LibroBibliotecaFindDto = FindDto

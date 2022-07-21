@@ -36,7 +36,7 @@ export default function libroBibliotecaId() {
     if (data.registro) {
         estaEditando = data.registro[0][0];
     }
-    let camposFormulario: CampoFormularioInterface[] = [...LibroBibliotecaForm()]
+    const camposFormulario: CampoFormularioInterface[] = [...LibroBibliotecaForm()]
         .map(
             (campo) => {
                 if (estaEditando) {

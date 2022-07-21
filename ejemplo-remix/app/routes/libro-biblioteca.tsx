@@ -40,12 +40,16 @@ import SubirArchivoContenedor from "~/components/subir-archivos/SubirArchivoCont
 import {TipoArchivoEnum} from "~/enum/tipo-archivo.enum";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import BackupIcon from '@mui/icons-material/Backup';
+import {SisHabilitadoEnum} from "~/enum/sis-habilitado.enum";
+import {NuevoArchivoInterface} from "~/classes/interfaces/nuevo-archivo.interface";
+import {DescargarArchivoBase64Function} from "~/functions/util/descargar-archivo-base64.function";
 // Carga de datos en backend
 export const loader: LoaderFunction = LibroBibliotecaLoader;
 
 export default function LibroBiblioteca() {
     // Hooks Librearias y variables globales
     const loaderData = useLoaderData<LibroBibliotecaLoaderData>();
+    console.log('loaderData', loaderData);
     const navigate: NavigateFunction = useNavigate();
     const path = '/libro-biblioteca';
     const navbar: NavbarSoloTituloInterface = {
@@ -287,11 +291,40 @@ export default function LibroBiblioteca() {
     const subirImagen = () => {
         setSubirImagenAbierto(true)
     };
-    const subirArchivoHTTP = (data: FileList) => {
-        console.log('Data', data, registroSeleccionadoRuta)
+    const subirArchivoHTTP = async (data?: FileList) => {
+        if(data){
+            if(registroSeleccionadoRuta.id){
+                const archivo: NuevoArchivoInterface = {
+                    id:registroSeleccionadoRuta.id,
+                    file: data[0],
+                    sisHabilitado: SisHabilitadoEnum.Activo,
+                    tipo: TipoArchivoEnum.Archivo,
+                    nombreIdentificador: path.replace('/', '')
+                };
+                const resultado = await LibroBibliotecaInstanceHttp.subirArchivoPrincipal(archivo);
+                setSubirArchivoAbierto(false);
+            }
+        }
+        setAbrioOpciones(false);
+        recargarPaginaConNuevosQueryParams();
+
     };
-    const subirImagenHTTP = (data: FileList) => {
-        console.log('Data', data, registroSeleccionadoRuta);
+    const subirImagenHTTP = async (data: FileList) => {
+        if(data){
+            if(registroSeleccionadoRuta.id){
+                const archivo: NuevoArchivoInterface = {
+                    id:registroSeleccionadoRuta.id,
+                    file: data[0],
+                    sisHabilitado: SisHabilitadoEnum.Activo,
+                    tipo: TipoArchivoEnum.Imagen,
+                    nombreIdentificador: path.replace('/', '')
+                };
+                const resultado = await LibroBibliotecaInstanceHttp.subirArchivoPrincipal(archivo);
+                setSubirImagenAbierto(false);
+            }
+        }
+        setAbrioOpciones(false);
+        recargarPaginaConNuevosQueryParams();
     };
 
     // Componente
@@ -354,10 +387,12 @@ export default function LibroBiblioteca() {
                         Descargar PDF <PictureAsPdfIcon className={'ml-2'}/>
                     </ActionsButton>
                     <ActionsButton onClick={() => subirArchivo()} bold>
-                        Subir Archivo <UploadFileIcon className={'ml-2'}/>
+                        Gestionar Archivos <UploadFileIcon className={'ml-2'}/>
                     </ActionsButton>
-                    <ActionsButton onClick={() => subirImagen()} bold>
-                        Subir Imagen <BackupIcon className={'ml-2'}/>
+                    <ActionsButton onClick={() => {
+                        subirImagen()
+                    }} bold>
+                        Gestionar Imagenes <BackupIcon className={'ml-2'}/>
                     </ActionsButton>
                     <ActionsButton
                         onClick={() => setAbrioOpciones(false)}
@@ -374,6 +409,7 @@ export default function LibroBiblioteca() {
                                     accept={'application/pdf'}
                                     tamanioMaximoEnBytes={1000 * 1024 * 0.5}
                                     eventoDioClicSubirArchivoOImagen={subirArchivoHTTP}
+                                    registroSeleccionadoRuta={registroSeleccionadoRuta}
             />
             <SubirArchivoContenedor sheetOpened={subirImagenAbierto}
                                     tipoArchivo={TipoArchivoEnum.Imagen}
@@ -381,6 +417,7 @@ export default function LibroBiblioteca() {
                                     accept={'.png'}
                                     tamanioMaximoEnBytes={1000 * 1024 * 0.5}
                                     eventoDioClicSubirArchivoOImagen={subirImagenHTTP}
+                                    registroSeleccionadoRuta={registroSeleccionadoRuta}
             />
             {/* Visualizacion */}
             <SheetContenedor setVisualizacionAbierto={setVisualizacionRegistroAbierto}

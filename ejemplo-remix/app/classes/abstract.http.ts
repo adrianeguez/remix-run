@@ -83,7 +83,7 @@ export abstract class AbstractHttp<FindDTO = any, CreateDTO = any, Registro = an
         formData.append('id', nuevoArchivo.id.toString());
         formData.append('nombreIdentificador', nuevoArchivo.nombreIdentificador);
         formData.append('sisHabilitado', nuevoArchivo.sisHabilitado.toString());
-        formData.append('tipov', nuevoArchivo.tipo);
+        formData.append('tipo', nuevoArchivo.tipo);
         if (nuevoArchivo.nombre) {
             formData.append('nombre', nuevoArchivo.nombre);
         }
@@ -92,7 +92,7 @@ export abstract class AbstractHttp<FindDTO = any, CreateDTO = any, Registro = an
         }
         formData.append('archivo', nuevoArchivo.file);
         try {
-            const respuesta = await fetch(`${this.urlBackend}/archivo-secundario/subir-archivo-secundario`, {
+            const respuesta = await fetch(`${this.urlBackend}/archivo-secundario/subir-archivo-principal`, {
                 body: formData,
                 method: 'POST'
             });

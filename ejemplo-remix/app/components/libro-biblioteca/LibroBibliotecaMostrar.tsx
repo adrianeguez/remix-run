@@ -8,6 +8,7 @@ import {
     LibroBibliotecaMostrarInterface
 } from "~/components/libro-biblioteca/interfaces/libro-biblioteca-mostrar.interface";
 import {LibroBibliotecaMostrarEnum} from "~/components/libro-biblioteca/enums/libro-biblioteca-mostrar.enum";
+import MostrarSisImagen from "~/components/imagenes/MostrarSisImagen";
 
 export function LibroBibliotecaMostrar(props: LibroBibliotecaMostrarInterface) {
     const {registro, dioClicBoton} = props;
@@ -21,6 +22,8 @@ export function LibroBibliotecaMostrar(props: LibroBibliotecaMostrarInterface) {
                             <div style={{float: 'left'}}>
                                 {registro.id?.toString()} - {registro.nombre?.toString()}
                             </div>
+
+                            <MostrarSisImagen registro={registro} claseCss={''}/>
                             <div className={'ml-2'} style={{float: 'right'}}>
                                 {dioClicBoton &&
                                     <Button

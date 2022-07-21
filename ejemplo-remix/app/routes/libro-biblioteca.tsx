@@ -284,7 +284,6 @@ export default function LibroBiblioteca() {
             setLoading(false);
         }
     }
-
     const subirArchivo = () => {
         setSubirArchivoAbierto(true)
     };
@@ -326,7 +325,6 @@ export default function LibroBiblioteca() {
         setAbrioOpciones(false);
         recargarPaginaConNuevosQueryParams();
     };
-
     // Componente
     return (
         <KonstaContainer titulo="Libro biblioteca">

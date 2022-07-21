@@ -21,6 +21,7 @@ import {KonstaContainerContext} from "~/root";
 import toast from "react-hot-toast";
 import {LibroBibliotecaEnum} from "~/http/libro-biblioteca/form/libro-biblioteca.enum";
 import {FormularioComunEnum} from "~/enum/formulario-comun.enum";
+import {LibroBibliotecaAccordionForm} from "~/http/libro-biblioteca/form/libro-biblioteca-accordion.form";
 
 // Loader
 export const loader: LoaderFunction = LibroBibliotecaCrearEditarLoader;
@@ -82,7 +83,8 @@ export default function libroBibliotecaId() {
     // Custom Hooks - Campo Formulario
     const [eventoAutocomplete, setEventoAutocomplete, CamposFormularioComponente] = CamposFormulario({
         useFormReturn,
-        campos: camposFormularioCrearEditar
+        campos: camposFormularioCrearEditar,
+        accordeonCampos: LibroBibliotecaAccordionForm()
     });
 
     // Use Effects

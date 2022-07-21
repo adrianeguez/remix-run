@@ -73,6 +73,7 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                                     type={campoFormulario.type}
                                     name={campoFormulario.formControlName}
                                     placeholder={campoFormulario.placeholder}
+                                    hairlines={false}
                                     clearButton={(campoFormulario.type === CampoFormularioType.Date
                                         || campoFormulario.type === CampoFormularioType.DateTime
                                         || campoFormulario.type === CampoFormularioType.Textarea
@@ -133,6 +134,7 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                         header={errors[campoFormulario.formControlName] ?
                             <span className={'text-red-500'}>{generarLabel()}</span> :
                             generarLabel()}
+                        hairlines={false}
                         after={campoFormulario.file.tipoArchivo === TipoArchivoEnum.Archivo ? '📃' : '🏞'}
                         title={visualizarArchivo(watch(campoFormulario.formControlName as any))}
                         footer={errors[campoFormulario.formControlName] ?
@@ -201,6 +203,7 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                                                 className={'icon-small'}
                                                 src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
                                                 alt=""/></>}
+                                            hairlines={false}
                                             header={errors[campoFormulario.formControlName] ?
                                                 <span className={'text-red-500'}>{generarLabel()}</span> :
                                                 generarLabel()}
@@ -239,6 +242,7 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                                         media={<><img className={'icon-small'}
                                                       src="https://cdn-icons-png.flaticon.com/512/16/16363.png"
                                                       alt=""/></>}
+                                        hairlines={false}
                                         header={campoFormulario.label + (campoFormulario.validators.required ? ' *' : '') + ':'}
                                         titleWrapClassName={field.value ? '' : 'texto-placeholder'}
                                         title={field.value ? campoFormulario.toggle?.opcionPositivaLabel : campoFormulario.toggle?.opcionNegativaLabel}
@@ -280,10 +284,11 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                             .map(
                                 (aGL) => {
                                     return (
-                                        <Accordion key={aGL.id} className={'accordion-form'}>
+                                        <Accordion key={aGL.id} className={'accordion-form'} defaultExpanded={aGL.accordeonAbierto ? aGL.accordeonAbierto : false}>
                                             <AccordionSummary
                                                 expandIcon={<ExpandMoreIcon/>}
                                                 className={'accordion-form-summary'}
+
                                                 aria-controls={aGL.id}
                                                 id={aGL.id}
                                             >
@@ -291,7 +296,7 @@ export default function CamposFormulario(props: CampoFormularioComponentInterfac
                                             </AccordionSummary>
                                             <AccordionDetails>
                                                 <div className="accordion-detalle-texto">{aGL.descripcion}</div>
-                                                <List>
+                                                <List hairlines={false} className={'shadow-md rounded-md'}>
                                                     {aGL
                                                         .camposFormulario.map((f) => generarCampo(f))
                                                     }

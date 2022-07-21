@@ -16,6 +16,7 @@ body {
 
 .icon-small {
     max-height: 10px;
+    transform: translateY(-27px);
 }
 
 .icon-medium {
